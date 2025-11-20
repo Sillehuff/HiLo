@@ -1,3 +1,14 @@
+Based on the image you provided, I have completely overhauled the color scheme. The "Purple" vibe is gone.
+
+**New Design Identity:**
+
+  * **Primary Aesthetic:** "Electric Gradient" — transitioning from **Neon Lime (`#ccff00`)** to **Neon Cyan (`#00ff99`)**.
+  * **Background:** Deepest Black (`#000000`) to match the footer in your image.
+  * **Buttons & Accents:** Use the signature gradient from the image for high-impact elements (buttons, active tabs), with black text for maximum contrast.
+
+Here is the updated app:
+
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,38 +16,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#111814">
+  <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-title" content="Hilo">
   
   <title>Hilo Playlist</title>
   
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background:%2316231d'><circle cx='256' cy='256' r='220' stroke='%23c9a15d' stroke-width='30' fill='none'/><path d='M150 320C180 200 230 160 256 160C300 160 340 200 362 320' stroke='%23c9a15d' stroke-width='40' stroke-linecap='round'/><path d='M130 390H382' stroke='%23c9a15d' stroke-width='30' stroke-linecap='round'/></svg>">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='22' stroke='%23c9a15d' stroke-width='2' fill='none'/><path d='M14 30C16 20 20 16 24 16C28 16 32 20 34 30' stroke='%23c9a15d' stroke-width='3' stroke-linecap='round'/><path d='M12 36H36' stroke='%23c9a15d' stroke-width='2' stroke-linecap='round'/></svg>" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background:%23000000'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23ccff00'/><stop offset='100%25' stop-color='%2300ff99'/></linearGradient></defs><circle cx='256' cy='256' r='220' stroke='url(%23g)' stroke-width='30' fill='none'/><path d='M150 320C180 200 230 160 256 160C300 160 340 200 362 320' stroke='url(%23g)' stroke-width='40' stroke-linecap='round'/><path d='M130 390H382' stroke='url(%23g)' stroke-width='30' stroke-linecap='round'/></svg>">
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23ccff00'/><stop offset='100%25' stop-color='%2300ff99'/></linearGradient></defs><circle cx='24' cy='24' r='22' stroke='url(%23g)' stroke-width='2' fill='none'/><path d='M14 30C16 20 20 16 24 16C28 16 32 20 34 30' stroke='url(%23g)' stroke-width='3' stroke-linecap='round'/><path d='M12 36H36' stroke='url(%23g)' stroke-width='2' stroke-linecap='round'/></svg>" />
   
   <style>
     :root {
-      --bg-grad-start: #0d1512;
-      --bg-grad-mid: #16231d;
-      --bg-grad-end: #1b2d25;
-      --accent: #d4af37;
-      --accent-dim: rgba(212, 175, 55, 0.2);
+      /* HILO HOUSE BRAND: BLACK + NEON GRADIENT (LIME TO CYAN) */
+      
+      /* Backgrounds */
+      --bg-body: #000000;
+      --bg-card: #111111;
+      --bg-glass: rgba(17, 17, 17, 0.8);
+      
+      /* The Gradient from the image */
+      --brand-lime: #ccff00;
+      --brand-cyan: #00ff99;
+      --brand-grad: linear-gradient(135deg, var(--brand-lime) 0%, var(--brand-cyan) 100%);
+      
+      /* Text */
       --text-main: #ffffff;
-      --text-muted: rgba(255, 255, 255, 0.55);
-      --glass-bg: rgba(30, 40, 35, 0.65);
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --blur-amt: 25px;
+      --text-muted: rgba(255, 255, 255, 0.5);
+      
+      /* Borders */
+      --border-dim: rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(204, 255, 0, 0.3);
+      
+      /* UI Metrics */
       --radius: 20px;
       --safe-top: env(safe-area-inset-top, 20px);
       --safe-bottom: env(safe-area-inset-bottom, 20px);
-      --success: #32d74b;
-      --warning: #ff9f0a;
+      
+      /* States */
+      --success: #00ff99; 
+      --warning: #ccff00;
       --danger: #ff453a;
     }
 
     html { height: 100%; overflow: hidden; }
     body {
       margin: 0; padding: 0;
-      background: linear-gradient(180deg, var(--bg-grad-start) 0%, var(--bg-grad-mid) 40%, var(--bg-grad-end) 100%);
+      background: var(--bg-body);
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -52,105 +77,127 @@
     .app-frame { display: flex; flex-direction: column; min-height: 100%; padding-bottom: calc(80px + var(--safe-bottom)); }
     .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 20px; }
 
+    /* GRADIENT TOP BAR LINE */
+    .top-line {
+        position: fixed; top:0; left:0; right:0; height: 4px; z-index: 200;
+        background: var(--brand-grad);
+    }
+
     .nav {
       position: sticky; top: 0; z-index: 100;
-      padding-top: max(12px, var(--safe-top)); padding-bottom: 12px;
-      background: rgba(13, 21, 18, 0.85);
-      backdrop-filter: blur(var(--blur-amt)); -webkit-backdrop-filter: blur(var(--blur-amt));
-      border-bottom: 1px solid var(--glass-border);
+      padding-top: max(16px, var(--safe-top)); padding-bottom: 12px;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-dim);
     }
-    .nav-content { display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto; padding: 0 16px; }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--accent); }
-    .brand svg { width: 24px; height: 24px; }
+    .nav-content { display: flex; flex-direction: column; gap: 16px; max-width: 600px; margin: 0 auto; padding: 0 16px; }
+    
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; }
+    /* Gradient Logo Stroke */
+    .brand svg { width: 28px; height: 28px; }
+    
     .tabs-scroller { width: 100%; overflow-x: auto; scrollbar-width: none; }
     .tabs-scroller::-webkit-scrollbar { display: none; }
     .tabs { display: flex; gap: 8px; padding-bottom: 4px; }
     .tab-btn {
-      white-space: nowrap; padding: 8px 18px; border-radius: 100px;
-      background: rgba(255,255,255,0.05); border: none; color: var(--text-muted);
-      font-size: 13px; font-weight: 600; transition: all 0.25s;
+      white-space: nowrap; padding: 10px 20px; border-radius: 100px;
+      background: rgba(255,255,255,0.08); border: none; color: var(--text-muted);
+      font-size: 13px; font-weight: 600; transition: all 0.2s;
     }
-    .tab-btn[aria-selected="true"] { background: var(--accent); color: #000; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); }
+    .tab-btn[aria-selected="true"] { 
+        background: var(--brand-grad); 
+        color: #000; /* Black text on gradient */
+        font-weight: 700;
+        box-shadow: 0 4px 15px rgba(204, 255, 0, 0.2);
+    }
 
     .card {
-      background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-      border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim); border-radius: var(--radius); padding: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
     .hero {
-      text-align: center; padding: 24px 20px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
-      border: 1px solid var(--glass-border); border-radius: var(--radius);
+      text-align: center; padding: 30px 20px;
+      background: radial-gradient(circle at center, rgba(204, 255, 0, 0.05) 0%, rgba(0,0,0,0) 70%);
+      border: 1px solid var(--border-dim); border-radius: var(--radius);
     }
 
     input[type="text"], input[type="date"], input[type="time"], select {
-      font-size: 16px !important; background: rgba(0,0,0,0.25);
-      border: 1px solid var(--glass-border); color: white; padding: 14px;
+      font-size: 16px !important; background: #000;
+      border: 1px solid var(--border-dim); color: white; padding: 14px;
       border-radius: 14px; width: 100%; appearance: none; outline: none; transition: border-color 0.2s;
     }
-    input:focus, select:focus { border-color: var(--accent); }
+    input:focus, select:focus { border-color: var(--brand-lime); box-shadow: 0 0 0 1px var(--brand-lime); }
 
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 16px; border-radius: 14px; font-weight: 600; font-size: 16px;
+      padding: 16px; border-radius: 14px; font-weight: 700; font-size: 16px;
       border: none; cursor: pointer; transition: transform 0.1s, opacity 0.2s; width: 100%; touch-action: manipulation;
+      text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .btn:active { transform: scale(0.97); opacity: 0.9; }
-    .btn-primary { background: var(--accent); color: #111; }
+    .btn:active { transform: scale(0.98); opacity: 0.9; }
+    
+    /* Primary Button = Gradient + Black Text */
+    .btn-primary { background: var(--brand-grad); color: #000; }
+    
     .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
     .btn-danger { background: rgba(255, 69, 58, 0.15); color: var(--danger); }
     .btn-success { background: var(--success); color: #000; }
 
     .fab {
       position: fixed; bottom: calc(20px + var(--safe-bottom)); right: 20px;
-      width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: #000;
+      width: 56px; height: 56px; border-radius: 50%; 
+      background: var(--brand-grad); color: #000;
       font-size: 28px; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4); z-index: 90; transition: transform 0.2s;
+      box-shadow: 0 0 20px rgba(204, 255, 0, 0.3); z-index: 90; transition: transform 0.2s;
     }
     .fab:active { transform: scale(0.9); }
 
-    .guest-area { background: rgba(0,0,0,0.2); border-radius: 14px; padding: 14px; border: 1px solid var(--glass-border); }
+    .guest-area { background: #080808; border-radius: 14px; padding: 14px; border: 1px solid var(--border-dim); }
     .chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; margin-bottom: 12px; }
     .chip {
-      background: var(--accent-dim); border: 1px solid rgba(212, 175, 55, 0.3);
-      color: #fff; padding: 6px 12px; border-radius: 20px;
-      font-size: 14px; display: flex; align-items: center; gap: 6px;
+      background: rgba(204, 255, 0, 0.1); border: 1px solid var(--brand-lime);
+      color: var(--brand-lime); padding: 6px 12px; border-radius: 20px;
+      font-size: 14px; display: flex; align-items: center; gap: 6px; font-weight: 600;
     }
+    
     .list-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px;
-      max-height: 240px; overflow-y: auto; padding-top: 8px; border-top: 1px solid var(--glass-border);
+      max-height: 240px; overflow-y: auto; padding-top: 8px; border-top: 1px solid var(--border-dim);
     }
     .list-item {
       background: rgba(255,255,255,0.05); padding: 12px 8px; border-radius: 10px;
       font-size: 13px; text-align: center; color: rgba(255,255,255,0.8); cursor: pointer; transition: background 0.2s;
     }
-    .list-item.active { background: var(--accent); color: #000; font-weight: 700; }
+    /* Active list item gets gradient border or background */
+    .list-item.active { background: var(--brand-grad); color: #000; font-weight: 700; }
 
     .cal-entry {
-      background: rgba(255,255,255,0.07); padding: 16px; margin-bottom: 10px; border-radius: 14px;
-      display: flex; justify-content: space-between; align-items: center; border-left: 4px solid transparent;
+      background: #111; padding: 16px; margin-bottom: 10px; border-radius: 14px;
+      display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-dim);
+      border-left: 4px solid transparent;
     }
-    .cal-entry.draft { border-color: var(--warning); }
-    .cal-entry.final { border-color: var(--success); }
+    .cal-entry.draft { border-left-color: var(--warning); }
+    .cal-entry.final { border-left-color: var(--success); }
 
     .metric-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
-    .metric-box { background: rgba(0,0,0,0.3); padding: 16px 8px; border-radius: 14px; text-align: center; }
+    .metric-box { background: #000; padding: 16px 8px; border-radius: 14px; text-align: center; border: 1px solid var(--border-dim); }
     .metric-val { font-size: 22px; font-weight: 800; color: #fff; }
     .metric-lbl { font-size: 11px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
     .modal-backdrop {
       position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
       opacity: 0; pointer-events: none; transition: opacity 0.3s;
       display: flex; flex-direction: column; justify-content: flex-end;
     }
     .modal-backdrop.open { opacity: 1; pointer-events: auto; }
     .modal-sheet {
-      background: #1b2621; border-top: 1px solid var(--glass-border);
+      background: #141414; border-top: 1px solid var(--border-dim);
       border-radius: 24px 24px 0 0; padding: 24px 20px calc(20px + var(--safe-bottom));
       width: 100%; max-height: 92vh; overflow-y: auto;
       transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+      box-shadow: 0 -10px 40px rgba(0,0,0,1);
     }
     .modal-backdrop.open .modal-sheet { transform: translateY(0); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
@@ -158,33 +205,48 @@
 
     .hidden { display: none !important; }
     .pill { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-    .pill-warn { background: rgba(255, 159, 10, 0.2); color: var(--warning); }
-    .pill-ok { background: rgba(50, 215, 75, 0.2); color: var(--success); }
+    .pill-warn { background: rgba(204, 255, 0, 0.2); color: var(--warning); } 
+    .pill-ok { background: rgba(0, 255, 153, 0.2); color: var(--success); } 
 
-    .table-container { overflow-x: auto; border-radius: 14px; border: 1px solid var(--glass-border); }
+    .table-container { overflow-x: auto; border-radius: 14px; border: 1px solid var(--border-dim); }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
     th, td { padding: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    th { background: rgba(0,0,0,0.4); color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; }
+    th { background: #000; color: var(--brand-lime); font-size: 12px; font-weight: 700; text-transform: uppercase; }
 
     #toast-area { position: fixed; top: var(--safe-top); left: 0; right: 0; padding: 20px; z-index: 300; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-    .toast { pointer-events: auto; background: #333; color: #fff; padding: 12px 24px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; border: 1px solid var(--glass-border); animation: slideDown 0.3s ease-out; }
-    .toast.success { background: #1b3a24; color: var(--success); border-color: var(--success); }
-    .toast.error { background: #3a1b1b; color: var(--danger); border-color: var(--danger); }
+    .toast { pointer-events: auto; background: #222; color: #fff; padding: 12px 24px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; border: 1px solid var(--border-dim); animation: slideDown 0.3s ease-out; }
+    .toast.success { background: rgba(0, 255, 153, 0.1); color: var(--success); border-color: var(--success); }
+    .toast.error { background: rgba(255, 69, 58, 0.15); color: var(--danger); border-color: var(--danger); }
     @keyframes slideDown { from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
     body.ios-locked { overflow: hidden; position: fixed; width: 100%; }
+
+    /* Text Gradient for Brand Name if supported */
+    .text-gradient {
+        background: var(--brand-grad);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
   </style>
 </head>
 <body>
+
+  <div class="top-line"></div>
 
   <div class="app-frame">
     <nav class="nav">
       <div class="nav-content">
         <div class="brand">
-          <svg viewBox="0 0 48 48" fill="none" stroke="#d4af37">
-            <circle cx="24" cy="24" r="22" stroke-width="2"/>
-            <path d="M14 30C16 20 20 16 24 16C28 16 32 20 34 30" stroke-width="3" stroke-linecap="round"/>
+          <svg viewBox="0 0 48 48" fill="none">
+            <defs>
+              <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ccff00" />
+                <stop offset="100%" stop-color="#00ff99" />
+              </linearGradient>
+            </defs>
+            <circle cx="24" cy="24" r="22" stroke="url(#brandGrad)" stroke-width="2"/>
+            <path d="M14 30C16 20 20 16 24 16C28 16 32 20 34 30" stroke="url(#brandGrad)" stroke-width="3" stroke-linecap="round"/>
           </svg>
-          <span>Hilo</span>
+          <span>Hilo House</span>
         </div>
         <div class="tabs-scroller">
           <div class="tabs" role="tablist">
@@ -216,10 +278,10 @@
             <div id="dash-list" class="list-grid"></div>
           </div>
 
-          <div id="rec-box" class="hidden" style="margin-top: 24px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+          <div id="rec-box" class="hidden" style="margin-top: 24px; border-top: 1px solid var(--border-dim); padding-top: 20px;">
             <div style="text-align:center;">
-                <div class="subtle" style="text-transform:uppercase; letter-spacing:1px; color:var(--accent);">Best Match</div>
-                <div style="font-size:24px; font-weight:800; color:#fff; text-shadow:0 0 20px rgba(212,175,55,0.3); margin: 10px 0; line-height:1.2;">
+                <div class="subtle" style="text-transform:uppercase; letter-spacing:1px; color:var(--brand-lime);">Best Match</div>
+                <div style="font-size:24px; font-weight:800; color:#fff; text-shadow:0 0 20px rgba(204,255,0,0.2); margin: 10px 0; line-height:1.2;">
                   <span id="rec-id">--</span>
                 </div>
             </div>
@@ -300,8 +362,8 @@
             <button id="btn-import" class="btn btn-secondary">📂 Import CSV</button>
             <button id="btn-nuke" class="btn btn-danger">Reset Local Data</button>
             <input type="file" id="csv-file" accept=".csv" class="hidden">
-            <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--glass-border); text-align:center;">
-                <p class="subtle">Version 2.2 (Dynamic Playlist Support)</p>
+            <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border-dim); text-align:center;">
+                <p class="subtle">Version 2.3 (House Gradient Edition)</p>
             </div>
           </div>
         </div>
@@ -334,7 +396,7 @@
       <div style="margin-bottom:30px;">
          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <label class="subtle">Attendees (<span id="m-count">0</span>)</label>
-            <button id="m-copy" style="background:none; border:none; color:var(--accent); font-weight:600; font-size:13px;">+ Add Dashboard Guests</button>
+            <button id="m-copy" style="background:none; border:none; color:var(--brand-lime); font-weight:600; font-size:13px;">+ Add Dashboard Guests</button>
          </div>
          <div class="guest-area">
             <div id="m-chips" class="chips-wrap"></div>
@@ -353,8 +415,8 @@
 
 <script>
 /**
- * Hilo Playlist App - v2.2
- * Changes: Dynamic Playlist Strings + Auto-Sync on Connect
+ * Hilo Playlist App - v2.3
+ * Changes: Dynamic Playlist Strings + Auto-Sync + Neon Gradient Branding
  */
 
 const CONFIG = {
@@ -371,7 +433,7 @@ const store = {
     editId: null,
     modalGuests: new Set(),
     connected: false,
-    playlists: new Set() // Stores dynamic playlist names
+    playlists: new Set()
 };
 
 // --- INIT ---
@@ -397,23 +459,18 @@ function loadData() {
                     store.plans.set(k, v);
                 });
             }
-            // Rebuild known playlists from history
             rebuildPlaylistSet();
         }
-        // Add defaults if empty
         if(store.playlists.size === 0) {
             for(let i=1; i<=12; i++) store.playlists.add(String(i));
         }
     } catch (e) { console.error("Storage load fail", e); }
-    
     refreshPlaylistDropdown();
 }
 
 function rebuildPlaylistSet() {
     store.playlists.clear();
-    // Add defaults (1-12)
     for(let i=1; i<=12; i++) store.playlists.add(String(i));
-    // Add from history (handles strings like "90s HipHop")
     store.history.forEach(r => {
         if(r.playlist) store.playlists.add(String(r.playlist));
     });
@@ -422,16 +479,12 @@ function rebuildPlaylistSet() {
 function refreshPlaylistDropdown() {
     const sel = document.getElementById('m-playlist');
     sel.innerHTML = '<option value="">Select Playlist...</option>';
-    
-    // Sort: Try to sort numerically if possible, otherwise alphabetically
     const sorted = Array.from(store.playlists).sort((a,b) => {
         const numA = parseFloat(a), numB = parseFloat(b);
         if(!isNaN(numA) && !isNaN(numB)) return numA - numB;
         return a.localeCompare(b);
     });
-
     sorted.forEach(p => {
-        // Display Name Logic: If it's just a number, say "Playlist #X", else show name
         const display = !isNaN(parseFloat(p)) && isFinite(p) ? `Playlist #${p}` : p;
         sel.innerHTML += `<option value="${p}">${display}</option>`;
     });
@@ -549,10 +602,9 @@ function calcRecs() {
     if(store.selected.size === 0) return;
     document.getElementById('rec-box').classList.remove('hidden');
 
-    // Map: Guest -> Map(PlaylistString -> DateStr)
     const guestHist = new Map(); 
     store.history.forEach(r => {
-        const pStr = String(r.playlist); // Normalize to string
+        const pStr = String(r.playlist);
         if(!guestHist.has(r.guest)) guestHist.set(r.guest, new Map());
         const pm = guestHist.get(r.guest);
         if(!pm.has(pStr) || new Date(r.date) > new Date(pm.get(pStr))) {
@@ -561,7 +613,6 @@ function calcRecs() {
     });
 
     const scores = [];
-    // Iterate over ALL known playlists (strings included)
     store.playlists.forEach(plID => {
         let never = 0, stale = 0;
         let days = [];
@@ -580,7 +631,6 @@ function calcRecs() {
         days.sort((a,b)=>a-b);
         const median = days.length ? days[Math.floor(days.length/2)] : 0;
         const staleRate = Math.round((stale / store.selected.size) * 100);
-        // Score Algo
         const score = (staleRate * 2) + (never * 4) + (median * 0.2);
         scores.push({ id: plID, never, median, staleRate, score });
     });
@@ -588,7 +638,6 @@ function calcRecs() {
     scores.sort((a,b) => b.score - a.score);
     const top = scores[0];
 
-    // Format Display Name for Top Pick
     const topName = !isNaN(parseFloat(top.id)) && isFinite(top.id) ? `Playlist #${top.id}` : top.id;
     document.getElementById('rec-id').innerText = topName;
     
@@ -602,11 +651,9 @@ function calcRecs() {
         const d = document.createElement('div');
         d.className = 'metric-box';
         d.style.minWidth = '80px';
-        // Shorten name for runner up bubbles
         let shortName = s.id.length > 8 ? s.id.substring(0,6)+'..' : s.id;
         if(!isNaN(parseFloat(s.id))) shortName = `#${s.id}`;
-
-        d.innerHTML = `<div style="color:var(--accent); font-weight:bold; font-size:11px;">${shortName}</div><div class="metric-lbl">${s.staleRate}%</div>`;
+        d.innerHTML = `<div style="color:var(--brand-lime); font-weight:bold; font-size:11px;">${shortName}</div><div class="metric-lbl">${s.staleRate}%</div>`;
         alts.appendChild(d);
     });
     return scores; 
@@ -639,10 +686,7 @@ function renderCalendar() {
                 const el = document.createElement('div');
                 el.className = `cal-entry ${p.status === 'draft' ? 'draft' : 'final'}`;
                 el.onclick = () => openModal({ id: p.id });
-                
-                // Display Name Check
                 const plName = !isNaN(parseFloat(p.playlist)) ? `Playlist #${p.playlist}` : p.playlist;
-
                 el.innerHTML = `
                     <div>
                         <div style="font-size:16px; font-weight:700; margin-bottom:4px;">${fmtTime(p.time)} • ${plName}</div>
@@ -674,7 +718,6 @@ function openModal(opts = {}) {
         document.getElementById('m-time').value = p.time;
         document.getElementById('m-playlist').value = p.playlist;
         store.modalGuests = new Set(p.attendees);
-        
         document.getElementById('m-delete').classList.remove('hidden');
         document.getElementById('modal-title').innerText = "Edit Class";
         const draftBtn = document.getElementById('m-save');
@@ -688,7 +731,6 @@ function openModal(opts = {}) {
         document.getElementById('m-time').value = opts.time || '09:00';
         document.getElementById('m-playlist').value = opts.playlist || '';
         store.modalGuests = new Set(opts.attendees || []);
-        
         document.getElementById('m-delete').classList.add('hidden');
         document.getElementById('modal-title').innerText = "Plan Class";
         document.getElementById('m-save').disabled = false;
@@ -737,16 +779,10 @@ function commitClass(status) {
     const date = document.getElementById('m-date').value;
     const time = document.getElementById('m-time').value;
     const pl = document.getElementById('m-playlist').value;
-    
     if(!date || !pl) { toast('Date & Playlist required', 'error'); return; }
     
     const id = store.editId || Date.now().toString(36) + Math.random().toString(36).substr(2);
-    const obj = {
-        id, date, time, 
-        playlist: pl, // Store as string now
-        attendees: new Set(store.modalGuests),
-        status
-    };
+    const obj = { id, date, time, playlist: pl, attendees: new Set(store.modalGuests), status };
     
     store.plans.set(id, obj);
     saveData();
@@ -757,7 +793,7 @@ function commitClass(status) {
         });
         syncSheet(obj);
         saveData();
-        rebuildPlaylistSet(); // New playlist might have been created
+        rebuildPlaylistSet();
         refreshPlaylistDropdown();
     } else {
         toast('Draft Saved', 'success');
@@ -780,11 +816,10 @@ function renderExplorer() {
     const scores = calcRecs();
     const tbody = document.getElementById('expl-body');
     if(!scores) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Select guests on dashboard</td></tr>'; return; }
-    
     tbody.innerHTML = scores.map(s => {
         const name = !isNaN(parseFloat(s.id)) ? `#${s.id}` : s.id;
         return `<tr>
-            <td style="font-weight:bold; color:var(--accent)">${name}</td>
+            <td style="font-weight:bold; color:var(--brand-lime)">${name}</td>
             <td>${s.never}</td>
             <td>${s.median}</td>
             <td>${s.score.toFixed(1)}</td>
@@ -796,7 +831,6 @@ function renderHistory() {
     const term = document.getElementById('hist-search').value.toLowerCase();
     const tbody = document.getElementById('hist-body');
     const sorted = [...store.history].sort((a,b) => new Date(b.date) - new Date(a.date));
-    
     tbody.innerHTML = sorted
         .filter(h => h.guest.toLowerCase().includes(term) || h.date.includes(term))
         .slice(0, 50)
@@ -804,13 +838,12 @@ function renderHistory() {
             const plName = !isNaN(parseFloat(h.playlist)) ? `#${h.playlist}` : h.playlist;
             return `<tr>
                 <td>${h.date}<br><span class="subtle">${h.time}</span></td>
-                <td style="color:var(--accent)">${plName}</td>
+                <td style="color:var(--brand-lime)">${plName}</td>
                 <td>${h.guest}</td>
             </tr>`
         }).join('');
 }
 
-// --- CONNECTIVITY ---
 async function checkConnectivity() {
     const badge = document.getElementById('conn-status');
     try {
@@ -818,7 +851,6 @@ async function checkConnectivity() {
         store.connected = true;
         badge.className = 'pill pill-ok';
         badge.innerText = 'Online';
-        // AUTO PULL ON CONNECT
         await pullSheets(true);
     } catch(e) {
         store.connected = false;
@@ -843,19 +875,13 @@ async function pullSheets(isAuto = false) {
         if(res.success && res.data) {
             let count = 0;
             const sigs = new Set(store.history.map(r => `${r.date}|${r.time}|${r.guest}`));
-            
             res.data.forEach(row => {
                 const [d,t,g,p] = row;
                 const cleanDate = d.split('T')[0];
                 if(g && p) {
                     const sig = `${cleanDate}|${t}|${g}`;
                     if(!sigs.has(sig)) {
-                        store.history.push({
-                            date:cleanDate, 
-                            time:t||'00:00', 
-                            guest:g, 
-                            playlist: String(p).trim() // Force string, trim whitespace
-                        });
+                        store.history.push({ date:cleanDate, time:t||'00:00', guest:g, playlist: String(p).trim() });
                         store.guests.add(g);
                         count++;
                     }
@@ -871,7 +897,6 @@ async function pullSheets(isAuto = false) {
     } catch(e) { if(!isAuto) toast('Fetch failed', 'error'); }
 }
 
-// --- HELPERS ---
 function jsonp(action, params={}) {
     return new Promise((resolve, reject) => {
         const cb = 'cb_' + Math.random().toString(36).substr(2, 9);
@@ -932,11 +957,7 @@ function parseCSV() {
             if(c.length >= 4) {
                 const [d,t,g,p] = c;
                 if(g && p) {
-                    store.history.push({
-                        date: d.trim(), time: t.trim(), 
-                        guest: g.replace(/"/g,'').trim(), 
-                        playlist: p.trim() // No parseInt
-                    });
+                    store.history.push({ date: d.trim(), time: t.trim(), guest: g.replace(/"/g,'').trim(), playlist: p.trim() });
                     store.guests.add(g.replace(/"/g,'').trim());
                     count++;
                 }
@@ -953,3 +974,4 @@ function parseCSV() {
 </script>
 </body>
 </html>
+```
