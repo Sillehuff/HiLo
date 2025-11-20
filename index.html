@@ -3,1134 +3,1066 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>Hilo Playlist – Mobile Edition</title>
-  <meta name="description" content="Professional class planning with playlist optimization" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#111814">
+  <meta name="apple-mobile-web-app-title" content="Hilo">
+  
+  <title>Hilo Playlist</title>
+  
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background:%2316231d'><circle cx='256' cy='256' r='220' stroke='%23c9a15d' stroke-width='30' fill='none'/><path d='M150 320C180 200 230 160 256 160C300 160 340 200 362 320' stroke='%23c9a15d' stroke-width='40' stroke-linecap='round'/><path d='M130 390H382' stroke='%23c9a15d' stroke-width='30' stroke-linecap='round'/></svg>">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='22' stroke='%23c9a15d' stroke-width='2' fill='none'/><path d='M14 30C16 20 20 16 24 16C28 16 32 20 34 30' stroke='%23c9a15d' stroke-width='3' stroke-linecap='round'/><path d='M12 36H36' stroke='%23c9a15d' stroke-width='2' stroke-linecap='round'/></svg>" />
   
   <style>
     :root {
-      --primary: #243b33;
-      --accent: #c9a15d;
-      --cream: #f6f4f0;
-      --ink: #0f0f0f;
-      --glass: rgba(30, 40, 35, 0.75);
-      --glass-border: rgba(255,255,255,0.08);
-      --radius: 16px;
-      --shadow: 0 10px 30px rgba(0,0,0,.3);
-      --safe-top: env(safe-area-inset-top);
-      --safe-bottom: env(safe-area-inset-bottom);
-      --success: #2ecc71;
-      --warning: #f39c12;
-      --danger: #e74c3c;
-      --info: #3498db;
+      /* Palette: Deep Forest & Gold */
+      --bg-grad-start: #0d1512;
+      --bg-grad-mid: #16231d;
+      --bg-grad-end: #1b2d25;
+      --accent: #d4af37; /* Slightly richer gold */
+      --accent-dim: rgba(212, 175, 55, 0.2);
+      --text-main: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.55);
+      
+      /* Glassmorphism */
+      --glass-bg: rgba(30, 40, 35, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --blur-amt: 25px;
+      
+      /* iOS System */
+      --radius: 20px;
+      --safe-top: env(safe-area-inset-top, 20px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
+      
+      /* Functional Colors */
+      --success: #32d74b; /* Apple Green */
+      --warning: #ff9f0a; /* Apple Orange */
+      --danger: #ff453a;  /* Apple Red */
     }
 
-    /* Mobile Reset & Base */
-    html, body {
+    /* --- Reset & Base --- */
+    html {
+      height: 100%;
+      overflow: hidden; /* Prevent rubber-banding on the document itself */
+    }
+
+    body {
       margin: 0;
       padding: 0;
-      background: #111814; /* Fallback */
-      background: linear-gradient(180deg, #0d1512 0%, #16231d 40%, #1b2d25 100%);
-      color: var(--cream);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+      background: linear-gradient(180deg, var(--bg-grad-start) 0%, var(--bg-grad-mid) 40%, var(--bg-grad-end) 100%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-      /* Prevent pull-to-refresh on mobile to feel more like an app */
-      overscroll-behavior-y: none; 
+      height: 100%;
+      overflow-y: auto; /* Internal scrolling */
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: none;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    
-    a { text-decoration: none; color: inherit; }
-    
-    /* Navigation - Sticky & Safe Area Aware */
+    button, input, select { font-family: inherit; }
+
+    /* --- Typography --- */
+    h1, h2, h3 { margin: 0; font-weight: 700; letter-spacing: -0.5px; }
+    .subtle { font-size: 13px; color: var(--text-muted); }
+
+    /* --- Layout --- */
+    .app-frame {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      padding-bottom: calc(80px + var(--safe-bottom)); /* Space for scroll */
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px; /* iPhone Max width optimized */
+      margin: 0 auto;
+      padding: 16px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+
+    /* --- Navigation --- */
     .nav {
       position: sticky; top: 0; z-index: 100;
       padding-top: max(12px, var(--safe-top));
       padding-bottom: 12px;
-      padding-left: 16px; padding-right: 16px;
-      background: rgba(13, 21, 18, 0.95);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      background: rgba(13, 21, 18, 0.85);
+      backdrop-filter: blur(var(--blur-amt));
+      -webkit-backdrop-filter: blur(var(--blur-amt));
       border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-content {
       display: flex; flex-direction: column; gap: 12px;
+      max-width: 600px; margin: 0 auto; padding: 0 16px;
     }
 
     .brand {
-      display:flex; align-items:center; gap:10px;
-      font-weight: 800; font-size: 18px; letter-spacing: 0.5px;
-      color: var(--accent);
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 17px; color: var(--accent);
     }
     .brand svg { width: 24px; height: 24px; }
 
-    /* Scrollable Tabs */
-    .tabs-wrapper {
+    .tabs-scroller {
       width: 100%; overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none; /* Firefox */
+      scrollbar-width: none;
     }
-    .tabs-wrapper::-webkit-scrollbar { display: none; }
+    .tabs-scroller::-webkit-scrollbar { display: none; }
     
-    .tabs {
-      display: flex; gap: 8px; padding-bottom: 2px;
-      min-width: min-content;
-    }
-
+    .tabs { display: flex; gap: 8px; padding-bottom: 4px; }
+    
     .tab-btn {
       white-space: nowrap;
-      padding: 8px 16px;
-      border-radius: 99px;
-      background: rgba(255,255,255, .05);
-      border: 1px solid transparent;
-      color: rgba(255,255,255,0.7);
-      font-size: 14px; font-weight: 600;
-      transition: all .2s ease;
+      padding: 8px 18px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.05);
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px; font-weight: 600;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
     .tab-btn[aria-selected="true"] {
       background: var(--accent);
       color: #000;
-      box-shadow: 0 2px 10px rgba(201,161,93,.3);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
     }
 
-    /* Main Layout */
-    .container {
-      max-width: 800px; margin: 0 auto;
-      padding: 20px 16px;
-      padding-bottom: calc(80px + var(--safe-bottom));
-      display: flex; flex-direction: column; gap: 24px;
-    }
-
-    /* Hero & Cards */
-    .hero {
-      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+    /* --- Cards & UI Elements --- */
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius);
       padding: 20px;
-      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
-    .hero h1 { font-size: 24px; margin: 0 0 8px 0; color: #fff; }
-    .hero .subtle { font-size: 14px; color: rgba(255,255,255,0.6); }
-
-    .card {
-      background: var(--glass);
+    
+    .hero {
+      text-align: center; padding: 24px 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
       border: 1px solid var(--glass-border);
       border-radius: var(--radius);
-      overflow: hidden;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow);
     }
-    .card-body { padding: 16px; }
-    .card-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; color: #fff; }
-    .card-subtitle { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
 
-    /* Buttons & Inputs (Touch Friendly) */
-    button, select, input { font-family: inherit; }
-    
-    /* Prevent Zoom on iPhone */
-    input[type="text"], input[type="date"], input[type="time"], select, textarea {
-      font-size: 16px !important; 
-      background: rgba(0,0,0,0.3);
+    /* --- Forms --- */
+    input[type="text"], input[type="date"], input[type="time"], select {
+      font-size: 16px !important; /* Prevents iOS Zoom */
+      background: rgba(0,0,0,0.25);
       border: 1px solid var(--glass-border);
-      color: #fff;
-      padding: 12px; border-radius: 12px;
-      width: 100%; appearance: none;
+      color: white;
+      padding: 14px;
+      border-radius: 14px;
+      width: 100%;
+      appearance: none;
+      outline: none;
+      transition: border-color 0.2s;
     }
-    input:focus, select:focus, textarea:focus {
-      outline: none; border-color: var(--accent);
-    }
+    input:focus, select:focus { border-color: var(--accent); }
 
+    /* --- Buttons --- */
     .btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 14px 20px; border-radius: 12px;
-      font-weight: 600; font-size: 15px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 16px; border-radius: 14px;
+      font-weight: 600; font-size: 16px;
       border: none; cursor: pointer;
-      transition: transform 0.1s;
-      gap: 8px;
+      transition: transform 0.1s, opacity 0.2s;
+      width: 100%;
+      touch-action: manipulation;
     }
-    .btn:active { transform: scale(0.96); }
+    .btn:active { transform: scale(0.97); opacity: 0.9; }
     
-    .btn-primary { background: var(--accent); color: #121212; }
+    .btn-primary { background: var(--accent); color: #111; }
     .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-danger { background: rgba(231, 76, 60, 0.2); color: var(--danger); border: 1px solid var(--danger); }
-    .btn-block { width: 100%; }
-
-    /* Metric Grid */
-    .metric-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 16px 0; }
-    .metric { background: rgba(0,0,0,0.2); padding: 12px 4px; border-radius: 12px; text-align: center; }
-    .metric-val { font-size: 20px; font-weight: 800; color: #fff; }
-    .metric-lbl { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px; }
-
-    /* Guest Selector */
-    .guest-selector-area {
-      background: rgba(0,0,0,0.2);
-      border-radius: 12px; padding: 12px;
-      border: 1px solid var(--glass-border);
-    }
-    .chips-container {
-      display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;
-      min-height: 40px;
-    }
-    .chip {
-      background: rgba(201,161,93,0.2); border: 1px solid rgba(201,161,93,0.4);
-      color: #fff; padding: 6px 12px; border-radius: 20px;
-      font-size: 13px; display: flex; align-items: center; gap: 6px;
-    }
-    .chip-remove { opacity: 0.7; font-size: 16px; }
+    .btn-danger { background: rgba(255, 69, 58, 0.15); color: var(--danger); }
+    .btn-success { background: var(--success); color: #000; }
     
-    .scroll-list {
-      max-height: 220px; overflow-y: auto;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      margin-top: 8px; padding-top: 8px;
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px;
-    }
-    .list-item {
-      padding: 10px; background: rgba(255,255,255,0.05);
-      border-radius: 8px; font-size: 14px; text-align: center;
-      color: rgba(255,255,255,0.8);
-    }
-    .list-item.selected {
-      background: var(--accent); color: #121212; font-weight: 600;
-    }
-
-    /* Weekly Calendar Mobile Friendly */
-    .calendar-day {
-      margin-bottom: 16px;
-    }
-    .day-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 8px;
-    }
-    .day-title { font-weight: 700; color: var(--accent); }
-    
-    .class-entry {
-      background: rgba(255,255,255,0.07);
-      border-left: 4px solid transparent;
-      border-radius: 8px; padding: 14px; margin-bottom: 8px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .class-entry.status-draft { border-color: var(--warning); }
-    .class-entry.status-finalized { border-color: var(--success); }
-    
-    .class-meta h4 { margin: 0; font-size: 16px; color: #fff; }
-    .class-meta p { margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,0.6); }
-    
-    /* Floating Action Button (FAB) for adding class */
     .fab {
       position: fixed; bottom: calc(20px + var(--safe-bottom)); right: 20px;
       width: 56px; height: 56px; border-radius: 50%;
-      background: var(--accent); color: #121212;
+      background: var(--accent); color: #000;
+      font-size: 28px;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-      font-size: 28px; z-index: 90;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      z-index: 90;
+      transition: transform 0.2s;
     }
+    .fab:active { transform: scale(0.9); }
 
-    /* Modal */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
-      display: flex; align-items: flex-end; /* Bottom sheet style */
+    /* --- Guest Chips --- */
+    .guest-area {
+      background: rgba(0,0,0,0.2);
+      border-radius: 14px; padding: 14px;
+      border: 1px solid var(--glass-border);
     }
-    .modal-sheet {
-      background: #1c2621;
-      width: 100%; max-height: 90vh;
-      border-radius: 24px 24px 0 0;
-      padding: 24px; padding-bottom: calc(24px + var(--safe-bottom));
-      overflow-y: auto;
-      animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    .chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; margin-bottom: 12px; }
+    .chip {
+      background: var(--accent-dim); border: 1px solid rgba(212, 175, 55, 0.3);
+      color: #fff; padding: 6px 12px; border-radius: 20px;
+      font-size: 14px; display: flex; align-items: center; gap: 6px;
+      animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes popIn { from{transform:scale(0.8); opacity:0;} to{transform:scale(1); opacity:1;} }
     
-    .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-    .modal-header h3 { margin: 0; font-size: 22px; }
-    .close-btn { background: none; border: none; color: #fff; font-size: 24px; padding: 0; }
+    .list-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px;
+      max-height: 240px; overflow-y: auto;
+      padding-top: 8px; border-top: 1px solid var(--glass-border);
+    }
+    .list-item {
+      background: rgba(255,255,255,0.05); padding: 12px 8px;
+      border-radius: 10px; font-size: 13px; text-align: center;
+      color: rgba(255,255,255,0.8); cursor: pointer;
+      transition: background 0.2s;
+    }
+    .list-item.active { background: var(--accent); color: #000; font-weight: 700; }
 
-    /* Utilities */
+    /* --- Calendar --- */
+    .cal-entry {
+      background: rgba(255,255,255,0.07);
+      padding: 16px; margin-bottom: 10px; border-radius: 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-left: 4px solid transparent;
+    }
+    .cal-entry.draft { border-color: var(--warning); }
+    .cal-entry.final { border-color: var(--success); }
+    
+    /* --- Metrics --- */
+    .metric-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
+    .metric-box { background: rgba(0,0,0,0.3); padding: 16px 8px; border-radius: 14px; text-align: center; }
+    .metric-val { font-size: 22px; font-weight: 800; color: #fff; }
+    .metric-lbl { font-size: 11px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* --- Modal (Bottom Sheet) --- */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+      display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    
+    .modal-sheet {
+      background: #1b2621; /* Solid color to prevent see-through issues */
+      border-top: 1px solid var(--glass-border);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px calc(20px + var(--safe-bottom));
+      width: 100%; max-height: 92vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+    }
+    .modal-backdrop.open .modal-sheet { transform: translateY(0); }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .close-icon { font-size: 24px; background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; display:flex; align-items:center; justify-content:center; color:#fff; border:none; }
+
+    /* --- Utilities --- */
     .hidden { display: none !important; }
-    .pill { padding: 4px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-    .pill-draft { background: rgba(243, 156, 18, 0.2); color: #f39c12; }
-    .pill-final { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+    .pill { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+    .pill-warn { background: rgba(255, 159, 10, 0.2); color: var(--warning); }
+    .pill-ok { background: rgba(50, 215, 75, 0.2); color: var(--success); }
     
     /* Tables */
-    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--glass-border); }
+    .table-container { overflow-x: auto; border-radius: 14px; border: 1px solid var(--glass-border); }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    th { background: rgba(0,0,0,0.3); color: var(--accent); font-size: 12px; }
+    th, td { padding: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    th { background: rgba(0,0,0,0.4); color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; }
 
     /* Toast */
-    #toast-container { position: fixed; top: var(--safe-top); left: 0; right: 0; padding: 16px; z-index: 999; pointer-events: none; display: flex; flex-direction: column; gap: 10px; }
-    .toast { background: #333; color: #fff; padding: 12px 16px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-size: 14px; pointer-events: auto; text-align: center; animation: fadeIn 0.2s; border: 1px solid rgba(255,255,255,0.1); }
-    .toast.success { background: rgba(39, 174, 96, 0.95); }
-    .toast.error { background: rgba(192, 57, 43, 0.95); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    #toast-area { position: fixed; top: var(--safe-top); left: 0; right: 0; padding: 20px; z-index: 300; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .toast { pointer-events: auto; background: #333; color: #fff; padding: 12px 24px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; border: 1px solid var(--glass-border); animation: slideDown 0.3s ease-out; }
+    .toast.success { background: #1b3a24; color: var(--success); border-color: var(--success); }
+    .toast.error { background: #3a1b1b; color: var(--danger); border-color: var(--danger); }
+    @keyframes slideDown { from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
+
+    /* Helper to lock body scroll on iOS when modal is open */
+    body.ios-locked { overflow: hidden; position: fixed; width: 100%; }
 
   </style>
 </head>
 <body>
 
-  <nav class="nav">
-    <div class="brand">
-      <svg viewBox="0 0 48 48" fill="none" stroke="#c9a15d">
-        <circle cx="24" cy="24" r="22" stroke-width="2"/>
-        <path d="M14 30C16 20 20 16 24 16C28 16 32 20 34 30" stroke-width="3" stroke-linecap="round"/>
-      </svg>
-      <span>Hilo Playlist</span>
-    </div>
-    <div class="tabs-wrapper">
-      <div class="tabs" role="tablist">
-        <button class="tab-btn" aria-selected="true" data-tab="dashboard">Dashboard</button>
-        <button class="tab-btn" aria-selected="false" data-tab="weekly">Planner</button>
-        <button class="tab-btn" aria-selected="false" data-tab="explorer">Explorer</button>
-        <button class="tab-btn" aria-selected="false" data-tab="history">History</button>
-        <button class="tab-btn" aria-selected="false" data-tab="settings">Settings</button>
+  <div class="app-frame">
+    
+    <nav class="nav">
+      <div class="nav-content">
+        <div class="brand">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#d4af37">
+            <circle cx="24" cy="24" r="22" stroke-width="2"/>
+            <path d="M14 30C16 20 20 16 24 16C28 16 32 20 34 30" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <span>Hilo</span>
+        </div>
+        <div class="tabs-scroller">
+          <div class="tabs" role="tablist">
+            <button class="tab-btn" aria-selected="true" data-tab="dashboard">Dashboard</button>
+            <button class="tab-btn" aria-selected="false" data-tab="weekly">Planner</button>
+            <button class="tab-btn" aria-selected="false" data-tab="explorer">Explorer</button>
+            <button class="tab-btn" aria-selected="false" data-tab="history">History</button>
+            <button class="tab-btn" aria-selected="false" data-tab="settings">Settings</button>
+          </div>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
 
-  <main class="container">
+    <main class="container">
 
-    <section id="dashboard" class="fade-in">
-      <div class="hero">
-        <h1 id="greeting">Good Day</h1>
-        <div class="subtle" id="currentDateTime">Loading...</div>
-        <div id="connection-status" class="pill pill-draft" style="margin-top:10px; display:inline-block;">Google Sheets: Check</div>
-      </div>
+      <section id="dashboard" class="fade-in">
+        <div class="hero">
+          <h1 id="greeting">Hello</h1>
+          <div class="subtle" id="currentDateTime">...</div>
+          <div id="conn-status" class="pill pill-warn" style="margin-top:8px; display:inline-block;">Offline</div>
+        </div>
 
-      <div class="card">
-        <div class="card-body">
-          <div class="card-title">Playlist Optimizer</div>
-          <div class="card-subtitle">Select who is in the room to get the freshest mix.</div>
+        <div class="card">
+          <h2 style="font-size:18px; margin-bottom:4px;">Who's Here?</h2>
+          <p class="subtle" style="margin-bottom:16px;">Select attendees to optimize the playlist.</p>
           
-          <div class="guest-selector-area">
-            <input type="text" id="dashboard-search" placeholder="Search guests..." style="margin-bottom:8px;">
+          <div class="guest-area">
+            <input type="text" id="dash-search" placeholder="Search guests..." autocomplete="off">
             
-            <div id="dashboard-chips" class="chips-container">
-              <span style="color:rgba(255,255,255,0.4); font-size:13px; padding:8px 0;">No guests selected</span>
+            <div id="dash-chips" class="chips-wrap" style="margin-top:12px;">
+              <span class="subtle">Empty room...</span>
             </div>
             
-            <div id="dashboard-list" class="scroll-list">
-              </div>
+            <div id="dash-list" class="list-grid"></div>
           </div>
 
-          <div id="recommendation-area" class="hidden" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
-            <div style="text-align:center; margin-bottom:16px;">
-                <div style="font-size:12px; color:var(--accent); text-transform:uppercase; letter-spacing:1px;">Recommended</div>
-                <div style="font-size:32px; font-weight:800; color:#fff;">Playlist #<span id="best-playlist-num">--</span></div>
-                <div style="font-size:13px; color:rgba(255,255,255,0.6);">Based on <span id="best-roster-count">0</span> attendees</div>
+          <div id="rec-box" class="hidden" style="margin-top: 24px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+            <div style="text-align:center;">
+                <div class="subtle" style="text-transform:uppercase; letter-spacing:1px; color:var(--accent);">Best Match</div>
+                <div style="font-size:36px; font-weight:800; color:#fff; text-shadow:0 0 20px rgba(212,175,55,0.3);">Playlist #<span id="rec-id">--</span></div>
             </div>
 
-            <div class="metric-grid">
-              <div class="metric">
-                <div class="metric-val" id="best-never">0</div>
-                <div class="metric-lbl">Never Heard</div>
+            <div class="metric-row">
+              <div class="metric-box">
+                <div class="metric-val" id="rec-never">0</div>
+                <div class="metric-lbl">New To</div>
               </div>
-              <div class="metric">
-                <div class="metric-val" id="best-median">0</div>
-                <div class="metric-lbl">Median Days</div>
+              <div class="metric-box">
+                <div class="metric-val" id="rec-median">0</div>
+                <div class="metric-lbl">Avg Days</div>
               </div>
-              <div class="metric">
-                <div class="metric-val" id="best-stale">0%</div>
-                <div class="metric-lbl">Stale Rate</div>
+              <div class="metric-box">
+                <div class="metric-val" id="rec-stale">0%</div>
+                <div class="metric-lbl">Stale</div>
               </div>
             </div>
 
-            <button id="quick-draft-btn" class="btn btn-primary btn-block">
-              <span>📅</span> Schedule This Playlist
+            <button id="btn-quick-add" class="btn btn-primary">
+              📅 Schedule This Mix
             </button>
             
-            <div style="margin-top:16px;">
-                <div style="font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:8px;">RUNNER UPS</div>
-                <div id="runner-ups" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:8px;">
-                    </div>
+            <div style="margin-top:20px;">
+                <p class="subtle" style="margin-bottom:8px; font-size:11px; font-weight:700;">RUNNER UPS</p>
+                <div id="rec-alts" style="display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;"></div>
             </div>
           </div>
-
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="weekly" class="hidden">
-      <div class="hero" style="text-align:left; display:flex; justify-content:space-between; align-items:center;">
-        <div>
+      <section id="weekly" class="hidden">
+        <div class="hero" style="display:flex; justify-content:space-between; align-items:center; text-align:left;">
+          <div>
             <h1>Planner</h1>
-            <div class="subtle" id="week-range-label">Current Week</div>
-        </div>
-        <div style="display:flex; gap:4px;">
-            <button class="btn btn-secondary" style="padding:8px 12px;" id="prevWeekBtn">←</button>
-            <button class="btn btn-secondary" style="padding:8px 12px;" id="nextWeekBtn">→</button>
-        </div>
-      </div>
-      
-      <div id="calendar-list">
-        </div>
-
-      <div style="text-align:center; padding: 20px; color:rgba(255,255,255,0.5); font-style:italic;" id="empty-cal-msg">
-        No classes scheduled this week.
-      </div>
-      
-      <div class="fab" id="add-class-fab">+</div>
-    </section>
-
-    <section id="explorer" class="hidden">
-      <div class="card">
-        <div class="card-body">
-            <div class="card-title">Playlist Explorer</div>
-            <div class="card-subtitle">Metrics based on currently selected guests in Dashboard.</div>
-            <div class="table-wrap">
-                <table id="explorer-table">
-                    <thead>
-                        <tr>
-                            <th>Playlist</th>
-                            <th>Never</th>
-                            <th>Median</th>
-                            <th>Score</th>
-                        </tr>
-                    </thead>
-                    <tbody id="explorer-tbody"></tbody>
-                </table>
-            </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="history" class="hidden">
-      <div class="card">
-        <div class="card-body">
-            <input type="text" id="history-search" placeholder="Search history..." style="margin-bottom:12px;">
-            <div class="table-wrap">
-                <table id="history-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Playlist</th>
-                            <th>Guests</th>
-                        </tr>
-                    </thead>
-                    <tbody id="history-tbody"></tbody>
-                </table>
-            </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="settings" class="hidden">
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">Data Sync</div>
-                <div class="card-subtitle">Google Sheets Integration</div>
-                
-                <div style="display:grid; gap:12px;">
-                    <button id="testConnBtn" class="btn btn-secondary btn-block">Test Connection</button>
-                    <button id="pullSheetsBtn" class="btn btn-secondary btn-block">⬇ Pull from Sheets</button>
-                    <button id="csvImportBtn" class="btn btn-secondary btn-block">📂 Import CSV</button>
-                    <button id="resetBtn" class="btn btn-danger btn-block">Reset Local Data</button>
-                    <input type="file" id="csvInput" accept=".csv" class="hidden">
-                </div>
-            </div>
-        </div>
-    </section>
-
-  </main>
-
-  <div id="class-modal" class="modal-overlay hidden">
-    <div class="modal-sheet">
-        <div class="modal-header">
-            <h3 id="modal-title">Plan Class</h3>
-            <button class="close-btn" id="modal-close">✕</button>
+            <div class="subtle" id="week-label">--</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-secondary" style="padding:10px 16px;" id="prevWeek">←</button>
+            <button class="btn btn-secondary" style="padding:10px 16px;" id="nextWeek">→</button>
+          </div>
         </div>
         
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:16px;">
-            <div>
-                <label style="font-size:12px; color:rgba(255,255,255,0.6);">Date</label>
-                <input type="date" id="modal-date">
+        <div id="cal-container" style="margin-top:10px;"></div>
+        <p id="cal-empty" class="subtle" style="text-align:center; padding:40px; display:none;">No classes this week.</p>
+        
+        <div class="fab" id="fab-add">+</div>
+      </section>
+
+      <section id="explorer" class="hidden">
+        <div class="card">
+          <h2 style="font-size:18px;">Playlist Metrics</h2>
+          <p class="subtle" style="margin-bottom:16px;">Analysis based on current dashboard selection.</p>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>#</th><th>New</th><th>Med</th><th>Scr</th></tr></thead>
+              <tbody id="expl-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="history" class="hidden">
+        <div class="card">
+          <input type="text" id="hist-search" placeholder="Search history..." style="margin-bottom:16px;">
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Date</th><th>Mix</th><th>Guest</th></tr></thead>
+              <tbody id="hist-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="settings" class="hidden">
+        <div class="card">
+          <h2 style="font-size:18px;">Data Sync</h2>
+          <p class="subtle" style="margin-bottom:20px;">Google Sheets Integration</p>
+          
+          <div style="display:grid; gap:14px;">
+            <button id="btn-test" class="btn btn-secondary">Test Connection</button>
+            <button id="btn-pull" class="btn btn-secondary">⬇ Pull from Sheets</button>
+            <button id="btn-import" class="btn btn-secondary">📂 Import CSV</button>
+            <button id="btn-nuke" class="btn btn-danger">Reset Local Data</button>
+            <input type="file" id="csv-file" accept=".csv" class="hidden">
+            
+            <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--glass-border); text-align:center;">
+                <p class="subtle">Version 2.1 (iOS Optimized)</p>
             </div>
-            <div>
-                <label style="font-size:12px; color:rgba(255,255,255,0.6);">Time</label>
-                <input type="time" id="modal-time">
-            </div>
+          </div>
         </div>
+      </section>
 
-        <div style="margin-bottom:16px;">
-            <label style="font-size:12px; color:rgba(255,255,255,0.6);">Playlist</label>
-            <select id="modal-playlist">
-                <option value="">Select Playlist...</option>
-                </select>
-        </div>
+    </main>
+  </div>
 
-        <div style="margin-bottom:24px;">
-             <div style="display:flex; justify-content:space-between;">
-                <label style="font-size:12px; color:rgba(255,255,255,0.6);">Attendees (<span id="modal-guest-count">0</span>)</label>
-                <a href="#" id="modal-copy-dash" style="font-size:12px; color:var(--accent);">Copy from Dashboard</a>
-             </div>
-             <div class="guest-selector-area" style="margin-top:8px;">
-                <div id="modal-chips" class="chips-container"></div>
-                <input type="text" id="modal-search" placeholder="Add guest..." style="font-size:14px;">
-                <div id="modal-list" class="scroll-list" style="max-height:150px;"></div>
-             </div>
+  <div id="modal-backdrop" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-title">Plan Class</h3>
+        <button class="close-icon" id="modal-close">✕</button>
+      </div>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
+        <div>
+          <label class="subtle" style="margin-bottom:6px; display:block;">Date</label>
+          <input type="date" id="m-date">
         </div>
+        <div>
+          <label class="subtle" style="margin-bottom:6px; display:block;">Time</label>
+          <input type="time" id="m-time">
+        </div>
+      </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-            <button id="modal-delete" class="btn btn-danger hidden">Delete</button>
-            <button id="modal-save" class="btn btn-secondary">Save Draft</button>
-            <button id="modal-finalize" class="btn btn-success" style="grid-column: 1 / -1;">✔ Finalize & Sync</button>
-        </div>
+      <div style="margin-bottom:24px;">
+        <label class="subtle" style="margin-bottom:6px; display:block;">Playlist</label>
+        <select id="m-playlist">
+          <option value="">Select Playlist...</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:30px;">
+         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label class="subtle">Attendees (<span id="m-count">0</span>)</label>
+            <button id="m-copy" style="background:none; border:none; color:var(--accent); font-weight:600; font-size:13px;">+ Add Dashboard Guests</button>
+         </div>
+         <div class="guest-area">
+            <div id="m-chips" class="chips-wrap"></div>
+            <input type="text" id="m-search" placeholder="Add guest..." style="margin-bottom:8px;">
+            <div id="m-list" class="list-grid" style="max-height:160px;"></div>
+         </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <button id="m-delete" class="btn btn-danger hidden">Delete</button>
+        <button id="m-save" class="btn btn-secondary">Save Draft</button>
+        <button id="m-final" class="btn btn-success" style="grid-column: 1 / -1; padding: 18px;">✔ Finalize & Sync</button>
+      </div>
     </div>
   </div>
 
-  <div id="toast-container"></div>
+  <div id="toast-area"></div>
 
 <script>
-// --- CONFIGURATION ---
+/**
+ * Hilo Playlist App - v2.1 iOS Optimized
+ * Focus: Touch stability, safe-areas, visual hierarchy
+ */
+
 const CONFIG = {
-    // Your exact URL
-    appsScriptUrl: 'https://script.google.com/macros/s/AKfycbyp5q-4rIC2XHa60ZnYS2x0bZrxDmNYAV3YvOf5EmxnnVqW2nAKEq6Em6UWgCy8ftULgQ/exec',
+    scriptUrl: 'https://script.google.com/macros/s/AKfycbyp5q-4rIC2XHa60ZnYS2x0bZrxDmNYAV3YvOf5EmxnnVqW2nAKEq6Em6UWgCy8ftULgQ/exec',
     token: '4c94713e-9b2b-4980-8b07-2b3948f6f6a1'
 };
 
-// --- STATE MANAGEMENT ---
-const state = {
-    attendees: new Set(), // Dashboard selection
-    allGuests: new Set(),
-    records: [], // Historical data
-    // CHANGED: weeklyPlan is now a Map of ID -> ClassObject (allows multiple classes per day)
-    weeklyPlan: new Map(), 
-    currentWeekStart: getWeekStart(new Date()),
-    editingId: null, // Track which class is being edited
-    playlists: Array.from({length: 12}, (_, i) => i + 1),
-    isConnected: false
+const store = {
+    selected: new Set(),    // Dashboard selection
+    guests: new Set(),      // All known guests
+    history: [],            // Past records
+    plans: new Map(),       // Future plans (Map ID -> Object)
+    weekStart: getMonday(new Date()),
+    editId: null,           // Currently editing ID
+    modalGuests: new Set(), // Temp set for modal
+    connected: false
 };
 
-// --- INITIALIZATION ---
+// --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
-    loadState();
-    setupEventListeners();
-    renderDashboard();
-    updateTime();
-    populatePlaylists();
-    
-    // Auto-test connection silently
-    checkConnection();
-    
-    setInterval(updateTime, 60000);
+    loadData();
+    initUI();
+    updateClock();
+    checkConnectivity(); // Auto-check
+    setInterval(updateClock, 60000);
 });
 
-// --- CORE FUNCTIONS ---
-
-function uuid() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
-
-function getWeekStart(d) {
-    const date = new Date(d);
-    const day = date.getDay(); // 0 (Sun) to 6 (Sat)
-    const diff = date.getDate() - day;
-    return new Date(date.setDate(diff));
-}
-
-function formatDateKey(d) {
-    return d.toISOString().slice(0, 10);
-}
-
-// --- DATA HANDLING ---
-
-function saveState() {
-    const data = {
-        records: state.records,
-        weeklyPlan: Array.from(state.weeklyPlan.entries()),
-        allGuests: Array.from(state.allGuests)
-    };
-    localStorage.setItem('hiloV11', JSON.stringify(data));
-}
-
-function loadState() {
-    const raw = localStorage.getItem('hiloV11');
-    if (raw) {
-        const data = JSON.parse(raw);
-        state.records = data.records || [];
-        state.allGuests = new Set(data.allGuests || []);
-        
-        // Hydrate the weekly plan map
-        state.weeklyPlan = new Map();
-        if (data.weeklyPlan) {
-            data.weeklyPlan.forEach(([id, cls]) => {
-                // Convert attendee arrays back to Sets
-                cls.attendees = new Set(cls.attendees);
-                state.weeklyPlan.set(id, cls);
-            });
+// --- DATA LAYER ---
+function loadData() {
+    try {
+        const raw = localStorage.getItem('hilo_v2');
+        if (raw) {
+            const d = JSON.parse(raw);
+            store.history = d.history || [];
+            store.guests = new Set(d.guests || []);
+            if (d.plans) {
+                d.plans.forEach(([k, v]) => {
+                    v.attendees = new Set(v.attendees);
+                    store.plans.set(k, v);
+                });
+            }
         }
+    } catch (e) { console.error("Storage load fail", e); }
+    
+    // Fill playlist select options once
+    const sel = document.getElementById('m-playlist');
+    sel.innerHTML = '<option value="">Select Playlist...</option>';
+    for(let i=1; i<=12; i++) {
+        sel.innerHTML += `<option value="${i}">Playlist #${i}</option>`;
     }
+}
+
+function saveData() {
+    try {
+        const d = {
+            history: store.history,
+            guests: Array.from(store.guests),
+            plans: Array.from(store.plans.entries()) // Map to Array for JSON
+        };
+        localStorage.setItem('hilo_v2', JSON.stringify(d));
+    } catch (e) { toast('Storage Full/Error', 'error'); }
 }
 
 // --- UI RENDERING ---
 
-function renderDashboard() {
-    // Render Guest List
-    const listEl = document.getElementById('dashboard-list');
-    const chipsEl = document.getElementById('dashboard-chips');
-    const search = document.getElementById('dashboard-search').value.toLowerCase();
-    
-    listEl.innerHTML = '';
-    chipsEl.innerHTML = state.attendees.size === 0 ? 
-        '<span style="color:rgba(255,255,255,0.4); font-size:13px; padding:8px 0;">No guests selected</span>' : '';
-    
-    // Render Chips
-    state.attendees.forEach(g => {
-        const chip = document.createElement('div');
-        chip.className = 'chip';
-        chip.innerHTML = `${g} <span class="chip-remove">×</span>`;
-        chip.querySelector('.chip-remove').onclick = () => toggleGuest(g);
-        chipsEl.appendChild(chip);
+function initUI() {
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.onclick = () => {
+            document.querySelectorAll('.tab-btn').forEach(t => t.setAttribute('aria-selected', false));
+            b.setAttribute('aria-selected', true);
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            const tid = b.dataset.tab;
+            document.getElementById(tid).classList.remove('hidden');
+            
+            // Refresh specific views
+            if(tid === 'weekly') renderCalendar();
+            if(tid === 'explorer') renderExplorer();
+            if(tid === 'history') renderHistory();
+        };
     });
 
-    // Render Selectable List
-    const sorted = Array.from(state.allGuests).sort();
-    sorted.forEach(g => {
-        if(g.toLowerCase().includes(search)) {
-            const div = document.createElement('div');
-            div.className = `list-item ${state.attendees.has(g) ? 'selected' : ''}`;
-            div.textContent = g;
-            div.onclick = () => toggleGuest(g);
-            listEl.appendChild(div);
+    // Dashboard Search
+    const dSearch = document.getElementById('dash-search');
+    dSearch.addEventListener('input', () => renderDashboardList(dSearch.value));
+    
+    // Modal Search
+    const mSearch = document.getElementById('m-search');
+    mSearch.addEventListener('input', () => renderModalList(mSearch.value));
+
+    // History Search
+    document.getElementById('hist-search').addEventListener('input', renderHistory);
+
+    // Planner Nav
+    document.getElementById('prevWeek').onclick = () => changeWeek(-7);
+    document.getElementById('nextWeek').onclick = () => changeWeek(7);
+    document.getElementById('fab-add').onclick = () => openModal();
+
+    // Modal Actions
+    document.getElementById('modal-close').onclick = closeModal;
+    document.getElementById('m-copy').onclick = () => {
+        store.selected.forEach(g => store.modalGuests.add(g));
+        renderModalChips(); renderModalList();
+    };
+    document.getElementById('m-save').onclick = () => commitClass('draft');
+    document.getElementById('m-final').onclick = () => commitClass('final');
+    document.getElementById('m-delete').onclick = deleteClass;
+    
+    // Quick Add from Dashboard
+    document.getElementById('btn-quick-add').onclick = () => {
+        const pl = document.getElementById('rec-id').innerText;
+        openModal({ playlist: pl, attendees: store.selected });
+    };
+
+    // Settings
+    document.getElementById('btn-test').onclick = checkConnectivity;
+    document.getElementById('btn-pull').onclick = pullSheets;
+    document.getElementById('btn-nuke').onclick = () => {
+        if(confirm("Reset all data?")) { localStorage.removeItem('hilo_v2'); location.reload(); }
+    };
+    document.getElementById('btn-import').onclick = () => document.getElementById('csv-file').click();
+    document.getElementById('csv-file').onchange = parseCSV;
+
+    renderDashboardList();
+    renderDashboardChips();
+}
+
+// --- DASHBOARD LOGIC ---
+
+function renderDashboardList(filter = '') {
+    const list = document.getElementById('dash-list');
+    list.innerHTML = '';
+    const term = filter.toLowerCase();
+    
+    Array.from(store.guests).sort().forEach(g => {
+        if(g.toLowerCase().includes(term)) {
+            const isActive = store.selected.has(g);
+            const el = document.createElement('div');
+            el.className = `list-item ${isActive ? 'active' : ''}`;
+            el.textContent = g;
+            el.onclick = () => {
+                if(store.selected.has(g)) store.selected.delete(g);
+                else store.selected.add(g);
+                renderDashboardList(term);
+                renderDashboardChips();
+                calcRecs();
+            };
+            list.appendChild(el);
         }
     });
-    
-    calculateRecommendations();
 }
 
-function toggleGuest(name) {
-    if (state.attendees.has(name)) state.attendees.delete(name);
-    else state.attendees.add(name);
-    
-    renderDashboard();
-    renderExplorer();
-}
-
-// --- RECOMMENDATION ENGINE ---
-
-function calculateRecommendations() {
-    const area = document.getElementById('recommendation-area');
-    
-    if (state.attendees.size === 0) {
-        area.classList.add('hidden');
+function renderDashboardChips() {
+    const box = document.getElementById('dash-chips');
+    if(store.selected.size === 0) {
+        box.innerHTML = '<span class="subtle">Empty room...</span>';
+        document.getElementById('rec-box').classList.add('hidden');
         return;
     }
-    area.classList.remove('hidden');
+    
+    box.innerHTML = '';
+    store.selected.forEach(g => {
+        const c = document.createElement('div');
+        c.className = 'chip';
+        c.innerHTML = `${g} <span style="opacity:0.6">×</span>`;
+        c.onclick = () => {
+            store.selected.delete(g);
+            renderDashboardList(document.getElementById('dash-search').value);
+            renderDashboardChips();
+            calcRecs();
+        };
+        box.appendChild(c);
+    });
+    calcRecs();
+}
 
-    // Build history map
-    const historyMap = new Map(); // Guest -> Map(Playlist -> LastDate)
-    state.records.forEach(r => {
-        if (!historyMap.has(r.guest)) historyMap.set(r.guest, new Map());
-        const gMap = historyMap.get(r.guest);
-        // Keep most recent
-        if (!gMap.has(r.playlist) || new Date(r.date) > new Date(gMap.get(r.playlist))) {
-            gMap.set(r.playlist, r.date);
+function calcRecs() {
+    if(store.selected.size === 0) return;
+    document.getElementById('rec-box').classList.remove('hidden');
+
+    // Build guest history map
+    const guestHist = new Map(); 
+    store.history.forEach(r => {
+        if(!guestHist.has(r.guest)) guestHist.set(r.guest, new Map());
+        // Only keep most recent date per playlist
+        const pm = guestHist.get(r.guest);
+        if(!pm.has(r.playlist) || new Date(r.date) > new Date(pm.get(r.playlist))) {
+            pm.set(r.playlist, r.date);
         }
     });
 
-    const metrics = state.playlists.map(pl => {
-        let never = 0;
-        let daysArr = [];
-        let staleCount = 0;
-        const threshold = 45;
+    const scores = [];
+    for(let i=1; i<=12; i++) {
+        let never = 0, stale = 0;
+        let days = [];
         
-        state.attendees.forEach(g => {
-            const last = historyMap.get(g)?.get(pl);
-            if (!last) {
-                never++;
-                staleCount++;
+        store.selected.forEach(g => {
+            const last = guestHist.get(g)?.get(i);
+            if(!last) {
+                never++; stale++;
             } else {
-                const diff = Math.floor((new Date() - new Date(last)) / (1000 * 60 * 60 * 24));
-                daysArr.push(diff);
-                if (diff >= threshold) staleCount++;
+                const diff = Math.floor((new Date() - new Date(last))/(86400000));
+                days.push(diff);
+                if(diff > 45) stale++;
             }
         });
 
-        daysArr.sort((a,b) => a-b);
-        const median = daysArr.length ? (daysArr[Math.floor(daysArr.length/2)]) : 0;
-        const stalePct = Math.round((staleCount / state.attendees.size) * 100);
-        
-        // Score: Higher is better
-        const score = (stalePct * 2) + (never * 3) + (median * 0.1);
-        
-        return { id: pl, never, median, stalePct, score };
-    }).sort((a, b) => b.score - a.score);
+        days.sort((a,b)=>a-b);
+        const median = days.length ? days[Math.floor(days.length/2)] : 0;
+        const staleRate = Math.round((stale / store.selected.size) * 100);
+        // Heuristic Score
+        const score = (staleRate * 2) + (never * 4) + (median * 0.2);
+        scores.push({ id: i, never, median, staleRate, score });
+    }
 
-    // Render Best
-    const best = metrics[0];
-    document.getElementById('best-playlist-num').textContent = best.id;
-    document.getElementById('best-roster-count').textContent = state.attendees.size;
-    document.getElementById('best-never').textContent = best.never;
-    document.getElementById('best-median').textContent = best.median;
-    document.getElementById('best-stale').textContent = best.stalePct + '%';
+    scores.sort((a,b) => b.score - a.score);
+    const top = scores[0];
 
-    // Update Quick Draft Button
-    const btn = document.getElementById('quick-draft-btn');
-    btn.onclick = () => {
-        openModal({
-            playlist: best.id,
-            attendees: state.attendees
-        });
-    };
+    document.getElementById('rec-id').innerText = top.id;
+    document.getElementById('rec-never').innerText = top.never;
+    document.getElementById('rec-median').innerText = top.median;
+    document.getElementById('rec-stale').innerText = top.staleRate + '%';
 
-    // Render Runner Ups
-    const runnersEl = document.getElementById('runner-ups');
-    runnersEl.innerHTML = '';
-    metrics.slice(1, 4).forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'metric';
-        div.style.minWidth = '80px';
-        div.innerHTML = `<div style="color:var(--accent); font-weight:bold;">#${m.id}</div><div class="metric-lbl">${m.stalePct}% Stale</div>`;
-        runnersEl.appendChild(div);
+    const alts = document.getElementById('rec-alts');
+    alts.innerHTML = '';
+    scores.slice(1, 4).forEach(s => {
+        const d = document.createElement('div');
+        d.className = 'metric-box';
+        d.style.minWidth = '80px';
+        d.innerHTML = `<div style="color:var(--accent); font-weight:bold">#${s.id}</div><div class="metric-lbl">${s.staleRate}%</div>`;
+        alts.appendChild(d);
     });
-    
-    return metrics; // Return for explorer
+
+    return scores; // For Explorer
 }
 
-function renderExplorer() {
-    const metrics = calculateRecommendations();
-    const tbody = document.getElementById('explorer-tbody');
-    if(!metrics) return;
+// --- WEEKLY PLANNER ---
+
+function renderCalendar() {
+    const con = document.getElementById('cal-container');
+    con.innerHTML = '';
     
-    tbody.innerHTML = metrics.map(m => `
+    const start = new Date(store.weekStart);
+    const end = new Date(start); end.setDate(end.getDate() + 6);
+    
+    document.getElementById('week-label').innerText = 
+        `${start.toLocaleDateString('en-US',{month:'short',day:'numeric'})} - ${end.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`;
+
+    let hasData = false;
+
+    for(let i=0; i<7; i++) {
+        const curr = new Date(start);
+        curr.setDate(curr.getDate() + i);
+        const key = curr.toISOString().split('T')[0];
+        
+        const dayPlans = Array.from(store.plans.values())
+            .filter(p => p.date === key)
+            .sort((a,b) => a.time.localeCompare(b.time));
+        
+        if(dayPlans.length) {
+            hasData = true;
+            const wrap = document.createElement('div');
+            wrap.innerHTML = `<div class="subtle" style="margin:16px 0 8px 4px; font-weight:700;">${curr.toLocaleDateString('en-US',{weekday:'long'})}</div>`;
+            
+            dayPlans.forEach(p => {
+                const el = document.createElement('div');
+                el.className = `cal-entry ${p.status === 'draft' ? 'draft' : 'final'}`;
+                el.onclick = () => openModal({ id: p.id }); // Edit mode
+                el.innerHTML = `
+                    <div>
+                        <div style="font-size:16px; font-weight:700; margin-bottom:4px;">${fmtTime(p.time)} • Playlist #${p.playlist}</div>
+                        <div class="subtle">${p.attendees.size} Guests • ${p.status.toUpperCase()}</div>
+                    </div>
+                    <div style="opacity:0.3">›</div>
+                `;
+                wrap.appendChild(el);
+            });
+            con.appendChild(wrap);
+        }
+    }
+    
+    document.getElementById('cal-empty').style.display = hasData ? 'none' : 'block';
+}
+
+function changeWeek(days) {
+    store.weekStart.setDate(store.weekStart.getDate() + days);
+    renderCalendar();
+}
+
+// --- MODAL SYSTEM ---
+
+function openModal(opts = {}) {
+    // Reset State
+    const now = new Date();
+    store.editId = opts.id || null;
+    
+    if(opts.id) {
+        // Load existing
+        const p = store.plans.get(opts.id);
+        document.getElementById('m-date').value = p.date;
+        document.getElementById('m-time').value = p.time;
+        document.getElementById('m-playlist').value = p.playlist;
+        store.modalGuests = new Set(p.attendees);
+        
+        document.getElementById('m-delete').classList.remove('hidden');
+        document.getElementById('modal-title').innerText = "Edit Class";
+        
+        // If finalized, lock draft button
+        const draftBtn = document.getElementById('m-save');
+        if(p.status === 'final') {
+            draftBtn.disabled = true; draftBtn.innerText = "Finalized";
+        } else {
+            draftBtn.disabled = false; draftBtn.innerText = "Save Draft";
+        }
+
+    } else {
+        // New
+        document.getElementById('m-date').value = opts.date || now.toISOString().split('T')[0];
+        document.getElementById('m-time').value = opts.time || '09:00';
+        document.getElementById('m-playlist').value = opts.playlist || '';
+        store.modalGuests = new Set(opts.attendees || []);
+        
+        document.getElementById('m-delete').classList.add('hidden');
+        document.getElementById('modal-title').innerText = "Plan Class";
+        document.getElementById('m-save').disabled = false;
+        document.getElementById('m-save').innerText = "Save Draft";
+    }
+
+    renderModalChips();
+    renderModalList();
+    
+    // Animation & Locking
+    document.getElementById('modal-backdrop').classList.add('open');
+    document.body.classList.add('ios-locked');
+}
+
+function closeModal() {
+    document.getElementById('modal-backdrop').classList.remove('open');
+    document.body.classList.remove('ios-locked');
+}
+
+function renderModalChips() {
+    const con = document.getElementById('m-chips');
+    document.getElementById('m-count').innerText = store.modalGuests.size;
+    con.innerHTML = '';
+    store.modalGuests.forEach(g => {
+        const c = document.createElement('div');
+        c.className = 'chip';
+        c.innerHTML = `${g} <span style="opacity:0.6">×</span>`;
+        c.onclick = () => { store.modalGuests.delete(g); renderModalChips(); renderModalList(); };
+        con.appendChild(c);
+    });
+}
+
+function renderModalList(filter='') {
+    const list = document.getElementById('m-list');
+    list.innerHTML = '';
+    const term = filter.toLowerCase();
+    
+    Array.from(store.guests).sort().forEach(g => {
+        if(!store.modalGuests.has(g) && g.toLowerCase().includes(term)) {
+            const d = document.createElement('div');
+            d.className = 'list-item';
+            d.innerText = g;
+            d.onclick = () => { store.modalGuests.add(g); renderModalChips(); renderModalList(filter); };
+            list.appendChild(d);
+        }
+    });
+}
+
+function commitClass(status) {
+    const date = document.getElementById('m-date').value;
+    const time = document.getElementById('m-time').value;
+    const pl = document.getElementById('m-playlist').value;
+    
+    if(!date || !pl) { toast('Date & Playlist required', 'error'); return; }
+    
+    const id = store.editId || Date.now().toString(36) + Math.random().toString(36).substr(2);
+    const obj = {
+        id, date, time, 
+        playlist: parseInt(pl),
+        attendees: new Set(store.modalGuests),
+        status
+    };
+    
+    store.plans.set(id, obj);
+    saveData();
+    
+    if(status === 'final') {
+        // Add to history locally immediately
+        obj.attendees.forEach(g => {
+            store.history.push({date, time, guest:g, playlist:obj.playlist});
+        });
+        syncSheet(obj);
+        saveData(); // save history update
+    } else {
+        toast('Draft Saved', 'success');
+    }
+    
+    closeModal();
+    renderCalendar();
+}
+
+function deleteClass() {
+    if(confirm("Delete this class?")) {
+        store.plans.delete(store.editId);
+        saveData();
+        closeModal();
+        renderCalendar();
+        toast('Deleted', 'success');
+    }
+}
+
+// --- EXPLORER & HISTORY ---
+
+function renderExplorer() {
+    const scores = calcRecs();
+    const tbody = document.getElementById('expl-body');
+    if(!scores) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Select guests on dashboard</td></tr>'; return; }
+    
+    tbody.innerHTML = scores.map(s => `
         <tr>
-            <td><strong>#${m.id}</strong></td>
-            <td>${m.never}</td>
-            <td>${m.median}</td>
-            <td>${m.score.toFixed(1)}</td>
+            <td style="font-weight:bold; color:var(--accent)">#${s.id}</td>
+            <td>${s.never}</td>
+            <td>${s.median}</td>
+            <td>${s.score.toFixed(1)}</td>
         </tr>
     `).join('');
 }
 
-// --- WEEKLY PLANNER LOGIC (MULTI-CLASS FIX) ---
-
-function renderWeekly() {
-    const list = document.getElementById('calendar-list');
-    list.innerHTML = '';
-    const start = new Date(state.currentWeekStart);
-    const end = new Date(start); end.setDate(end.getDate() + 6);
+function renderHistory() {
+    const term = document.getElementById('hist-search').value.toLowerCase();
+    const tbody = document.getElementById('hist-body');
     
-    document.getElementById('week-range-label').textContent = 
-        `${start.toLocaleDateString('en-US', {month:'short', day:'numeric'})} - ${end.toLocaleDateString('en-US', {month:'short', day:'numeric'})}`;
-
-    let hasClasses = false;
-
-    // Loop 7 days
-    for (let i = 0; i < 7; i++) {
-        const curr = new Date(start);
-        curr.setDate(curr.getDate() + i);
-        const dateKey = formatDateKey(curr);
-        const dayName = curr.toLocaleDateString('en-US', {weekday:'long'});
-        const displayDate = curr.toLocaleDateString('en-US', {month:'short', day:'numeric'});
-        
-        // Find classes for this day from the Map
-        const daysClasses = Array.from(state.weeklyPlan.values())
-            .filter(c => c.date === dateKey)
-            .sort((a, b) => a.time.localeCompare(b.time)); // Sort by time
-
-        if (daysClasses.length > 0) {
-            hasClasses = true;
-            const dayDiv = document.createElement('div');
-            dayDiv.className = 'calendar-day';
-            
-            let entriesHtml = daysClasses.map(cls => `
-                <div class="class-entry status-${cls.status}" onclick="openModalById('${cls.id}')">
-                    <div class="class-meta">
-                        <h4>${formatTime(cls.time)} • Playlist #${cls.playlist}</h4>
-                        <p>${cls.attendees.size} Guests • <span class="pill ${cls.status === 'draft' ? 'pill-draft' : 'pill-final'}">${cls.status}</span></p>
-                    </div>
-                    <div style="color:rgba(255,255,255,0.4);">›</div>
-                </div>
-            `).join('');
-
-            dayDiv.innerHTML = `
-                <div class="day-header">
-                    <span class="day-title">${dayName}</span>
-                    <span style="font-size:12px; opacity:0.6;">${displayDate}</span>
-                </div>
-                ${entriesHtml}
-            `;
-            list.appendChild(dayDiv);
-        }
-    }
+    // Sort by date desc
+    const sorted = [...store.history].sort((a,b) => new Date(b.date) - new Date(a.date));
     
-    document.getElementById('empty-cal-msg').style.display = hasClasses ? 'none' : 'block';
+    tbody.innerHTML = sorted
+        .filter(h => h.guest.toLowerCase().includes(term) || h.date.includes(term))
+        .slice(0, 50)
+        .map(h => `
+            <tr>
+                <td>${h.date}<br><span class="subtle">${h.time}</span></td>
+                <td style="color:var(--accent)">#${h.playlist}</td>
+                <td>${h.guest}</td>
+            </tr>
+        `).join('');
 }
 
-// --- MODAL & CLASS MANAGEMENT ---
+// --- CONNECTIVITY ---
 
-function openModal(overrides = {}) {
-    state.editingId = overrides.id || null;
-    
-    const now = new Date();
-    // Defaults
-    document.getElementById('modal-date').value = overrides.date || formatDateKey(now);
-    document.getElementById('modal-time').value = overrides.time || '09:00';
-    document.getElementById('modal-playlist').value = overrides.playlist || '';
-    
-    // Manage Attendees in Modal
-    // We use a temporary set for the modal so we don't mess up dashboard or saved data until save
-    window.modalAttendees = new Set(overrides.attendees || []);
-    
-    renderModalGuests();
-    
-    const delBtn = document.getElementById('modal-delete');
-    const saveBtn = document.getElementById('modal-save');
-    const finalBtn = document.getElementById('modal-finalize');
-    
-    if (state.editingId) {
-        delBtn.classList.remove('hidden');
-        document.getElementById('modal-title').textContent = 'Edit Class';
-        // If finalized, disable save draft
-        const cls = state.weeklyPlan.get(state.editingId);
-        if (cls && cls.status === 'finalized') {
-            saveBtn.disabled = true; 
-            saveBtn.textContent = 'Already Finalized';
-        } else {
-            saveBtn.disabled = false;
-            saveBtn.textContent = 'Save Draft';
-        }
-    } else {
-        delBtn.classList.add('hidden');
-        document.getElementById('modal-title').textContent = 'Plan Class';
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Draft';
-    }
-
-    document.getElementById('class-modal').classList.remove('hidden');
-}
-
-function openModalById(id) {
-    const cls = state.weeklyPlan.get(id);
-    if (cls) {
-        openModal({
-            id: id,
-            date: cls.date,
-            time: cls.time,
-            playlist: cls.playlist,
-            attendees: cls.attendees
-        });
-    }
-}
-
-function renderModalGuests() {
-    const chips = document.getElementById('modal-chips');
-    const list = document.getElementById('modal-list');
-    const count = document.getElementById('modal-guest-count');
-    const search = document.getElementById('modal-search').value.toLowerCase();
-    
-    count.textContent = window.modalAttendees.size;
-    
-    chips.innerHTML = '';
-    window.modalAttendees.forEach(g => {
-        const chip = document.createElement('div');
-        chip.className = 'chip';
-        chip.innerHTML = `${g} <span class="chip-remove">×</span>`;
-        chip.onclick = () => { window.modalAttendees.delete(g); renderModalGuests(); };
-        chips.appendChild(chip);
-    });
-
-    list.innerHTML = '';
-    Array.from(state.allGuests).sort().forEach(g => {
-        if (g.toLowerCase().includes(search) && !window.modalAttendees.has(g)) {
-            const div = document.createElement('div');
-            div.className = 'list-item';
-            div.textContent = g;
-            div.onclick = () => { window.modalAttendees.add(g); renderModalGuests(); };
-            list.appendChild(div);
-        }
-    });
-}
-
-function saveClass(status) {
-    const date = document.getElementById('modal-date').value;
-    const time = document.getElementById('modal-time').value;
-    const playlist = document.getElementById('modal-playlist').value;
-    
-    if (!date || !playlist) {
-        showToast('Date and Playlist required', 'error');
-        return false;
-    }
-
-    const id = state.editingId || uuid();
-    
-    const cls = {
-        id: id,
-        date: date,
-        time: time,
-        playlist: parseInt(playlist),
-        attendees: new Set(window.modalAttendees),
-        status: status
-    };
-
-    state.weeklyPlan.set(id, cls);
-    saveState();
-    renderWeekly();
-    
-    // If finalizing, add to history and sync
-    if (status === 'finalized') {
-        addToHistory(cls);
-        syncToSheets(cls);
-    } else {
-        showToast('Draft saved', 'success');
-    }
-    
-    document.getElementById('class-modal').classList.add('hidden');
-    return true;
-}
-
-function deleteClass() {
-    if (state.editingId && confirm('Delete this class?')) {
-        state.weeklyPlan.delete(state.editingId);
-        saveState();
-        renderWeekly();
-        document.getElementById('class-modal').classList.add('hidden');
-        showToast('Class deleted', 'success');
-    }
-}
-
-function addToHistory(cls) {
-    cls.attendees.forEach(guest => {
-        state.records.push({
-            date: cls.date,
-            time: cls.time,
-            playlist: cls.playlist,
-            guest: guest
-        });
-    });
-    saveState();
-    renderHistory(); // Helper to refresh history table if needed
-}
-
-// --- GOOGLE SHEETS INTEGRATION ---
-
-async function checkConnection() {
+async function checkConnectivity() {
+    const badge = document.getElementById('conn-status');
     try {
-        await jsonpRequest('test');
-        document.getElementById('connection-status').className = 'pill pill-final';
-        document.getElementById('connection-status').textContent = 'Google Sheets: Connected';
-        state.isConnected = true;
-    } catch (e) {
-        document.getElementById('connection-status').className = 'pill pill-draft';
-        document.getElementById('connection-status').textContent = 'Google Sheets: Offline';
-        state.isConnected = false;
+        await jsonp('test');
+        store.connected = true;
+        badge.className = 'pill pill-ok';
+        badge.innerText = 'Online';
+    } catch(e) {
+        store.connected = false;
+        badge.className = 'pill pill-warn';
+        badge.innerText = 'Offline';
     }
 }
 
-async function syncToSheets(cls) {
-    if (!state.isConnected) {
-        showToast('Saved locally. Connect Sheets to sync.', 'error');
-        return;
-    }
-    
-    const rows = Array.from(cls.attendees).map(g => [
-        cls.date,
-        cls.time,
-        g,
-        cls.playlist
-    ]);
-
+async function syncSheet(obj) {
+    if(!store.connected) { toast('Saved locally. Offline.', 'warn'); return; }
+    const rows = Array.from(obj.attendees).map(g => [obj.date, obj.time, g, obj.playlist]);
     try {
-        await jsonpRequest('append', { rows: JSON.stringify(rows) });
-        showToast('Synced to Google Sheets!', 'success');
-    } catch (e) {
-        showToast('Sync failed: ' + e.message, 'error');
-    }
+        await jsonp('append', {rows: JSON.stringify(rows)});
+        toast('Synced to Google Sheets', 'success');
+    } catch(e) { toast('Sync Error', 'error'); }
 }
 
-async function pullFromSheets() {
-    showToast('Fetching data...', 'info');
+async function pullSheets() {
+    toast('Fetching...', 'normal');
     try {
-        const res = await jsonpRequest('read');
-        if (res.success && res.data) {
+        const res = await jsonp('read');
+        if(res.success && res.data) {
             let count = 0;
-            const newRecs = [];
-            // Simple dedup based on string comparison
-            const existingSig = new Set(state.records.map(r => `${r.date}|${r.time}|${r.guest}`));
+            // Create signatures to prevent dupes
+            const sigs = new Set(store.history.map(r => `${r.date}|${r.time}|${r.guest}`));
             
             res.data.forEach(row => {
-                const [d, t, g, p] = row;
-                const date = d.includes('T') ? d.split('T')[0] : d;
+                const [d,t,g,p] = row;
+                const cleanDate = d.split('T')[0];
                 if(g && p) {
-                    const rec = { date, time: t || '09:00', guest: g, playlist: parseInt(p) };
-                    const sig = `${rec.date}|${rec.time}|${rec.guest}`;
-                    if(!existingSig.has(sig)) {
-                        newRecs.push(rec);
-                        state.allGuests.add(g);
+                    const sig = `${cleanDate}|${t}|${g}`;
+                    if(!sigs.has(sig)) {
+                        store.history.push({date:cleanDate, time:t||'00:00', guest:g, playlist: parseInt(p)});
+                        store.guests.add(g);
                         count++;
                     }
                 }
             });
-            
-            state.records = [...state.records, ...newRecs];
-            saveState();
-            renderDashboard(); // Update guest list
-            showToast(`Imported ${count} new records`, 'success');
+            saveData();
+            toast(`Imported ${count} records`, 'success');
+            renderDashboardList(); // Update guest list if needed
         }
-    } catch (e) {
-        showToast('Import failed', 'error');
-    }
-}
-
-// JSONP Helper (Bypasses CORS without backend changes)
-function jsonpRequest(action, params = {}) {
-    return new Promise((resolve, reject) => {
-        const cbName = 'cb_' + Math.round(Math.random() * 1000000);
-        window[cbName] = (data) => {
-            delete window[cbName];
-            document.body.removeChild(script);
-            resolve(data);
-        };
-        
-        const url = new URL(CONFIG.appsScriptUrl);
-        url.searchParams.set('token', CONFIG.token);
-        url.searchParams.set('action', action);
-        url.searchParams.set('callback', cbName);
-        Object.keys(params).forEach(k => url.searchParams.set(k, params[k]));
-        
-        const script = document.createElement('script');
-        script.src = url.toString();
-        script.onerror = () => reject(new Error('Script load error'));
-        document.body.appendChild(script);
-        
-        setTimeout(() => {
-            if(window[cbName]) {
-                delete window[cbName];
-                if(script.parentNode) document.body.removeChild(script);
-                reject(new Error('Timeout'));
-            }
-        }, 10000);
-    });
+    } catch(e) { toast('Fetch failed', 'error'); }
 }
 
 // --- HELPERS ---
 
-function showToast(msg, type='info') {
+function jsonp(action, params={}) {
+    return new Promise((resolve, reject) => {
+        const cb = 'cb_' + Math.random().toString(36).substr(2, 9);
+        window[cb] = (data) => { delete window[cb]; document.body.removeChild(script); resolve(data); };
+        
+        const url = new URL(CONFIG.scriptUrl);
+        url.searchParams.append('token', CONFIG.token);
+        url.searchParams.append('action', action);
+        url.searchParams.append('callback', cb);
+        Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
+        
+        const script = document.createElement('script');
+        script.src = url.href;
+        script.onerror = () => { delete window[cb]; if(script.parentNode) document.body.removeChild(script); reject(); };
+        document.body.appendChild(script);
+        setTimeout(() => { if(window[cb]) { delete window[cb]; reject(); } }, 8000);
+    });
+}
+
+function toast(msg, type='normal') {
     const t = document.createElement('div');
     t.className = `toast ${type}`;
-    t.textContent = msg;
-    document.getElementById('toast-container').appendChild(t);
+    t.innerText = msg;
+    document.getElementById('toast-area').appendChild(t);
     setTimeout(() => t.remove(), 3000);
 }
 
-function formatTime(t) {
-    const [h, m] = t.split(':');
-    const hour = parseInt(h);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const dh = hour % 12 || 12;
+function getMonday(d) {
+    const date = new Date(d);
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+    return new Date(date.setDate(diff));
+}
+
+function fmtTime(str) {
+    if(!str) return '';
+    const [h,m] = str.split(':');
+    const hr = parseInt(h);
+    const ampm = hr >= 12 ? 'PM' : 'AM';
+    const dh = hr % 12 || 12;
     return `${dh}:${m} ${ampm}`;
 }
 
-function updateTime() {
+function updateClock() {
     const now = new Date();
-    const hours = now.getHours();
-    const greeting = hours < 12 ? 'Good Morning' : hours < 18 ? 'Good Afternoon' : 'Good Evening';
-    document.getElementById('greeting').textContent = greeting;
-    document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+    const hrs = now.getHours();
+    document.getElementById('greeting').innerText = hrs < 12 ? 'Good Morning' : hrs < 18 ? 'Good Afternoon' : 'Good Evening';
+    document.getElementById('currentDateTime').innerText = now.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
 }
 
-function populatePlaylists() {
-    const sel = document.getElementById('modal-playlist');
-    state.playlists.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p;
-        opt.textContent = `Playlist #${p}`;
-        sel.appendChild(opt);
-    });
+function parseCSV() {
+    const f = this.files[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = (e) => {
+        const lines = e.target.result.split('\n').slice(1); // skip header
+        let count = 0;
+        lines.forEach(l => {
+            const c = l.split(',');
+            if(c.length >= 4) {
+                const [d,t,g,p] = c;
+                if(g && p) {
+                    store.history.push({
+                        date: d.trim(), time: t.trim(), 
+                        guest: g.replace(/"/g,'').trim(), 
+                        playlist: parseInt(p)
+                    });
+                    store.guests.add(g.replace(/"/g,'').trim());
+                    count++;
+                }
+            }
+        });
+        saveData();
+        toast(`CSV: ${count} records added`, 'success');
+        renderDashboardList();
+    };
+    r.readAsText(f);
 }
-
-function setupEventListeners() {
-    // Tab Switching
-    document.querySelectorAll('.tab-btn').forEach(b => {
-        b.onclick = () => {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.setAttribute('aria-selected', false));
-            b.setAttribute('aria-selected', true);
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            const target = b.dataset.tab;
-            document.getElementById(target).classList.remove('hidden');
-            if(target === 'weekly') renderWeekly();
-            if(target === 'explorer') renderExplorer();
-            if(target === 'history') renderHistory();
-        };
-    });
-    
-    // Search inputs
-    document.getElementById('dashboard-search').addEventListener('input', renderDashboard);
-    document.getElementById('modal-search').addEventListener('input', renderModalGuests);
-    document.getElementById('history-search').addEventListener('input', renderHistory);
-
-    // Modal Buttons
-    document.getElementById('modal-close').onclick = () => document.getElementById('class-modal').classList.add('hidden');
-    document.getElementById('modal-save').onclick = () => saveClass('draft');
-    document.getElementById('modal-finalize').onclick = () => saveClass('finalized');
-    document.getElementById('modal-delete').onclick = deleteClass;
-    document.getElementById('modal-copy-dash').onclick = (e) => {
-        e.preventDefault();
-        state.attendees.forEach(a => window.modalAttendees.add(a));
-        renderModalGuests();
-    };
-
-    // Planner Nav
-    document.getElementById('add-class-fab').onclick = () => openModal();
-    document.getElementById('prevWeekBtn').onclick = () => {
-        state.currentWeekStart.setDate(state.currentWeekStart.getDate() - 7);
-        renderWeekly();
-    };
-    document.getElementById('nextWeekBtn').onclick = () => {
-        state.currentWeekStart.setDate(state.currentWeekStart.getDate() + 7);
-        renderWeekly();
-    };
-
-    // Settings
-    document.getElementById('testConnBtn').onclick = checkConnection;
-    document.getElementById('pullSheetsBtn').onclick = pullFromSheets;
-    document.getElementById('resetBtn').onclick = () => {
-        if(confirm('Nuke all local data?')) {
-            localStorage.removeItem('hiloV11');
-            location.reload();
-        }
-    };
-    document.getElementById('csvImportBtn').onclick = () => document.getElementById('csvInput').click();
-    document.getElementById('csvInput').onchange = (e) => {
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const rows = ev.target.result.split('\n').slice(1);
-            rows.forEach(row => {
-                const [d,t,g,p] = row.split(',');
-                if(g && p) state.records.push({date:d, time:t, guest:g.replace(/"/g,''), playlist:parseInt(p)});
-            });
-            saveState();
-            showToast('CSV Imported', 'success');
-        };
-        reader.readAsText(file);
-    };
-}
-
-function renderHistory() {
-    const tbody = document.getElementById('history-tbody');
-    const search = document.getElementById('history-search').value.toLowerCase();
-    
-    // Combine history records + finalized weekly plan items
-    const history = [...state.records];
-    
-    // Sort descending date
-    history.sort((a,b) => new Date(b.date+'T'+b.time) - new Date(a.date+'T'+a.time));
-    
-    tbody.innerHTML = history.filter(h => 
-        h.guest.toLowerCase().includes(search) || 
-        h.playlist.toString().includes(search) || 
-        h.date.includes(search)
-    ).slice(0, 50).map(h => `
-        <tr>
-            <td>${h.date}<br><span style="font-size:11px; opacity:0.6">${h.time}</span></td>
-            <td>#${h.playlist}</td>
-            <td>${h.guest}</td>
-        </tr>
-    `).join('');
-}
-
 </script>
 </body>
 </html>
