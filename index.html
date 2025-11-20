@@ -2,2520 +2,954 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hilo Playlist – Instructor Edition</title>
-  <meta name="description" content="Professional class planning with playlist optimization and Google Sheets integration" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#111814">
+  <meta name="apple-mobile-web-app-title" content="Hilo">
+  
+  <title>Hilo Playlist</title>
+  
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background:%2316231d'><circle cx='256' cy='256' r='220' stroke='%23c9a15d' stroke-width='30' fill='none'/><path d='M150 320C180 200 230 160 256 160C300 160 340 200 362 320' stroke='%23c9a15d' stroke-width='40' stroke-linecap='round'/><path d='M130 390H382' stroke='%23c9a15d' stroke-width='30' stroke-linecap='round'/></svg>">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='22' stroke='%23c9a15d' stroke-width='2' fill='none'/><path d='M14 30C16 20 20 16 24 16C28 16 32 20 34 30' stroke='%23c9a15d' stroke-width='3' stroke-linecap='round'/><path d='M12 36H36' stroke='%23c9a15d' stroke-width='2' stroke-linecap='round'/></svg>" />
   
   <style>
     :root {
-      --primary: #243b33;
-      --accent: #c9a15d;
-      --cream: #f6f4f0;
-      --ink: #0f0f0f;
-      --ink-light: #2b2b2b;
-      --glass: rgba(255,255,255,0.08);
-      --radius: 16px;
-      --radius-lg: 22px;
-      --shadow: 0 10px 30px rgba(0,0,0,.22), 0 4px 12px rgba(0,0,0,.18);
-      --inner-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.15);
-      --blur: blur(16px);
-      --gap: 18px;
-      --success: #2ecc71;
-      --warning: #f39c12;
-      --danger: #e74c3c;
-      --info: #3498db;
+      --bg-grad-start: #0d1512;
+      --bg-grad-mid: #16231d;
+      --bg-grad-end: #1b2d25;
+      --accent: #d4af37;
+      --accent-dim: rgba(212, 175, 55, 0.2);
+      --text-main: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.55);
+      --glass-bg: rgba(30, 40, 35, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --blur-amt: 25px;
+      --radius: 20px;
+      --safe-top: env(safe-area-inset-top, 20px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
+      --success: #32d74b;
+      --warning: #ff9f0a;
+      --danger: #ff453a;
     }
-    /* Apple-like base */
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(180deg, #0d1512 0%, #16231d 40%, #1b2d25 100%);
-      color: var(--cream);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
+
+    html { height: 100%; overflow: hidden; }
+    body {
+      margin: 0; padding: 0;
+      background: linear-gradient(180deg, var(--bg-grad-start) 0%, var(--bg-grad-mid) 40%, var(--bg-grad-end) 100%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      min-height: 100vh;
+      height: 100%; overflow-y: auto;
+      -webkit-overflow-scrolling: touch; overscroll-behavior-y: none;
     }
-    * { box-sizing: border-box; }
-    a { color: inherit; text-decoration: none; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    button, input, select { font-family: inherit; }
+
+    h1, h2, h3 { margin: 0; font-weight: 700; letter-spacing: -0.5px; }
+    .subtle { font-size: 13px; color: var(--text-muted); }
+
+    .app-frame { display: flex; flex-direction: column; min-height: 100%; padding-bottom: calc(80px + var(--safe-bottom)); }
+    .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 20px; }
+
     .nav {
-      position: sticky; top: 0; z-index: 20;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px clamp(14px, 3vw, 28px);
-      background: rgba(20, 34, 28, .85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,.06);
+      position: sticky; top: 0; z-index: 100;
+      padding-top: max(12px, var(--safe-top)); padding-bottom: 12px;
+      background: rgba(13, 21, 18, 0.85);
+      backdrop-filter: blur(var(--blur-amt)); -webkit-backdrop-filter: blur(var(--blur-amt));
+      border-bottom: 1px solid var(--glass-border);
     }
-    .brand {
-      display:flex; align-items:center; gap:10px;
-      font-weight: 700; letter-spacing:.2px;
-    }
-    .brand svg { width: 28px; height: 28px; }
-    .tabs {
-      display: flex; gap: 8px; flex-wrap: wrap;
-    }
+    .nav-content { display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto; padding: 0 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--accent); }
+    .brand svg { width: 24px; height: 24px; }
+    .tabs-scroller { width: 100%; overflow-x: auto; scrollbar-width: none; }
+    .tabs-scroller::-webkit-scrollbar { display: none; }
+    .tabs { display: flex; gap: 8px; padding-bottom: 4px; }
     .tab-btn {
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255, .06);
-      border: 1px solid rgba(255,255,255,.08);
-      color: #f7f7f7;
-      cursor: pointer;
-      transition: all .15s ease;
-      font-size: 14px;
-      font-weight: 500;
+      white-space: nowrap; padding: 8px 18px; border-radius: 100px;
+      background: rgba(255,255,255,0.05); border: none; color: var(--text-muted);
+      font-size: 13px; font-weight: 600; transition: all 0.25s;
     }
-    .tab-btn[aria-selected="true"] {
-      background: linear-gradient(180deg, rgba(201,161,93,.28), rgba(201,161,93,.14));
-      border-color: rgba(201,161,93,.55);
-      box-shadow: 0 6px 18px rgba(201,161,93,.26);
-    }
-    .tab-btn:hover {
-      background: rgba(255,255,255, .1);
-      transform: translateY(-1px);
-    }
-    .tab-btn:active { transform: scale(.98); }
-    .container {
-      max-width: 1200px;
-      margin: 24px auto;
-      padding: 0 clamp(12px, 3vw, 24px);
-      display: grid;
-      gap: var(--gap);
-    }
-    /* Hero */
-    .hero {
-      position: relative;
-      border-radius: var(--radius-lg);
-      padding: clamp(18px, 3vw, 28px);
-      background: radial-gradient(1200px 600px at 0% -10%, rgba(201,161,93,.12), transparent 60%),
-                  radial-gradient(800px 500px at 100% 110%, rgba(201,161,93,.08), transparent 60%),
-                  rgba(28, 45, 38, .6);
-      backdrop-filter: var(--blur);
-      border: 1px solid rgba(255,255,255,.07);
-      box-shadow: var(--shadow);
-    }
-    .hero h1 {
-      margin: 0 0 6px 0;
-      font-size: clamp(22px, 3vw, 32px);
-      font-weight: 800;
-      letter-spacing: .2px;
-    }
-    .subtle { color: rgba(255,255,255,.75); font-weight: 500; }
-    .hero .row {
-      display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 10px;
-    }
-    .pill {
-      display:inline-flex; align-items:center; gap:8px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.1);
-      padding: 8px 12px; border-radius:999px;
-      font-size: 13px;
-      transition: all .2s ease;
-    }
-    .pill:hover {
-      transform: translateY(-1px);
-    }
-    /* Status indicators */
-    .status-connected { background: rgba(46, 204, 113, .18); border-color: rgba(46, 204, 113, .45); }
-    .status-disconnected { background: rgba(231, 76, 60, .18); border-color: rgba(231, 76, 60, .45); }
-    .status-draft { background: rgba(241, 196, 15, .18); border-color: rgba(241, 196, 15, .45); }
-    .status-finalized { background: rgba(46, 204, 113, .18); border-color: rgba(46, 204, 113, .45); }
-    .status-info { background: rgba(52, 152, 219, .18); border-color: rgba(52, 152, 219, .45); }
-    /* Glass cards */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: var(--gap);
-    }
+    .tab-btn[aria-selected="true"] { background: var(--accent); color: #000; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); }
+
     .card {
-      position: relative;
-      border-radius: var(--radius);
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.09);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      transition: all .3s ease;
-    }
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 36px rgba(0,0,0,.26), 0 6px 16px rgba(0,0,0,.22);
-    }
-    .card .body { padding: 16px; }
-    .card .title { font-weight: 700; letter-spacing:.2px; margin-bottom: 4px; }
-    .card .muted { color: rgba(255,255,255,.74); font-size: 14px; }
-    .primary-card {
-      background: linear-gradient(180deg, rgba(36,59,51,.82), rgba(36,59,51,.68));
-      border-color: rgba(201,161,93,.55);
-    }
-    .primary-card .title { color: #fff; font-size: 18px; }
-    .metric-row {
-      display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px;
-    }
-    .metric {
-      background: rgba(0,0,0,.15);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px;
-      padding: 12px;
-      text-align:center;
-    }
-    .metric .value { font-weight: 800; font-size: 22px; }
-    .metric .label { color: rgba(255,255,255,.74); font-size: 12px; margin-top: 4px; }
-    .btn { 
-      padding: 10px 16px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.1);
-      border:1px solid rgba(255,255,255,.2);
-      color: #fff; cursor:pointer;
-      transition: all .15s ease;
-      font-weight: 600;
-      font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn:hover {
-      background: linear-gradient(180deg, rgba(201,161,93,.3), rgba(201,161,93,.15));
-      box-shadow: 0 8px 22px rgba(201,161,93,.25);
-      transform: translateY(-1px);
-    }
-    .btn:active { transform: translateY(1px) scale(.99); }
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .btn:disabled:hover {
-      transform: none;
-      box-shadow: none;
-    }
-    .btn-primary {
-      background: linear-gradient(180deg, var(--accent), rgba(201,161,93,.8));
-      border-color: var(--accent);
-    }
-    .btn-success {
-      background: linear-gradient(180deg, var(--success), rgba(46, 204, 113, .8));
-      border-color: var(--success);
-    }
-    .btn-warning {
-      background: linear-gradient(180deg, var(--warning), rgba(243, 156, 18, .8));
-      border-color: var(--warning);
-    }
-    .btn-danger {
-      background: linear-gradient(180deg, var(--danger), rgba(231, 76, 60, .8));
-      border-color: var(--danger);
-    }
-    .btn-info {
-      background: linear-gradient(180deg, var(--info), rgba(52, 152, 219, .8));
-      border-color: var(--info);
-    }
-    .suggestions { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--gap); }
-    .suggestion-card { 
-      padding: 14px; 
-      cursor: pointer;
-      transition: all .2s ease;
-    }
-    .suggestion-card:hover { 
-      background: rgba(255,255,255,.08);
-      transform: translateY(-2px);
-    }
-    /* Date/Time Selection */
-    .datetime-selector {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-      background: rgba(0,0,0,.1);
-      border-radius: var(--radius);
-      padding: 16px;
-      border: 1px solid rgba(255,255,255,.08);
-      margin: 16px 0;
-    }
-    .datetime-selector label {
-      font-weight: 500;
-      color: rgba(255,255,255,.9);
-      font-size: 14px;
-    }
-    .datetime-selector input {
-      padding: 8px 12px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 14px;
-    }
-    .datetime-selector input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(201,161,93,.2);
-    }
-    /* Guest Selection UI */
-    .guest-selector {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      background: rgba(0,0,0,.1);
-      border-radius: var(--radius);
-      padding: 16px;
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    .selected-guests-container {
-      min-height: 50px;
-      padding: 10px;
-      background: rgba(0,0,0,.15);
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    .selected-guests {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .no-selection {
-      color: rgba(255,255,255,.5);
-      font-style: italic;
-      padding: 8px 4px;
-    }
-    .selected-guest-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: linear-gradient(180deg, rgba(201,161,93,.28), rgba(201,161,93,.14));
-      border: 1px solid rgba(201,161,93,.35);
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 14px;
-      animation: fadeIn .2s ease;
-    }
-    .remove-guest {
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-    }
-    .remove-guest:hover {
-      opacity: 1;
-    }
-    .guest-list-container {
-      max-height: 300px;
-      overflow-y: auto;
-      background: rgba(0,0,0,.15);
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    .guest-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
-      padding: 12px;
-    }
-    .guest-list-item {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 14px;
-    }
-    .guest-list-item:hover {
-      background: rgba(255,255,255,.1);
-      border-color: rgba(201,161,93,.4);
-      transform: translateY(-1px);
-    }
-    .guest-list-item.selected {
-      background: linear-gradient(180deg, rgba(201,161,93,.28), rgba(201,161,93,.14));
-      border-color: rgba(201,161,93,.55);
-      font-weight: 500;
-    }
-    /* Search Container */
-    .search-container {
-      position: relative;
-      max-width: 300px;
-    }
-    
-    .search-container input {
-      width: 100%;
-      padding: 12px 16px;
-      padding-left: 40px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      color: #fff;
-      font-size: 14px;
-    }
-    
-    .search-container::before {
-      content: '🔍';
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0.6;
-    }
-    .search-wrap { display:flex; gap:8px; flex-wrap:wrap; }
-    .search { 
-      flex:1;
-      min-width: 240px;
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.12);
-      padding: 10px 12px; border-radius: 12px; color:#fff;
-    }
-    .select { 
-      min-width: 160px;
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.12);
-      padding: 10px 12px; border-radius: 12px; color:#fff;
-      cursor: pointer;
-    }
-    /* Enhanced Tables */
-    .table-container {
-      border-radius: var(--radius);
-      overflow: hidden;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    
-    .data-table { 
-      width:100%; 
-      border-collapse: collapse; 
-      background: transparent;
-    }
-    
-    .data-table th, .data-table td { 
-      text-align:left; 
-      padding: 16px 20px; 
-      border-bottom: 1px solid rgba(255,255,255,.08); 
-    }
-    
-    .data-table th { 
-      color: rgba(255,255,255,.9); 
-      font-weight: 600; 
-      background: rgba(255,255,255,.06);
-      font-size: 14px;
-      letter-spacing: 0.5px;
-    }
-    
-    .data-table tbody tr:hover { 
-      background: rgba(255,255,255,.06);
-      transition: background 0.2s ease;
-    }
-    
-    .data-table tbody tr:last-child td {
-      border-bottom: none;
-    }
-    .sortable {
-      cursor: pointer;
-      user-select: none;
-      position: relative;
-    }
-    
-    .sortable:hover {
-      color: var(--accent);
-    }
-    
-    .sortable::after {
-      content: '↕';
-      position: absolute;
-      right: 8px;
-      opacity: 0.5;
-      font-size: 12px;
-    }
-    .sortable.asc::after {
-      content: '↑';
-      opacity: 1;
-    }
-    .sortable.desc::after {
-      content: '↓';
-      opacity: 1;
-    }
-    /* Section Header */
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-    
-    .section-header h2 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 700;
-      color: #fff;
-    }
-    /* Weekly Calendar */
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 16px;
-      margin-top: 20px;
-    }
-    .day-card {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.09);
-      border-radius: var(--radius);
-      padding: 16px;
-      min-height: 200px;
-      transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-    }
-    .day-card:hover {
-      background: rgba(255,255,255,.1);
-      transform: translateY(-2px);
-    }
-    .day-card.has-classes {
-      border-color: rgba(201,161,93,.4);
-      background: rgba(201,161,93,.08);
-    }
-    .day-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(255,255,255,.1);
-    }
-    .day-name {
-      font-weight: 600;
-      color: #fff;
-    }
-    .day-date {
-      font-size: 12px;
-      color: rgba(255,255,255,.7);
-    }
-    .class-list {
-      flex-grow: 1;
-    }
-    .class-item {
-      background: rgba(0,0,0,.2);
-      border-radius: 8px;
-      padding: 8px;
-      margin-bottom: 8px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all .2s ease;
-    }
-    .class-item:hover {
-      background: rgba(0,0,0,.3);
-      transform: translateX(2px);
-    }
-    .class-time {
-      font-weight: 600;
-      color: var(--accent);
-    }
-    .class-info {
-      color: rgba(255,255,255,.8);
-      font-size: 12px;
-      margin-top: 2px;
-    }
-    .class-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .btn-sm {
-      padding: 6px 10px;
-      font-size: 12px;
-    }
-    /* Guest Grid */
-    .guests-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-    }
-    .guest-card {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.09);
-      border-radius: var(--radius);
-      padding: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .guest-card:hover {
-      background: rgba(255,255,255,.1);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,.3);
-    }
-    .guest-card-header {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    .guest-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), rgba(201,161,93,.6));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 18px;
-      color: #fff;
-    }
-    .guest-info h4 {
-      margin: 0 0 4px 0;
-      font-size: 16px;
-      color: #fff;
-    }
-    .guest-info p {
-      margin: 0;
-      font-size: 13px;
-      color: rgba(255,255,255,.7);
-    }
-    .guest-stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    .guest-stat {
-      text-align: center;
-      padding: 8px;
-      background: rgba(0,0,0,.15);
-      border-radius: 8px;
-    }
-    .guest-stat .value {
-      display: block;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .guest-stat .label {
-      display: block;
-      font-size: 11px;
-      color: rgba(255,255,255,.6);
-      margin-top: 2px;
-    }
-    /* Modal */
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,.85);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      animation: fadeIn .2s ease;
-    }
-    
-    .modal__content {
-      background: rgba(28, 45, 38, .95);
-      backdrop-filter: var(--blur);
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: var(--radius-lg);
-      max-width: 600px;
-      width: 100%;
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      box-shadow: var(--shadow);
-      animation: slideUp .3s ease;
-    }
-    
-    .modal__header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      flex-shrink: 0;
-    }
-    
-    .modal__header h3 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
-    }
-    
-    .modal__close {
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: rgba(255,255,255,.7);
-      cursor: pointer;
-      padding: 0;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-    }
-    
-    .modal__close:hover {
-      background: rgba(255,255,255,.1);
-      color: #fff;
-    }
-    
-    .modal__body {
-      padding: 24px;
-      overflow-y: auto;
-    }
-     .modal__footer {
-      padding: 16px 24px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-    /* Form styling */
-    .form-group {
-      margin-bottom: 16px;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 500;
-      color: rgba(255,255,255,.9);
-      font-size: 14px;
-    }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%;
-      padding: 10px 12px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 14px;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(201,161,93,.2);
-    }
-    .form-group textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    /* Connection status */
-    .connection-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-    }
-    .connection-status.connected {
-      background: rgba(46, 204, 113, .1);
-      border: 1px solid rgba(46, 204, 113, .3);
-    }
-    .connection-status.disconnected {
-      background: rgba(231, 76, 60, .1);
-      border: 1px solid rgba(231, 76, 60, .3);
-    }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    .status-dot.connected { background: var(--success); }
-    .status-dot.disconnected { background: var(--danger); }
-    /* Empty States */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: rgba(255,255,255,.6);
-    }
-    
-    .empty-state h3 {
-      margin: 0 0 8px 0;
-      font-size: 18px;
-      color: rgba(255,255,255,.8);
-    }
-    /* Toast notifications */
-    #toast-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
-    }
-    
-    .toast {
-      pointer-events: auto;
-      min-width: 280px;
-      max-width: 420px;
-      background: rgba(28,28,30,.95);
-      color: #fff;
-      padding: 14px 18px;
-      border-radius: 14px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.3);
-      font: 500 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial;
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,.1);
-      animation: slideInRight .3s ease;
-    }
-    
-    .toast.success {
-      background: rgba(46, 204, 113, .95);
-      border-color: rgba(46, 204, 113, .5);
-    }
-    
-    .toast.error {
-      background: rgba(231, 76, 60, .95);
-      border-color: rgba(231, 76, 60, .5);
-    }
-    
-    .toast.info {
-      background: rgba(52, 152, 219, .95);
-      border-color: rgba(52, 152, 219, .5);
-    }
-    /* Loading indicator */
-    .loading-spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: var(--accent);
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
+      background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+      border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .hero {
+      text-align: center; padding: 24px 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
+      border: 1px solid var(--glass-border); border-radius: var(--radius);
+    }
+
+    input[type="text"], input[type="date"], input[type="time"], select {
+      font-size: 16px !important; background: rgba(0,0,0,0.25);
+      border: 1px solid var(--glass-border); color: white; padding: 14px;
+      border-radius: 14px; width: 100%; appearance: none; outline: none; transition: border-color 0.2s;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 16px; border-radius: 14px; font-weight: 600; font-size: 16px;
+      border: none; cursor: pointer; transition: transform 0.1s, opacity 0.2s; width: 100%; touch-action: manipulation;
+    }
+    .btn:active { transform: scale(0.97); opacity: 0.9; }
+    .btn-primary { background: var(--accent); color: #111; }
+    .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-danger { background: rgba(255, 69, 58, 0.15); color: var(--danger); }
+    .btn-success { background: var(--success); color: #000; }
+
+    .fab {
+      position: fixed; bottom: calc(20px + var(--safe-bottom)); right: 20px;
+      width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: #000;
+      font-size: 28px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4); z-index: 90; transition: transform 0.2s;
+    }
+    .fab:active { transform: scale(0.9); }
+
+    .guest-area { background: rgba(0,0,0,0.2); border-radius: 14px; padding: 14px; border: 1px solid var(--glass-border); }
+    .chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; margin-bottom: 12px; }
+    .chip {
+      background: var(--accent-dim); border: 1px solid rgba(212, 175, 55, 0.3);
+      color: #fff; padding: 6px 12px; border-radius: 20px;
+      font-size: 14px; display: flex; align-items: center; gap: 6px;
+    }
+    .list-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px;
+      max-height: 240px; overflow-y: auto; padding-top: 8px; border-top: 1px solid var(--glass-border);
+    }
+    .list-item {
+      background: rgba(255,255,255,0.05); padding: 12px 8px; border-radius: 10px;
+      font-size: 13px; text-align: center; color: rgba(255,255,255,0.8); cursor: pointer; transition: background 0.2s;
+    }
+    .list-item.active { background: var(--accent); color: #000; font-weight: 700; }
+
+    .cal-entry {
+      background: rgba(255,255,255,0.07); padding: 16px; margin-bottom: 10px; border-radius: 14px;
+      display: flex; justify-content: space-between; align-items: center; border-left: 4px solid transparent;
+    }
+    .cal-entry.draft { border-color: var(--warning); }
+    .cal-entry.final { border-color: var(--success); }
+
+    .metric-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
+    .metric-box { background: rgba(0,0,0,0.3); padding: 16px 8px; border-radius: 14px; text-align: center; }
+    .metric-val { font-size: 22px; font-weight: 800; color: #fff; }
+    .metric-lbl { font-size: 11px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+      display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    .modal-sheet {
+      background: #1b2621; border-top: 1px solid var(--glass-border);
+      border-radius: 24px 24px 0 0; padding: 24px 20px calc(20px + var(--safe-bottom));
+      width: 100%; max-height: 92vh; overflow-y: auto;
+      transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+    }
+    .modal-backdrop.open .modal-sheet { transform: translateY(0); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .close-icon { font-size: 24px; background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; display:flex; align-items:center; justify-content:center; color:#fff; border:none; }
+
     .hidden { display: none !important; }
-    .fade-in { animation: fadeIn .3s ease both; }
-    /* Debug Panel */
-    .debug-panel {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(0,0,0,.9);
-      color: #fff;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      max-width: 300px;
-      max-height: 200px;
-      overflow-y: auto;
-      display: none;
-      z-index: 10000;
-    }
-    .debug-panel.show {
-      display: block;
-    }
-    /* Responsive */
-    @media (max-width: 768px) {
-      .calendar-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .metric-row {
-        grid-template-columns: 1fr;
-      }
-      
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-      
-      .datetime-selector {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      
-      .tabs {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        flex-wrap: nowrap;
-        scrollbar-width: none; /* Firefox */
-      }
-      .tabs::-webkit-scrollbar {
-        display: none; /* Safari and Chrome */
-      }
-    }
+    .pill { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+    .pill-warn { background: rgba(255, 159, 10, 0.2); color: var(--warning); }
+    .pill-ok { background: rgba(50, 215, 75, 0.2); color: var(--success); }
+
+    .table-container { overflow-x: auto; border-radius: 14px; border: 1px solid var(--glass-border); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    th { background: rgba(0,0,0,0.4); color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; }
+
+    #toast-area { position: fixed; top: var(--safe-top); left: 0; right: 0; padding: 20px; z-index: 300; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .toast { pointer-events: auto; background: #333; color: #fff; padding: 12px 24px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; border: 1px solid var(--glass-border); animation: slideDown 0.3s ease-out; }
+    .toast.success { background: #1b3a24; color: var(--success); border-color: var(--success); }
+    .toast.error { background: #3a1b1b; color: var(--danger); border-color: var(--danger); }
+    @keyframes slideDown { from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
+    body.ios-locked { overflow: hidden; position: fixed; width: 100%; }
   </style>
 </head>
 <body>
-  <nav class="nav">
-    <div class="brand">
-      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="24" cy="24" r="22" stroke="#c9a15d" stroke-width="2"/>
-        <path d="M14 30C16 20 20 16 24 16C28 16 32 20 34 30" stroke="#c9a15d" stroke-width="3" stroke-linecap="round"/>
-        <path d="M12 36H36" stroke="#c9a15d" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span>Hilo Playlist</span>
-    </div>
-    <div class="tabs" role="tablist">
-      <button class="tab-btn" role="tab" aria-selected="true" data-tab="dashboard">Dashboard</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="weekly">Weekly Planner</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="explorer">Playlist Explorer</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="history">History</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="guests">Guests</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="settings">Settings</button>
-    </div>
-  </nav>
-  <main class="container">
-    <section id="dashboard" class="fade-in">
-      <div class="hero">
-        <h1>Class Planning Dashboard</h1>
-        <div class="subtle" id="currentDateTime"></div>
-        
-        <div id="connection-status" class="connection-status disconnected">
-          <div class="status-dot disconnected"></div>
-          <span>Google Sheets: Not Connected</span>
+
+  <div class="app-frame">
+    <nav class="nav">
+      <div class="nav-content">
+        <div class="brand">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#d4af37">
+            <circle cx="24" cy="24" r="22" stroke-width="2"/>
+            <path d="M14 30C16 20 20 16 24 16C28 16 32 20 34 30" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <span>Hilo</span>
         </div>
-        
-        <div class="datetime-selector">
-          <div style="flex: 1;">
-            <label for="class-date-dashboard">Class Date</label>
-            <input type="date" id="class-date-dashboard">
+        <div class="tabs-scroller">
+          <div class="tabs" role="tablist">
+            <button class="tab-btn" aria-selected="true" data-tab="dashboard">Dashboard</button>
+            <button class="tab-btn" aria-selected="false" data-tab="weekly">Planner</button>
+            <button class="tab-btn" aria-selected="false" data-tab="explorer">Explorer</button>
+            <button class="tab-btn" aria-selected="false" data-tab="history">History</button>
+            <button class="tab-btn" aria-selected="false" data-tab="settings">Settings</button>
           </div>
-          <div style="flex: 1;">
-            <label for="class-time-dashboard">Class Time</label>
-            <input type="time" id="class-time-dashboard" value="09:00">
-          </div>
-          <button id="todayBtn" class="btn btn-info">Set to Now</button>
-        </div>
-        
-        <div style="margin-top:20px;">
-          <div class="guest-selector">
-            <div class="search-container" style="max-width:100%;">
-              <input type="text" id="guest-search" placeholder="Search House Guests...">
-            </div>
-            
-            <div class="selected-guests-container">
-              <div class="selected-guests" id="rosterChips">
-                <div class="no-selection" id="no-selection-message">No House Guests selected</div>
-              </div>
-            </div>
-            
-            <div class="guest-list-container">
-              <div class="guest-list" id="guest-list"></div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="row" style="margin-top:14px;">
-          <div class="search-wrap" style="flex:1;">
-            <select id="playlistWindow" class="select" title="Stale window">
-              <option value="45" selected>Stale ≥ 45 days</option>
-              <option value="30">Stale ≥ 30 days</option>
-              <option value="60">Stale ≥ 60 days</option>
-              <option value="90">Stale ≥ 90 days</option>
-            </select>
-            <button id="saveDraftBtn" class="btn btn-warning" title="Save as draft">
-              <span>💾</span> Save Draft
-            </button>
-            <button id="finalizeBtn" class="btn btn-success" title="Finalize and sync" disabled>
-              <span>✔</span> Finalize Class
-            </button>
-          </div>
-        </div>
-        <div class="row" style="margin-top:10px;">
-          <span class="pill" id="rosterCountPill">0 attendees</span>
-          <span class="pill" id="recordsCountPill">0 records</span>
-          <span id="draftStatusPill" class="pill hidden">No draft</span>
         </div>
       </div>
-      <div class="cards" style="margin-top:14px;">
-        <div class="card primary-card" id="bestCard">
-          <div class="body">
-            <div class="title">Best Fit Recommendation</div>
-            <div class="muted">Maximizes freshness for the current roster</div>
-            <div id="bestSummary" style="margin-top:10px;"></div>
+    </nav>
+
+    <main class="container">
+      <section id="dashboard" class="fade-in">
+        <div class="hero">
+          <h1 id="greeting">Hello</h1>
+          <div class="subtle" id="currentDateTime">...</div>
+          <div id="conn-status" class="pill pill-warn" style="margin-top:8px; display:inline-block;">Offline</div>
+        </div>
+
+        <div class="card">
+          <h2 style="font-size:18px; margin-bottom:4px;">Who's Here?</h2>
+          <p class="subtle" style="margin-bottom:16px;">Select attendees to optimize the playlist.</p>
+          
+          <div class="guest-area">
+            <input type="text" id="dash-search" placeholder="Search guests..." autocomplete="off">
+            <div id="dash-chips" class="chips-wrap" style="margin-top:12px;"><span class="subtle">Empty room...</span></div>
+            <div id="dash-list" class="list-grid"></div>
+          </div>
+
+          <div id="rec-box" class="hidden" style="margin-top: 24px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+            <div style="text-align:center;">
+                <div class="subtle" style="text-transform:uppercase; letter-spacing:1px; color:var(--accent);">Best Match</div>
+                <div style="font-size:24px; font-weight:800; color:#fff; text-shadow:0 0 20px rgba(212,175,55,0.3); margin: 10px 0; line-height:1.2;">
+                  <span id="rec-id">--</span>
+                </div>
+            </div>
+
             <div class="metric-row">
-              <div class="metric">
-                <div class="value" id="bestNever">—</div>
-                <div class="label">Never-heard</div>
+              <div class="metric-box">
+                <div class="metric-val" id="rec-never">0</div>
+                <div class="metric-lbl">New To</div>
               </div>
-              <div class="metric">
-                <div class="value" id="bestMedian">—</div>
-                <div class="label">Median days</div>
+              <div class="metric-box">
+                <div class="metric-val" id="rec-median">0</div>
+                <div class="metric-lbl">Avg Days</div>
               </div>
-              <div class="metric">
-                <div class="value" id="bestStale">—</div>
-                <div class="label">Stale %</div>
+              <div class="metric-box">
+                <div class="metric-val" id="rec-stale">0%</div>
+                <div class="metric-lbl">Stale</div>
               </div>
             </div>
-            <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="btn" id="selectPlaylistBtn">Use This Playlist</button>
-              <button class="btn" id="previewRosterBtn">View Details</button>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="body">
-            <div class="title">Runner-ups</div>
-            <div class="muted">Strong alternatives ranked by freshness</div>
-            <div class="suggestions" id="runnerUps"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section id="weekly" class="hidden fade-in">
-      <div class="hero">
-        <h1>Weekly Class Planner</h1>
-        <div class="subtle">Plan and manage your upcoming week of classes</div>
-        
-        <div class="row" style="margin-top:14px;">
-          <div class="search-wrap" style="flex:1;">
-            <button id="prevWeekBtn" class="btn">← Previous Week</button>
-            <button id="currentWeekBtn" class="btn btn-info">Current Week</button>
-            <button id="nextWeekBtn" class="btn">Next Week →</button>
-            <button id="syncAllBtn" class="btn btn-success" disabled>Sync All Finalized</button>
-          </div>
-        </div>
-        <div class="row" style="margin-top:10px;">
-          <span class="pill" id="weekRangePill">Week of ...</span>
-          <span class="pill status-draft" id="draftsCountPill">0 drafts</span>
-          <span class="pill status-finalized" id="finalizedCountPill">0 finalized</span>
-        </div>
-      </div>
-      <div class="calendar-grid" id="calendarGrid">
-        </div>
-    </section>
-    <section id="explorer" class="hidden fade-in">
-      <div class="hero">
-        <h1>Playlist Explorer</h1>
-        <div class="subtle">Compare all playlists by freshness metrics for the current roster</div>
-      </div>
-      <div class="card">
-        <div class="table-container">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th class="sortable" data-sort="playlist">Playlist</th>
-                <th class="sortable" data-sort="never">Never-heard</th>
-                <th class="sortable" data-sort="median">Median days</th>
-                <th class="sortable" data-sort="stalePct">Stale %</th>
-                <th class="sortable" data-sort="score">Score</th>
-              </tr>
-            </thead>
-            <tbody id="explorerTbody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-    <section id="history" class="hidden fade-in">
-      <div class="section-header">
-        <h2>Class History</h2>
-        <div class="search-container">
-          <input type="text" id="history-search" placeholder="Search classes...">
-        </div>
-      </div>
-      <div class="card">
-        <div class="table-container">
-          <table id="history-table" class="data-table">
-            <thead>
-              <tr>
-                <th class="sortable" data-sort="datetime">Date & Time</th>
-                <th class="sortable" data-sort="playlist">Playlist</th>
-                <th class="sortable" data-sort="count">Attendees</th>
-                <th>Guest Names</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="historyTbody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-    <section id="guests" class="hidden fade-in">
-      <div class="section-header">
-        <h2>Guest Profiles</h2>
-        <div class="search-container">
-          <input type="text" id="guest-search-filter" placeholder="Search guests...">
-        </div>
-      </div>
-      <div id="guests-grid" class="guests-grid">
-        <div class="empty-state">
-          <h3>No guest data available</h3>
-          <p>Connect Google Sheets to see guest profiles</p>
-        </div>
-      </div>
-    </section>
-    <section id="settings" class="hidden fade-in">
-      <div class="hero">
-        <h1>Settings</h1>
-        <div class="subtle">Configure Google Sheets integration and app preferences</div>
-      </div>
-      <div class="cards">
-        <div class="card">
-          <div class="body">
-            <div class="title">Google Sheets Integration</div>
-            <div class="muted">Connected via Apps Script Web App</div>
+
+            <button id="btn-quick-add" class="btn btn-primary">📅 Schedule This Mix</button>
             
-            <div style="margin-top:16px;">
-              <div class="form-group">
-                <label>Connection Status</label>
-                <div id="sheets-connection-info" style="padding: 12px; background: rgba(0,0,0,.1); border-radius: 8px; color: rgba(255,255,255,.9);">
-                  <div style="margin-bottom: 8px;">Web App URL: Configured ✔</div>
-                  <div>API Token: Configured ✔</div>
-                </div>
-              </div>
-              
-              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top: 16px;">
-                <button id="testConnectionBtn" class="btn btn-primary">Test Connection</button>
-                <button id="refreshDataBtn" class="btn">Refresh Data</button>
-              </div>
+            <div style="margin-top:20px;">
+                <p class="subtle" style="margin-bottom:8px; font-size:11px; font-weight:700;">RUNNER UPS</p>
+                <div id="rec-alts" style="display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;"></div>
             </div>
           </div>
         </div>
+      </section>
+
+      <section id="weekly" class="hidden">
+        <div class="hero" style="display:flex; justify-content:space-between; align-items:center; text-align:left;">
+          <div>
+            <h1>Planner</h1>
+            <div class="subtle" id="week-label">--</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-secondary" style="padding:10px 16px;" id="prevWeek">←</button>
+            <button class="btn btn-secondary" style="padding:10px 16px;" id="nextWeek">→</button>
+          </div>
+        </div>
+        <div id="cal-container" style="margin-top:10px;"></div>
+        <p id="cal-empty" class="subtle" style="text-align:center; padding:40px; display:none;">No classes this week.</p>
+        <div class="fab" id="fab-add">+</div>
+      </section>
+
+      <section id="explorer" class="hidden">
         <div class="card">
-          <div class="body">
-            <div class="title">Data Management</div>
-            <div class="muted">Import/export and sync your class data</div>
-            
-            <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
-              <button id="importCsvBtn" class="btn">📥 Import CSV</button>
-              <button id="exportCsvBtn" class="btn">📤 Export CSV</button>
-              <button id="syncFromSheetsBtn" class="btn">🔄 Pull from Sheets</button>
-              <button id="clearDataBtn" class="btn btn-danger">🗑️ Clear All Data</button>
-            </div>
-            <input id="fileInput" type="file" accept=".csv" class="hidden" />
+          <h2 style="font-size:18px;">Playlist Metrics</h2>
+          <p class="subtle" style="margin-bottom:16px;">Analysis based on current dashboard selection.</p>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Playlist</th><th>New</th><th>Med</th><th>Scr</th></tr></thead>
+              <tbody id="expl-body"></tbody>
+            </table>
           </div>
         </div>
-      </div>
-    </section>
-    <div id="class-modal" class="modal hidden">
-      <div class="modal__content">
-        <div class="modal__header">
-          <h3 id="class-modal-title">Plan Class</h3>
-          <button id="close-class-modal" class="modal__close">&times;</button>
+      </section>
+
+      <section id="history" class="hidden">
+        <div class="card">
+          <input type="text" id="hist-search" placeholder="Search history..." style="margin-bottom:16px;">
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Date</th><th>Mix</th><th>Guest</th></tr></thead>
+              <tbody id="hist-body"></tbody>
+            </table>
+          </div>
         </div>
-        <div class="modal__body">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="modal-class-date">Date</label>
-              <input type="date" id="modal-class-date">
-            </div>
-            <div class="form-group">
-              <label for="modal-class-time">Time</label>
-              <input type="time" id="modal-class-time" value="09:00">
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="modal-class-playlist">Playlist</label>
-            <select id="modal-class-playlist">
-              <option value="">Select playlist...</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label>Attendees</label>
-            <div class="guest-selector">
-              <div class="search-container" style="max-width:100%;">
-                <input type="text" id="modal-guest-search" placeholder="Search guests...">
-              </div>
-              
-              <div class="selected-guests-container">
-                <div class="selected-guests" id="modal-selected-guests">
-                  <div class="no-selection">No guests selected</div>
-                </div>
-              </div>
-              
-              <div class="guest-list-container" style="max-height: 200px;">
-                <div class="guest-list" id="modal-guest-list"></div>
-              </div>
+      </section>
+
+      <section id="settings" class="hidden">
+        <div class="card">
+          <h2 style="font-size:18px;">Data Sync</h2>
+          <p class="subtle" style="margin-bottom:20px;">Google Sheets Integration</p>
+          <div style="display:grid; gap:14px;">
+            <button id="btn-test" class="btn btn-secondary">Test Connection (Auto-Syncs)</button>
+            <button id="btn-pull" class="btn btn-secondary">⬇ Force Pull from Sheets</button>
+            <button id="btn-import" class="btn btn-secondary">📂 Import CSV</button>
+            <button id="btn-nuke" class="btn btn-danger">Reset Local Data</button>
+            <input type="file" id="csv-file" accept=".csv" class="hidden">
+            <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--glass-border); text-align:center;">
+                <p class="subtle">Version 2.2 (Dynamic Playlist Support)</p>
             </div>
           </div>
-          
-          <div class="form-group">
-            <label for="modal-class-notes">Notes (optional)</label>
-            <textarea id="modal-class-notes" placeholder="Add any notes about this class..."></textarea>
-          </div>
         </div>
-         <div class="modal__footer">
-            <button id="delete-class-modal" class="btn btn-danger" style="margin-right: auto;">🗑️ Delete</button>
-            <button id="cancel-modal" class="btn">Cancel</button>
-            <button id="save-draft-modal" class="btn btn-warning">💾 Save as Draft</button>
-            <button id="finalize-modal" class="btn btn-success">✔ Finalize</button>
-        </div>
-      </div>
-    </div>
-    <div id="guest-modal" class="modal hidden">
-      <div class="modal__content">
-        <div class="modal__header">
-          <h3 id="guest-modal-title">Guest Profile</h3>
-          <button id="close-guest-modal" class="modal__close">&times;</button>
-        </div>
-        <div class="modal__body" id="guest-modal-body">
-          <div id="guest-modal-content"></div>
-        </div>
-      </div>
-    </div>
-  </main>
-  <div id="debug-panel" class="debug-panel">
-    <strong>Debug Info:</strong>
-    <div id="debug-content"></div>
+      </section>
+    </main>
   </div>
-<script>
-  // --- Configuration for Google Apps Script ---
-  const APPS_SCRIPT_CONFIG = {
-    url: 'https://script.google.com/macros/s/AKfycbyp5q-4rIC2XHa60ZnYS2x0bZrxDmNYAV3YvOf5EmxnnVqW2nAKEq6Em6UWgCy8ftULgQ/exec',
-    token: '4c94713e-9b2b-4980-8b07-2b3948f6f6a1'
-  };
-  // --- Debug Mode ---
-  const DEBUG_MODE = false; // Set to true to enable debug logging
-  function debugLog(...args) {
-    if (DEBUG_MODE) {
-      console.log('[DEBUG]', ...args);
-      const panel = document.getElementById('debug-panel');
-      const content = document.getElementById('debug-content');
-      if (panel && content) {
-        panel.classList.add('show');
-        const timestamp = new Date().toLocaleTimeString();
-        content.innerHTML = `<div>${timestamp}: ${args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' ')}</div>` + content.innerHTML;
-        const messages = content.querySelectorAll('div');
-        if (messages.length > 20) {
-          messages[messages.length - 1].remove();
-        }
-      }
-    }
-  }
-  // --- Enhanced state with Google Sheets integration ---
-  const state = {
-    attendees: new Set(),
-    playlists: new Set(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']), // Default, will expand dynamicallly
-    records: [], // Historical records with date, time, guest, playlist
-    selectedWindow: 45,
-    allGuests: new Set(),
-    sortOrder: { column: 'datetime', ascending: false },
-    explorerSortOrder: { column: 'score', ascending: false },
-    
-    // Google Sheets integration
-    googleSheetsConnected: false,
-    lastSyncTime: null,
-    
-    // Weekly planner state
-    weeklyPlan: new Map(), // DateTime string -> class object
-    currentWeekStart: null,
-    selectedClass: null, // Holds the class being edited in the modal
-    
-    // Current selection for dashboard
-    selectedDate: null,
-    selectedTime: null,
-    
-    // Track active JSONP requests
-    activeRequests: new Set()
-  };
-  const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-  // --- Google Apps Script API Functions (Fixed JSONP Version) ---
-  async function makeApiRequest(action, data = {}) {
-    return new Promise((resolve, reject) => {
-      const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-      
-      state.activeRequests.add(callbackName);
-      debugLog(`Starting API request: ${action}`, callbackName);
-      
-      const script = document.createElement('script');
-      let timeoutId;
-      window[callbackName] = (responseData) => {
-        debugLog(`Received response for ${action}:`, responseData);
-        clearTimeout(timeoutId);
-        state.activeRequests.delete(callbackName);
-        if (script.parentNode) {
-          document.body.removeChild(script);
-        }
-        delete window[callbackName];
-        
-        if (responseData && responseData.success !== undefined) {
-          if (responseData.error) {
-            reject(new Error(responseData.error));
-          } else {
-            resolve(responseData);
-          }
-        } else {
-          reject(new Error('Invalid response format'));
-        }
-      };
-      script.onerror = () => {
-        debugLog(`Script error for ${action}`);
-        clearTimeout(timeoutId);
-        state.activeRequests.delete(callbackName);
-        if (script.parentNode) {
-          document.body.removeChild(script);
-        }
-        delete window[callbackName];
-        reject(new Error('API request failed: Script error'));
-      };
-      
-      timeoutId = setTimeout(() => {
-        debugLog(`Request timeout for ${action}`);
-        state.activeRequests.delete(callbackName);
-        if (window[callbackName]) {
-          if (script.parentNode) {
-            document.body.removeChild(script);
-          }
-          delete window[callbackName];
-          reject(new Error('API request timed out'));
-        }
-      }, 15000); // 15-second timeout
-      const params = new URLSearchParams({
-        token: APPS_SCRIPT_CONFIG.token,
-        action: action,
-        callback: callbackName
-      });
-      
-      if (data.rows) {
-        params.set('rows', JSON.stringify(data.rows));
-      }
-      script.src = `${APPS_SCRIPT_CONFIG.url}?${params.toString()}`;
-      debugLog(`Request URL: ${script.src}`);
-      document.body.appendChild(script);
-    });
-  }
-   function setLoading(button, isLoading) {
-    if (!button) return;
-    if (isLoading) {
-      button.disabled = true;
-      button.dataset.originalContent = button.innerHTML;
-      button.innerHTML = '<div class="loading-spinner"></div>';
-    } else {
-      button.disabled = false;
-      if (button.dataset.originalContent) {
-        button.innerHTML = button.dataset.originalContent;
-      }
-    }
-  }
-  async function testConnection() {
-    debugLog('Testing connection...');
-    setLoading($("#testConnectionBtn"), true);
-    
-    try {
-      const result = await makeApiRequest('test');
-      debugLog('Connection test result:', result);
-      
-      if (result.success) {
-        state.googleSheetsConnected = true;
-        updateConnectionStatus();
-        showToast('Connection successful!', 'success');
-        return true;
-      } else {
-        throw new Error(result.error || 'Connection test failed');
-      }
-    } catch (error) {
-      console.error('Connection test failed:', error);
-      debugLog('Connection test error:', error.message);
-      state.googleSheetsConnected = false;
-      updateConnectionStatus();
-      showToast('Connection failed: ' + error.message, 'error');
-      return false;
-    } finally {
-      setLoading($("#testConnectionBtn"), false);
-    }
-  }
-  async function fetchDataFromSheets() {
-    debugLog('Fetching data from sheets...');
-    
-    try {
-      const result = await makeApiRequest('read');
-      debugLog('Fetch result:', result);
-      
-      if (result.success && result.data) {
-        const localRecords = new Set(state.records.map(r => `${r.date}|${r.time}|${r.guest}|${r.playlist}`));
-        let newRecordsCount = 0;
-        
-        result.data.forEach((row, index) => {
-          if (row && row.length >= 4) {
-            const [dateStr, timeStr, guest, playlistStr] = row;
-            
-            if (dateStr && guest && playlistStr) {
-              const date = typeof dateStr === 'string' ? dateStr.slice(0, 10) : formatDateKey(new Date(dateStr));
-              const time = timeStr || '09:00';
-              const playlist = playlistStr.toString().trim(); // Treated as string now
-              
-              if (playlist) {
-                  const recordKey = `${date}|${time}|${guest.trim()}|${playlist}`;
-                  if (!localRecords.has(recordKey)) {
-                    state.records.push({ date, time, guest: guest.trim(), playlist });
-                    state.allGuests.add(guest.trim());
-                    state.playlists.add(playlist);
-                    newRecordsCount++;
-                  }
-              }
-            }
-          }
-        });
-        
-        debugLog(`Synced ${newRecordsCount} new records from Sheets.`);
-        state.lastSyncTime = new Date();
-        updateKnownPlaylists();
-        saveStateToLocalStorage();
-        showToast(`Loaded ${newRecordsCount} new records from Google Sheets`, 'success');
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-      debugLog('Fetch error:', error.message);
-      throw error;
-    }
-  }
-  async function writeToSheets(classData) {
-    debugLog('Writing to sheets:', classData);
-    if (!state.googleSheetsConnected) {
-        showToast('Cannot sync: Not connected to Google Sheets.', 'error');
-        return false;
-    }
-    
-    try {
-      const rows = [];
-      classData.attendees.forEach(guest => {
-        rows.push([
-          classData.date,
-          classData.time || '09:00',
-          guest,
-          classData.playlist.toString()
-        ]);
-      });
-      
-      debugLog('Sending rows:', rows);
-      const result = await makeApiRequest('append', { rows: rows });
-      debugLog('Write result:', result);
-      
-      if (result.success) {
-        showToast(`Synced ${rows.length} records to Google Sheets`, 'success');
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('Failed to write to sheets:', error);
-      debugLog('Write error:', error.message);
-      showToast('Failed to sync to Google Sheets: ' + error.message, 'error');
-      return false;
-    }
-  }
-  // --- Local Storage Persistence ---
-  function saveStateToLocalStorage() {
-      try {
-          const dataToSave = {
-              records: state.records,
-              weeklyPlan: Array.from(state.weeklyPlan.entries()),
-              allGuests: Array.from(state.allGuests),
-              playlists: Array.from(state.playlists)
-          };
-          localStorage.setItem('hiloPlaylistData', JSON.stringify(dataToSave));
-          debugLog('State saved to localStorage');
-      } catch (e) {
-          console.error("Failed to save state to localStorage", e);
-      }
-  }
-  function loadStateFromLocalStorage() {
-      try {
-          const savedData = localStorage.getItem('hiloPlaylistData');
-          if (savedData) {
-              const parsedData = JSON.parse(savedData);
-              state.records = parsedData.records || [];
-              state.weeklyPlan = new Map(parsedData.weeklyPlan || []);
-              // Convert attendee arrays back to Sets
-              state.weeklyPlan.forEach(cls => {
-                  cls.attendees = new Set(cls.attendees);
-              });
-              state.allGuests = new Set(parsedData.allGuests || []);
-              if(parsedData.playlists && parsedData.playlists.length > 0) {
-                state.playlists = new Set(parsedData.playlists);
-              }
-              debugLog('State loaded from localStorage');
-          }
-      } catch (e) {
-          console.error("Failed to load state from localStorage", e);
-      }
-  }
-  function updateKnownPlaylists() {
-    state.records.forEach(r => {
-      if(r.playlist) state.playlists.add(r.playlist.toString());
-    });
-  }
-  // --- Utility Functions ---
-  const formatDate = (d) => {
-    if (!d) return '';
-    const date = new Date(d);
-    // Adjust for timezone offset to prevent off-by-one day errors
-    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
-    const correctedDate = new Date(date.getTime() + userTimezoneOffset);
-    return correctedDate.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
-  const formatTime = (timeStr) => {
-    if (!timeStr) return '';
-    const [hours, minutes] = timeStr.split(':');
-    const hour = parseInt(hours, 10);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour % 12 || 12;
-    return `${displayHour}:${String(minutes).padStart(2, '0')} ${ampm}`;
-  };
-  const formatDateTime = (date, time) => {
-    return `${formatDate(date)} at ${formatTime(time)}`;
-  };
-  const createDateTimeKey = (date, time) => {
-    return `${date}T${time}`;
-  };
-  const parseDateTimeKey = (key) => {
-    const [date, time] = key.split('T');
-    return { date, time };
-  };
-  const daysBetween = (d1, d2) => {
-    const date1 = new Date(d1);
-    const date2 = new Date(d2);
-    const diffTime = Math.abs(date2 - date1);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-  const median = (arr) => {
-    if (!arr.length) return 0;
-    const sorted = [...arr].sort((a, b) => a - b);
-    const mid = Math.floor(sorted.length / 2);
-    return sorted.length % 2 ? sorted[mid] : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
-  };
-  const getWeekStart = (date) => {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day; // Sunday = 0
-    return new Date(d.setDate(diff));
-  };
-  const getWeekDays = (weekStart) => {
-    const days = [];
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(weekStart);
-      day.setDate(weekStart.getDate() + i);
-      days.push(day);
-    }
-    return days;
-  };
-  // FIX: Correctly handle local timezone for input values
-  const formatDateKey = (date) => {
-    const offset = date.getTimezoneOffset();
-    const localDate = new Date(date.getTime() - (offset*60*1000));
-    return localDate.toISOString().split('T')[0];
-  };
-  
-  // --- Initialize App ---
-  async function initializeApp() {
-    debugLog('Initializing app...');
-    loadStateFromLocalStorage();
-    updateKnownPlaylists(); // Ensure any stored records update the playlist set
-    
-    const today = new Date();
-    const currentTime = `${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}`;
-    
-    $("#class-date-dashboard").value = formatDateKey(today);
-    $("#class-time-dashboard").value = currentTime;
-    
-    state.selectedDate = formatDateKey(today);
-    state.selectedTime = currentTime;
-    state.currentWeekStart = getWeekStart(today);
-    
-    const connected = await testConnection();
-    if (connected) {
-      await loadDataFromSheets();
-    }
-    
-    addEventListeners();
-    populateGuestList();
-    renderSelectedGuests();
-    updateConnectionStatus();
-    updateDashboardStatus();
-    updateRecordsPill();
-    refreshAll();
-  }
-  function updateCurrentDateTime() {
-    const now = new Date();
-    $("#currentDateTime").textContent = now.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit'
-    });
-  }
-  updateCurrentDateTime();
-  setInterval(updateCurrentDateTime, 60000);
-  
-  async function loadDataFromSheets() {
-    debugLog('Loading data from sheets...');
-    setLoading($("#refreshDataBtn"), true);
-    setLoading($("#syncFromSheetsBtn"), true);
-    
-    try {
-      const success = await fetchDataFromSheets();
-      if (success) {
-        populateGuestList();
-        updateRecordsPill();
-        refreshAll();
-        refreshHistory();
-        refreshGuests();
-      }
-    } catch (error) {
-      showToast('Failed to load data: ' + error.message, 'error');
-    } finally {
-      setLoading($("#refreshDataBtn"), false);
-      setLoading($("#syncFromSheetsBtn"), false);
-    }
-  }
-  // --- Toast Notification System ---
-  function showToast(message, type = 'info', duration = 3000) {
-    let container = $('#toast-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'toast-container';
-      document.body.appendChild(container);
-    }
-    
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    container.appendChild(toast);
-    
-    const removeToast = () => {
-        toast.style.animation = 'slideOutRight 0.3s ease forwards';
-        toast.addEventListener('animationend', () => toast.remove());
-    };
-    
-    const timer = setTimeout(removeToast, duration);
-    
-    toast.addEventListener('click', () => {
-        clearTimeout(timer);
-        removeToast();
-    });
-  }
-  
-  // Add CSS for slide out animation
-  const styleSheet = document.createElement("style");
-  styleSheet.type = "text/css";
-  styleSheet.innerText = `@keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }`;
-  document.head.appendChild(styleSheet);
-  
-  function updateConnectionStatus() {
-    const statusEl = $("#connection-status");
-    const dotEl = statusEl.querySelector('.status-dot');
-    
-    if (state.googleSheetsConnected) {
-      statusEl.className = 'connection-status connected';
-      dotEl.className = 'status-dot connected';
-      statusEl.querySelector('span').textContent = 'Google Sheets: Connected';
-      if($("#finalizeBtn")) $("#finalizeBtn").disabled = false;
-      if($("#syncAllBtn")) $("#syncAllBtn").disabled = false;
-    } else {
-      statusEl.className = 'connection-status disconnected';
-      dotEl.className = 'status-dot disconnected';
-      statusEl.querySelector('span').textContent = 'Google Sheets: Not Connected';
-      if($("#finalizeBtn")) $("#finalizeBtn").disabled = true;
-      if($("#syncAllBtn")) $("#syncAllBtn").disabled = true;
-    }
-  }
-  // --- Class Management ---
-  function createClass(date, time, playlist = null, attendees = new Set(), notes = '', status = 'draft') {
-    return {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      date: date,
-      time: time,
-      playlist: playlist, // Now a string
-      attendees: new Set(attendees),
-      status: status,
-      notes: notes,
-      synced: false
-    };
-  }
-  function saveDraftClass() {
-    if (state.attendees.size === 0) {
-      showToast('Please select at least one attendee', 'error');
-      return;
-    }
-    const metrics = computeMetrics();
-    const bestPlaylist = metrics[0]?.playlist;
-    
-    if (!bestPlaylist) {
-      showToast('No playlist recommendation available', 'error');
-      return;
-    }
-    const dateTimeKey = createDateTimeKey(state.selectedDate, state.selectedTime);
-    let existingClass = state.weeklyPlan.get(dateTimeKey);
-    
-    if (existingClass) {
-      existingClass.playlist = bestPlaylist;
-      existingClass.attendees = new Set(state.attendees);
-      existingClass.status = 'draft'; // Revert to draft if re-saved
-      existingClass.synced = false;
-    } else {
-      const newClass = createClass(state.selectedDate, state.selectedTime, bestPlaylist, state.attendees);
-      state.weeklyPlan.set(dateTimeKey, newClass);
-    }
-    
-    updateDashboardStatus();
-    saveStateToLocalStorage();
-    showToast('Draft saved!', 'success');
-  }
-  async function finalizeClass() {
-    const dateTimeKey = createDateTimeKey(state.selectedDate, state.selectedTime);
-    const draftClass = state.weeklyPlan.get(dateTimeKey);
-    
-    if (!draftClass || state.attendees.size === 0) {
-      showToast('No valid draft found. Please select attendees and save a draft first.', 'error');
-      return;
-    }
-    if (draftClass.status === 'finalized') {
-      showToast('This class has already been finalized.', 'info');
-      return;
-    }
-    setLoading($("#finalizeBtn"), true);
-    
-    try {
-      draftClass.status = 'finalized';
-      const synced = await writeToSheets(draftClass);
-      if (synced) {
-        draftClass.synced = true;
-        draftClass.attendees.forEach(guest => {
-          state.records.push({ date: draftClass.date, time: draftClass.time, guest: guest, playlist: draftClass.playlist });
-        });
-        
-        updateKnownPlaylists();
-        saveStateToLocalStorage();
-        updateDashboardStatus();
-        updateRecordsPill();
-        refreshAll();
-        showToast('Class finalized and synced!', 'success');
-      } else {
-        draftClass.status = 'draft'; // Revert if sync failed
-        showToast('Failed to sync. Class remains as draft.', 'error');
-      }
-    } finally {
-      setLoading($("#finalizeBtn"), false);
-    }
-  }
-  function updateDashboardStatus() {
-    const dateTimeKey = createDateTimeKey(state.selectedDate, state.selectedTime);
-    const currentClass = state.weeklyPlan.get(dateTimeKey);
-    const draftStatusPill = $("#draftStatusPill");
-    
-    if (currentClass) {
-      draftStatusPill.textContent = currentClass.status === 'draft' ? 'Draft saved' : 'Finalized';
-      draftStatusPill.className = `pill ${currentClass.status === 'draft' ? 'status-draft' : 'status-finalized'}`;
-      draftStatusPill.classList.remove('hidden');
-      $("#finalizeBtn").disabled = currentClass.status === 'finalized' || !state.googleSheetsConnected;
-    } else {
-      draftStatusPill.classList.add('hidden');
-      $("#finalizeBtn").disabled = state.attendees.size === 0 || !state.googleSheetsConnected;
-    }
-  }
-  function updateRecordsPill() {
-    $("#recordsCountPill").textContent = `${state.records.length} records`;
-  }
-  // --- Weekly Calendar ---
-  function renderWeeklyCalendar() {
-    const calendarGrid = $("#calendarGrid");
-    const weekDays = getWeekDays(state.currentWeekStart);
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    
-    calendarGrid.innerHTML = '';
-    
-    weekDays.forEach((day, index) => {
-      const dayKey = formatDateKey(day);
-      const isToday = dayKey === formatDateKey(new Date());
-      
-      const dayClasses = Array.from(state.weeklyPlan.entries())
-        .filter(([key]) => key.startsWith(dayKey))
-        .map(([key, cls]) => ({...cls, dateTimeKey: key}))
-        .sort((a, b) => a.time.localeCompare(b.time));
-      
-      const dayCard = document.createElement('div');
-      dayCard.className = `day-card ${dayClasses.length > 0 ? 'has-classes' : ''}`;
-      
-      let classesHTML = '';
-      if (dayClasses.length > 0) {
-        classesHTML = dayClasses.map(cls => `
-          <div class="class-item" onclick="openClassModal('${cls.dateTimeKey}')">
-            <div class="class-time">${formatTime(cls.time)}</div>
-            <div class="class-info">
-              ${cls.playlist} • ${cls.attendees.size} guests
-            </div>
-            <div class="pill ${cls.status === 'draft' ? 'status-draft' : 'status-finalized'} " style="margin-top: 4px; font-size: 11px; padding: 4px 8px;">
-              ${cls.status}${cls.synced ? ' (Synced)' : ''}
-            </div>
-          </div>
-        `).join('');
-      } else {
-        classesHTML = '<div class="empty-state" style="padding: 20px 0;"><p style="margin:0;">No classes scheduled</p></div>';
-      }
-      
-      dayCard.innerHTML = `
-        <div class="day-header">
-          <div class="day-name">${dayNames[index]} ${isToday ? '• Today' : ''}</div>
-          <div class="day-date">${day.getMonth() + 1}/${day.getDate()}</div>
-        </div>
-        <div class="class-list">${classesHTML}</div>
-        <div class="class-actions">
-          <button class="btn btn-sm btn-primary" onclick="openNewClassModal('${dayKey}')">+ Add Class</button>
-        </div>
-      `;
-      
-      calendarGrid.appendChild(dayCard);
-    });
-    
-    updateWeeklyStats();
-  }
-  function updateWeeklyStats() {
-    const weekStart = state.currentWeekStart;
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 6);
-    
-    $("#weekRangePill").textContent = `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
-    
-    let drafts = 0, finalized = 0;
-    state.weeklyPlan.forEach(cls => {
-        const clsDate = new Date(cls.date);
-        if (clsDate >= weekStart && clsDate <= weekEnd) {
-            if (cls.status === 'draft') drafts++;
-            else finalized++;
-        }
-    });
-    
-    $("#draftsCountPill").textContent = `${drafts} draft${drafts !== 1 ? 's' : ''}`;
-    $("#finalizedCountPill").textContent = `${finalized} finalized`;
-  }
-  function navigateWeek(direction) {
-    if (direction === 0) {
-        state.currentWeekStart = getWeekStart(new Date());
-    } else {
-        const newStart = new Date(state.currentWeekStart);
-        newStart.setDate(newStart.getDate() + (direction * 7));
-        state.currentWeekStart = newStart;
-    }
-    renderWeeklyCalendar();
-  }
-  
-  window.openNewClassModal = function(dateKey) {
-    state.selectedClass = createClass(dateKey, '09:00');
-    state.attendees = new Set(); // Start with empty roster for new class
-    
-    $("#class-modal-title").textContent = 'Plan New Class';
-    $("#modal-class-date").value = dateKey;
-    $("#modal-class-time").value = '09:00';
-    $("#modal-class-playlist").value = '';
-    $("#modal-class-notes").value = '';
-    
-    populateModalPlaylistOptions();
-    populateModalGuestList();
-    renderModalSelectedGuests();
-    
-    $("#delete-class-modal").classList.add('hidden');
-    $("#class-modal").classList.remove('hidden');
-  };
-  window.openClassModal = function(dateTimeKey) {
-    const classData = state.weeklyPlan.get(dateTimeKey);
-    if (!classData) return;
-    
-    state.selectedClass = classData;
-    state.attendees = new Set(classData.attendees); // Load roster from class
-    
-    $("#class-modal-title").textContent = 'Edit Class';
-    $("#modal-class-date").value = classData.date;
-    $("#modal-class-time").value = classData.time;
-    $("#modal-class-playlist").value = classData.playlist || '';
-    $("#modal-class-notes").value = classData.notes || '';
-    
-    populateModalPlaylistOptions();
-    populateModalGuestList();
-    renderModalSelectedGuests();
-    
-    $("#delete-class-modal").classList.remove('hidden');
-    $("#class-modal").classList.remove('hidden');
-  };
-  function populateModalPlaylistOptions() {
-    const select = $("#modal-class-playlist");
-    select.innerHTML = '<option value="">Select playlist...</option>';
-    // Sort playlists naturally (so "2" comes before "10", and "A" comes before "B")
-    const sortedPlaylists = Array.from(state.playlists).sort((a, b) => {
-        return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
-    });
-    
-    sortedPlaylists.forEach(pl => {
-      const option = document.createElement('option');
-      option.value = pl;
-      option.textContent = pl; // Just display the name directly
-      select.appendChild(option);
-    });
-  }
-  // --- Guest Selection System ---
-  function populateGuestList() {
-    const guestList = $("#guest-list");
-    guestList.innerHTML = "";
-    const sortedGuests = Array.from(state.allGuests).sort();
-    
-    if (sortedGuests.length === 0) {
-      guestList.innerHTML = '<div class="no-selection" style="padding: 20px;">No guests found. Import data to get started.</div>';
-      return;
-    }
-    
-    sortedGuests.forEach(guest => {
-      const guestElement = document.createElement("div");
-      guestElement.className = `guest-list-item ${state.attendees.has(guest) ? 'selected' : ''}`;
-      guestElement.dataset.guest = guest;
-      guestElement.textContent = guest;
-      
-      guestElement.addEventListener("click", () => toggleGuestSelection(guest, true));
-      guestList.appendChild(guestElement);
-    });
-  }
-  function populateModalGuestList() {
-    const modalGuestList = $("#modal-guest-list");
-    modalGuestList.innerHTML = "";
-    
-    Array.from(state.allGuests).sort().forEach(guest => {
-      const guestElement = document.createElement("div");
-      guestElement.className = `guest-list-item ${state.attendees.has(guest) ? 'selected' : ''}`;
-      guestElement.dataset.guest = guest;
-      guestElement.textContent = guest;
-      
-      guestElement.addEventListener("click", () => {
-        toggleGuestSelection(guest, false); // don't refresh all on modal toggle
-        renderModalSelectedGuests();
-        updateModalGuestListSelection();
-      });
-      modalGuestList.appendChild(guestElement);
-    });
-  }
-  function toggleGuestSelection(guest, refresh = true) {
-    if (state.attendees.has(guest)) {
-      state.attendees.delete(guest);
-    } else {
-      state.attendees.add(guest);
-    }
-    
-    if (refresh) {
-      renderSelectedGuests();
-      updateGuestListSelection();
-      refreshAll();
-    }
-  }
-  function renderSelectedGuests() {
-    const rosterChips = $("#rosterChips");
-    const rosterCountPill = $("#rosterCountPill");
-    
-    rosterChips.innerHTML = "";
-    
-    if (state.attendees.size === 0) {
-      rosterChips.innerHTML = `<div class="no-selection">No House Guests selected</div>`;
-    } else {
-      [...state.attendees].sort().forEach(name => {
-        const guestChip = document.createElement("div");
-        guestChip.className = "selected-guest-item";
-        guestChip.innerHTML = `<span>${name}</span><span class="remove-guest" data-guest="${name}">✕</span>`;
-        guestChip.querySelector(".remove-guest").addEventListener("click", (e) => {
-          e.stopPropagation();
-          state.attendees.delete(name);
-          renderSelectedGuests();
-          updateGuestListSelection();
-          refreshAll();
-        });
-        rosterChips.appendChild(guestChip);
-      });
-    }
-    
-    rosterCountPill.textContent = `${state.attendees.size} attendee${state.attendees.size !== 1 ? 's' : ''}`;
-    updateDashboardStatus();
-  }
-  function renderModalSelectedGuests() {
-    const container = $("#modal-selected-guests");
-    container.innerHTML = "";
-    
-    if (state.attendees.size === 0) {
-      container.innerHTML = `<div class="no-selection">No guests selected</div>`;
-    } else {
-      [...state.attendees].sort().forEach(name => {
-        const guestChip = document.createElement("div");
-        guestChip.className = "selected-guest-item";
-        guestChip.innerHTML = `<span>${name}</span><span class="remove-guest" data-guest="${name}">✕</span>`;
-        guestChip.querySelector(".remove-guest").addEventListener("click", (e) => {
-          e.stopPropagation();
-          state.attendees.delete(name);
-          renderModalSelectedGuests();
-          updateModalGuestListSelection();
-        });
-        container.appendChild(guestChip);
-      });
-    }
-  }
-  function updateGuestListSelection() {
-    $$("#guest-list .guest-list-item").forEach(item => {
-      item.classList.toggle("selected", state.attendees.has(item.dataset.guest));
-    });
-  }
-  function updateModalGuestListSelection() {
-    $$("#modal-guest-list .guest-list-item").forEach(item => {
-      item.classList.toggle("selected", state.attendees.has(item.dataset.guest));
-    });
-  }
-  
-  // --- Metrics Calculation ---
-  function lastHeardMap() {
-    const map = new Map();
-    state.records.forEach(r => {
-      if (!map.has(r.guest)) map.set(r.guest, new Map());
-      const pm = map.get(r.guest);
-      // playlist is now a string, strict equality works fine
-      const prev = pm.get(r.playlist);
-      if (!prev || new Date(r.date) > new Date(prev)) {
-        pm.set(r.playlist, r.date);
-      }
-    });
-    return map;
-  }
-  function computeMetrics() {
-    const lm = lastHeardMap();
-    const roster = [...state.attendees];
-    const windowDays = state.selectedWindow;
-    const todayISO = formatDateKey(new Date());
-    
-    const uniquePlaylists = Array.from(state.playlists);
-    
-    const byPlaylist = uniquePlaylists.map(pl => {
-      let never = 0;
-      let deltas = [];
-      let staleCount = 0;
-      roster.forEach(g => {
-        // FIX: Safely access map with ?. to prevent crash if guest has no history
-        const last = lm.get(g)?.get(pl);
-        if (!last) {
-          never++;
-          staleCount++;
-        } else {
-          const d = daysBetween(todayISO, last);
-          deltas.push(d);
-          if (d >= windowDays) staleCount++;
-        }
-      });
-      const medianDays = deltas.length ? median(deltas) : 0;
-      const stalePct = roster.length ? Math.round((staleCount / roster.length) * 100) : 0;
-      // Score: high stale %, high never count are "good" (they need to be heard)
-      // Low median is also "good" as it means other songs are fresh, but less important.
-      const score = (stalePct * 2) + (never * 3) - (medianDays * 0.1);
 
-      return { playlist: pl, never, median: medianDays, stalePct, score };
-    });
-    // Sort by score descending
-    byPlaylist.sort((a, b) => b.score - a.score);
-    return byPlaylist;
-  }
-  // --- UI Refresh Functions ---
-  function refreshAll() {
-      const metrics = computeMetrics();
-      refreshDashboard(metrics);
-      refreshExplorer(metrics);
-      updateDashboardStatus();
-      saveStateToLocalStorage();
-  }
-  function refreshDashboard(metrics) {
-    const best = metrics[0];
-    
-    if (!best || state.attendees.size === 0) {
-      $("#bestSummary").innerHTML = '<div class="muted">Add attendees above to see the best recommendation.</div>';
-      $("#bestNever").textContent = "—";
-      $("#bestMedian").textContent = "—";
-      $("#bestStale").textContent = "—";
-      $("#runnerUps").innerHTML = '<div class="empty-state"><p>Select attendees to see alternatives</p></div>';
-      $("#selectPlaylistBtn").disabled = true;
-      return;
-    }
-     $("#selectPlaylistBtn").disabled = false;
-    
-    $("#bestSummary").innerHTML = `
-      <div style="font-size:20px; font-weight:700; margin-top:10px;">
-        Playlist: <span style="color: var(--accent);">${best.playlist}</span>
+  <div id="modal-backdrop" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-title">Plan Class</h3>
+        <button class="close-icon" id="modal-close">✕</button>
       </div>
-      <div class="subtle" style="margin-top:4px;">Optimized for ${state.attendees.size} attendees • Stale threshold: ${state.selectedWindow} days</div>
-    `;
-    
-    $("#bestNever").textContent = best.never;
-    $("#bestMedian").textContent = best.median;
-    $("#bestStale").textContent = best.stalePct + "%";
-    
-    const runners = metrics.slice(1, 4);
-    const wrap = $("#runnerUps");
-    wrap.innerHTML = "";
-    
-    if (runners.length === 0) {
-      wrap.innerHTML = '<div class="empty-state"><p>No alternative playlists available</p></div>';
-    } else {
-      runners.forEach(r => {
-        wrap.innerHTML += `
-          <div class="card suggestion-card">
-            <div class="title">${r.playlist}</div>
-            <div class="metric-row" style="margin-top:8px;">
-              <div class="metric"><div class="value">${r.never}</div><div class="label">Never</div></div>
-              <div class="metric"><div class="value">${r.median}</div><div class="label">Median</div></div>
-              <div class="metric"><div class="value">${r.stalePct}%</div><div class="label">Stale</div></div>
-            </div>
-          </div>`;
-      });
-    }
-  }
-  function refreshExplorer(metrics) {
-    const tbody = $("#explorerTbody");
-    tbody.innerHTML = "";
-    const { column, ascending } = state.explorerSortOrder;
-
-    metrics.sort((a, b) => {
-        if (a[column] < b[column]) return ascending ? -1 : 1;
-        if (a[column] > b[column]) return ascending ? 1 : -1;
-        return 0;
-    });
-
-    metrics.forEach(m => {
-      tbody.innerHTML += `
-        <tr>
-          <td><strong>${m.playlist}</strong></td>
-          <td>${m.never}</td>
-          <td>${m.median}</td>
-          <td>${m.stalePct}%</td>
-          <td><span class="pill status-info">${m.score.toFixed(1)}</span></td>
-        </tr>`;
-    });
-  }
-  function refreshHistory() {
-    const tbody = $("#historyTbody");
-    const searchTerm = $("#history-search").value.toLowerCase();
-    
-    const byClass = new Map();
-    [...state.records, ...Array.from(state.weeklyPlan.values()).filter(c => c.status === 'finalized')]
-    .forEach(r => {
-        if (!r.playlist) return;
-        const key = `${r.date}T${r.time}::${r.playlist}`;
-        if (!byClass.has(key)) {
-            byClass.set(key, { date: r.date, time: r.time, playlist: r.playlist, guests: new Set(), status: 'finalized' });
-        }
-        if (r.guest) {
-            byClass.get(key).guests.add(r.guest);
-        } else if (r.attendees) {
-            r.attendees.forEach(g => byClass.get(key).guests.add(g));
-        }
-    });
-
-    let rows = [...byClass.values()].filter(row => {
-        if (!searchTerm) return true;
-        const guestNames = [...row.guests].join(' ').toLowerCase();
-        return row.date.includes(searchTerm) || row.playlist.toString().toLowerCase().includes(searchTerm) || guestNames.includes(searchTerm);
-    });
-    
-    const { column, ascending } = state.sortOrder;
-    rows.sort((a, b) => {
-        let aVal, bVal;
-        if (column === 'datetime') {
-            // Standardize date parsing for sorting
-            aVal = new Date(`${a.date}T${a.time}`);
-            bVal = new Date(`${b.date}T${b.time}`);
-        } else if (column === 'count') {
-            aVal = a.guests.size;
-            bVal = b.guests.size;
-        } else {
-            aVal = a[column];
-            bVal = b[column];
-        }
-        if (aVal < bVal) return ascending ? -1 : 1;
-        if (aVal > bVal) return ascending ? 1 : -1;
-        return 0;
-    });
-
-    tbody.innerHTML = "";
-    rows.forEach(row => {
-      const guestArray = [...row.guests].sort();
-      tr = `
-        <tr>
-          <td>${formatDate(row.date)} ${formatTime(row.time)}</td>
-          <td><strong>${row.playlist}</strong></td>
-          <td><span class="pill">${guestArray.length}</span></td>
-          <td>${guestArray.slice(0, 3).join(", ")}${guestArray.length > 3 ? ` +${guestArray.length - 3} more` : ""}</td>
-          <td><span class="pill status-finalized">Completed</span></td>
-        </tr>
-      `;
-      tbody.innerHTML += tr;
-    });
-  }
-  function refreshGuests() {
-    const container = $("#guests-grid");
-    const searchTerm = $("#guest-search-filter").value.toLowerCase();
-    
-    if (state.allGuests.size === 0) {
-      container.innerHTML = `<div class="empty-state"><h3>No guest data available</h3><p>Import data or connect Google Sheets</p></div>`;
-      return;
-    }
-    const guestStats = Array.from(state.allGuests)
-      .filter(guest => guest.toLowerCase().includes(searchTerm))
-      .map(guest => {
-        const guestRecords = state.records.filter(r => r.guest === guest);
-        const totalClasses = guestRecords.length;
-        const playlistsHeard = new Set(guestRecords.map(r => r.playlist)).size;
-        const lastClassDate = guestRecords.length > 0 ? new Date(Math.max(...guestRecords.map(r => new Date(`${r.date}T${r.time}`)))) : null;
-        const daysSince = lastClassDate ? daysBetween(new Date(), lastClassDate) : null;
-        return { name: guest, totalClasses, playlistsHeard, daysSince, records: guestRecords };
-      })
-      .sort((a, b) => (b.daysSince ?? 9999) - (a.daysSince ?? 9999)); // Sort by most recent first
-    
-    container.innerHTML = "";
-    guestStats.forEach(guest => {
-      const guestCard = document.createElement("div");
-      guestCard.className = "guest-card";
-      guestCard.dataset.guestName = guest.name;
-      guestCard.innerHTML = `
-        <div class="guest-card-header">
-          <div class="guest-avatar">${guest.name.split(' ').map(n => n[0]).join('').toUpperCase()}</div>
-          <div class="guest-info">
-            <h4>${guest.name}</h4>
-            <p>${guest.daysSince !== null ? `Last seen: ${guest.daysSince} days ago` : 'No classes yet'}</p>
-          </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
+        <div>
+          <label class="subtle" style="margin-bottom:6px; display:block;">Date</label>
+          <input type="date" id="m-date">
         </div>
-        <div class="guest-stats">
-          <div class="guest-stat"><span class="value">${guest.totalClasses}</span><span class="label">Classes</span></div>
-          <div class="guest-stat"><span class="value">${guest.playlistsHeard}</span><span class="label">Playlists</span></div>
-        </div>`;
-      guestCard.addEventListener('click', () => showGuestDetailModal(guest.name));
-      container.appendChild(guestCard);
-    });
-  }
-  function showGuestDetailModal(guestName) {
-      const guestRecords = state.records
-          .filter(r => r.guest === guestName)
-          .sort((a, b) => new Date(`${b.date}T${b.time}`) - new Date(`${a.date}T${a.time}`));
-      
-      $('#guest-modal-title').textContent = `${guestName}'s Profile`;
-      
-      let contentHTML = `<div class="table-container"><table class="data-table"><thead><tr><th>Date</th><th>Playlist</th></tr></thead><tbody>`;
-      if (guestRecords.length > 0) {
-          guestRecords.forEach(record => {
-              contentHTML += `<tr><td>${formatDateTime(record.date, record.time)}</td><td>${record.playlist}</td></tr>`;
-          });
-      } else {
-          contentHTML += `<tr><td colspan="2" style="text-align:center;">No class history found.</td></tr>`;
-      }
-      contentHTML += `</tbody></table></div>`;
-      
-      $('#guest-modal-content').innerHTML = contentHTML;
-      $('#guest-modal').classList.remove('hidden');
-  }
+        <div>
+          <label class="subtle" style="margin-bottom:6px; display:block;">Time</label>
+          <input type="time" id="m-time">
+        </div>
+      </div>
+      <div style="margin-bottom:24px;">
+        <label class="subtle" style="margin-bottom:6px; display:block;">Playlist</label>
+        <select id="m-playlist">
+          <option value="">Select Playlist...</option>
+        </select>
+      </div>
+      <div style="margin-bottom:30px;">
+         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label class="subtle">Attendees (<span id="m-count">0</span>)</label>
+            <button id="m-copy" style="background:none; border:none; color:var(--accent); font-weight:600; font-size:13px;">+ Add Dashboard Guests</button>
+         </div>
+         <div class="guest-area">
+            <div id="m-chips" class="chips-wrap"></div>
+            <input type="text" id="m-search" placeholder="Add guest..." style="margin-bottom:8px;">
+            <div id="m-list" class="list-grid" style="max-height:160px;"></div>
+         </div>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <button id="m-delete" class="btn btn-danger hidden">Delete</button>
+        <button id="m-save" class="btn btn-secondary">Save Draft</button>
+        <button id="m-final" class="btn btn-success" style="grid-column: 1 / -1; padding: 18px;">✔ Finalize & Sync</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-area"></div>
 
-  // --- EVENT LISTENERS ---
-  function addEventListeners() {
-      // Tab navigation
-      $$('.tab-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-              const tab = btn.dataset.tab;
-              $$('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
-              btn.setAttribute('aria-selected', 'true');
-              $$('main > section').forEach(s => s.classList.add('hidden'));
-              $(`#${tab}`).classList.remove('hidden');
+<script>
+/**
+ * Hilo Playlist App - v2.2
+ * Changes: Dynamic Playlist Strings + Auto-Sync on Connect
+ */
 
-              // Refresh content on tab switch
-              if(tab === 'weekly') renderWeeklyCalendar();
-              if(tab === 'history') refreshHistory();
-              if(tab === 'guests') refreshGuests();
-              if(tab === 'explorer') refreshAll();
-          });
-      });
-      // Dashboard controls
-      $('#class-date-dashboard').addEventListener('change', (e) => {
-          state.selectedDate = e.target.value;
-          updateDashboardStatus();
-      });
-      $('#class-time-dashboard').addEventListener('change', (e) => {
-          state.selectedTime = e.target.value;
-          updateDashboardStatus();
-      });
-      $('#todayBtn').addEventListener('click', () => {
-          const now = new Date();
-          state.selectedDate = formatDateKey(now);
-          state.selectedTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-          $('#class-date-dashboard').value = state.selectedDate;
-          $('#class-time-dashboard').value = state.selectedTime;
-          updateDashboardStatus();
-      });
-      $('#playlistWindow').addEventListener('change', (e) => {
-          state.selectedWindow = parseInt(e.target.value, 10);
-          refreshAll();
-      });
-      $('#saveDraftBtn').addEventListener('click', saveDraftClass);
-      $('#finalizeBtn').addEventListener('click', finalizeClass);
-      
-      $('#selectPlaylistBtn').addEventListener('click', () => {
-        const metrics = computeMetrics();
-        const bestPlaylist = metrics[0]?.playlist;
-        if(bestPlaylist) {
-          saveDraftClass(); // This will use the best playlist
-        } else {
-          showToast('Cannot select playlist, no recommendation available.', 'error');
+const CONFIG = {
+    scriptUrl: 'https://script.google.com/macros/s/AKfycbyp5q-4rIC2XHa60ZnYS2x0bZrxDmNYAV3YvOf5EmxnnVqW2nAKEq6Em6UWgCy8ftULgQ/exec',
+    token: '4c94713e-9b2b-4980-8b07-2b3948f6f6a1'
+};
+
+const store = {
+    selected: new Set(),
+    guests: new Set(),
+    history: [],
+    plans: new Map(),
+    weekStart: getMonday(new Date()),
+    editId: null,
+    modalGuests: new Set(),
+    connected: false,
+    playlists: new Set() // Stores dynamic playlist names
+};
+
+// --- INIT ---
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    initUI();
+    updateClock();
+    checkConnectivity(); // Auto-check & Auto-Pull
+    setInterval(updateClock, 60000);
+});
+
+// --- DATA LAYER ---
+function loadData() {
+    try {
+        const raw = localStorage.getItem('hilo_v2');
+        if (raw) {
+            const d = JSON.parse(raw);
+            store.history = d.history || [];
+            store.guests = new Set(d.guests || []);
+            if (d.plans) {
+                d.plans.forEach(([k, v]) => {
+                    v.attendees = new Set(v.attendees);
+                    store.plans.set(k, v);
+                });
+            }
+            // Rebuild known playlists from history
+            rebuildPlaylistSet();
         }
-      });
-      
-      // Guest search
-      $('#guest-search').addEventListener("input", (e) => {
-          const term = e.target.value.toLowerCase();
-          $$("#guest-list .guest-list-item").forEach(item => {
-              item.style.display = item.dataset.guest.toLowerCase().includes(term) ? '' : 'grid';
-          });
-      });
-      $('#guest-search-filter').addEventListener('input', refreshGuests);
-      $('#history-search').addEventListener('input', refreshHistory);
+        // Add defaults if empty
+        if(store.playlists.size === 0) {
+            for(let i=1; i<=12; i++) store.playlists.add(String(i));
+        }
+    } catch (e) { console.error("Storage load fail", e); }
+    
+    refreshPlaylistDropdown();
+}
 
-      // Sorting table headers
-      $$('#history-table .sortable, #explorer thead .sortable').forEach(header => {
-          header.addEventListener('click', () => {
-              const sortKey = header.dataset.sort;
-              const isExplorer = header.closest('#explorer');
-              const sortState = isExplorer ? state.explorerSortOrder : state.sortOrder;
+function rebuildPlaylistSet() {
+    store.playlists.clear();
+    // Add defaults (1-12)
+    for(let i=1; i<=12; i++) store.playlists.add(String(i));
+    // Add from history (handles strings like "90s HipHop")
+    store.history.forEach(r => {
+        if(r.playlist) store.playlists.add(String(r.playlist));
+    });
+}
 
-              if (sortState.column === sortKey) {
-                  sortState.ascending = !sortState.ascending;
-              } else {
-                  sortState.column = sortKey;
-                  sortState.ascending = false;
-              }
-              
-              $$('.sortable').forEach(h => h.classList.remove('asc', 'desc'));
-              header.classList.add(sortState.ascending ? 'asc' : 'desc');
-              
-              if (isExplorer) refreshExplorer(computeMetrics()); else refreshHistory();
-          });
-      });
+function refreshPlaylistDropdown() {
+    const sel = document.getElementById('m-playlist');
+    sel.innerHTML = '<option value="">Select Playlist...</option>';
+    
+    // Sort: Try to sort numerically if possible, otherwise alphabetically
+    const sorted = Array.from(store.playlists).sort((a,b) => {
+        const numA = parseFloat(a), numB = parseFloat(b);
+        if(!isNaN(numA) && !isNaN(numB)) return numA - numB;
+        return a.localeCompare(b);
+    });
 
-      // Weekly Planner Navigation
-      $('#prevWeekBtn').addEventListener('click', () => navigateWeek(-1));
-      $('#currentWeekBtn').addEventListener('click', () => navigateWeek(0));
-      $('#nextWeekBtn').addEventListener('click', () => navigateWeek(1));
+    sorted.forEach(p => {
+        // Display Name Logic: If it's just a number, say "Playlist #X", else show name
+        const display = !isNaN(parseFloat(p)) && isFinite(p) ? `Playlist #${p}` : p;
+        sel.innerHTML += `<option value="${p}">${display}</option>`;
+    });
+}
 
-      // Settings Buttons
-      $('#testConnectionBtn').addEventListener('click', testConnection);
-      $('#refreshDataBtn').addEventListener('click', loadDataFromSheets);
-      $('#syncFromSheetsBtn').addEventListener('click', loadDataFromSheets);
-      $('#clearDataBtn').addEventListener('click', () => {
-          if (confirm('Are you sure you want to delete ALL local data? This cannot be undone.')) {
-              localStorage.removeItem('hiloPlaylistData');
-              state.records = [];
-              state.allGuests.clear();
-              state.weeklyPlan.clear();
-              state.playlists = new Set(['1','2','3','4','5','6','7','8','9','10','11','12']);
-              window.location.reload();
-          }
-      });
-      $('#importCsvBtn').addEventListener('click', () => $('#fileInput').click());
-      $('#exportCsvBtn').addEventListener('click', exportToCsv);
-      $('#fileInput').addEventListener('change', handleCsvImport);
+function saveData() {
+    try {
+        const d = {
+            history: store.history,
+            guests: Array.from(store.guests),
+            plans: Array.from(store.plans.entries())
+        };
+        localStorage.setItem('hilo_v2', JSON.stringify(d));
+    } catch (e) { toast('Storage Full/Error', 'error'); }
+}
 
-      // Modals - FIX: Split event listeners because querySelector only returns the first match
-      const closeClass = $('#close-class-modal');
-      const cancelClass = $('#cancel-modal');
-      const closeGuest = $('#close-guest-modal');
-      
-      if(closeClass) closeClass.addEventListener('click', () => $('#class-modal').classList.add('hidden'));
-      if(cancelClass) cancelClass.addEventListener('click', () => $('#class-modal').classList.add('hidden'));
-      if(closeGuest) closeGuest.addEventListener('click', () => $('#guest-modal').classList.add('hidden'));
+// --- UI RENDERING ---
+function initUI() {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.onclick = () => {
+            document.querySelectorAll('.tab-btn').forEach(t => t.setAttribute('aria-selected', false));
+            b.setAttribute('aria-selected', true);
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            const tid = b.dataset.tab;
+            document.getElementById(tid).classList.remove('hidden');
+            if(tid === 'weekly') renderCalendar();
+            if(tid === 'explorer') renderExplorer();
+            if(tid === 'history') renderHistory();
+        };
+    });
 
-      $('#save-draft-modal').addEventListener('click', handleModalSave);
-      $('#finalize-modal').addEventListener('click', handleModalFinalize);
-      $('#delete-class-modal').addEventListener('click', handleModalDelete);
-  }
+    const dSearch = document.getElementById('dash-search');
+    dSearch.addEventListener('input', () => renderDashboardList(dSearch.value));
+    const mSearch = document.getElementById('m-search');
+    mSearch.addEventListener('input', () => renderModalList(mSearch.value));
+    document.getElementById('hist-search').addEventListener('input', renderHistory);
 
-  // --- Modal Handlers ---
-  function handleModalSave() {
-      const cls = state.selectedClass;
-      if (!cls) return;
-      if (state.attendees.size === 0) {
-          showToast('Please select at least one guest.', 'error');
-          return;
-      }
-      const newPlaylist = $('#modal-class-playlist').value;
-      if (!newPlaylist) {
-          showToast('Please select a playlist.', 'error');
-          return;
-      }
+    document.getElementById('prevWeek').onclick = () => changeWeek(-7);
+    document.getElementById('nextWeek').onclick = () => changeWeek(7);
+    document.getElementById('fab-add').onclick = () => openModal();
 
-      // Remove old entry if date/time changed
-      const oldKey = createDateTimeKey(cls.date, cls.time);
-      const newKey = createDateTimeKey($('#modal-class-date').value, $('#modal-class-time').value);
-      if (oldKey !== newKey) {
-          state.weeklyPlan.delete(oldKey);
-      }
+    document.getElementById('modal-close').onclick = closeModal;
+    document.getElementById('m-copy').onclick = () => {
+        store.selected.forEach(g => store.modalGuests.add(g));
+        renderModalChips(); renderModalList();
+    };
+    document.getElementById('m-save').onclick = () => commitClass('draft');
+    document.getElementById('m-final').onclick = () => commitClass('final');
+    document.getElementById('m-delete').onclick = deleteClass;
+    
+    document.getElementById('btn-quick-add').onclick = () => {
+        const pl = document.getElementById('rec-id').innerText;
+        openModal({ playlist: pl, attendees: store.selected });
+    };
 
-      cls.date = $('#modal-class-date').value;
-      cls.time = $('#modal-class-time').value;
-      cls.playlist = newPlaylist; // String
-      cls.attendees = new Set(state.attendees);
-      cls.notes = $('#modal-class-notes').value;
-      cls.status = 'draft';
-      cls.synced = false;
+    document.getElementById('btn-test').onclick = checkConnectivity;
+    document.getElementById('btn-pull').onclick = pullSheets;
+    document.getElementById('btn-nuke').onclick = () => {
+        if(confirm("Reset all data?")) { localStorage.removeItem('hilo_v2'); location.reload(); }
+    };
+    document.getElementById('btn-import').onclick = () => document.getElementById('csv-file').click();
+    document.getElementById('csv-file').onchange = parseCSV;
 
-      state.weeklyPlan.set(newKey, cls);
-      saveStateToLocalStorage();
-      renderWeeklyCalendar();
-      showToast('Draft saved!', 'success');
-      $('#class-modal').classList.add('hidden');
-  }
+    renderDashboardList();
+    renderDashboardChips();
+}
 
-  async function handleModalFinalize() {
-      const cls = state.selectedClass;
-      if (!cls || state.attendees.size === 0 || !$('#modal-class-playlist').value) {
-          showToast('Please select attendees and a playlist.', 'error');
-          return;
-      }
-      setLoading($('#finalize-modal'), true);
-      
-      // Update class data from modal before finalizing
-      const oldKey = createDateTimeKey(cls.date, cls.time);
-      cls.date = $('#modal-class-date').value;
-      cls.time = $('#modal-class-time').value;
-      cls.playlist = $('#modal-class-playlist').value;
-      cls.attendees = new Set(state.attendees);
-      cls.notes = $('#modal-class-notes').value;
-      cls.status = 'finalized';
+// --- CORE LOGIC ---
+function renderDashboardList(filter = '') {
+    const list = document.getElementById('dash-list');
+    list.innerHTML = '';
+    const term = filter.toLowerCase();
+    Array.from(store.guests).sort().forEach(g => {
+        if(g.toLowerCase().includes(term)) {
+            const isActive = store.selected.has(g);
+            const el = document.createElement('div');
+            el.className = `list-item ${isActive ? 'active' : ''}`;
+            el.textContent = g;
+            el.onclick = () => {
+                if(store.selected.has(g)) store.selected.delete(g);
+                else store.selected.add(g);
+                renderDashboardList(term);
+                renderDashboardChips();
+                calcRecs();
+            };
+            list.appendChild(el);
+        }
+    });
+}
 
-      const synced = await writeToSheets(cls);
-      if (synced) {
-          cls.synced = true;
-          if (oldKey !== createDateTimeKey(cls.date, cls.time)) {
-              state.weeklyPlan.delete(oldKey);
-          }
-          state.weeklyPlan.set(createDateTimeKey(cls.date, cls.time), cls);
+function renderDashboardChips() {
+    const box = document.getElementById('dash-chips');
+    if(store.selected.size === 0) {
+        box.innerHTML = '<span class="subtle">Empty room...</span>';
+        document.getElementById('rec-box').classList.add('hidden');
+        return;
+    }
+    box.innerHTML = '';
+    store.selected.forEach(g => {
+        const c = document.createElement('div');
+        c.className = 'chip';
+        c.innerHTML = `${g} <span style="opacity:0.6">×</span>`;
+        c.onclick = () => {
+            store.selected.delete(g);
+            renderDashboardList(document.getElementById('dash-search').value);
+            renderDashboardChips();
+            calcRecs();
+        };
+        box.appendChild(c);
+    });
+    calcRecs();
+}
 
-          // Add to local records
-          cls.attendees.forEach(guest => {
-              state.records.push({ date: cls.date, time: cls.time, guest: guest, playlist: cls.playlist });
-          });
-          
-          updateKnownPlaylists();
-          saveStateToLocalStorage();
-          renderWeeklyCalendar();
-          refreshHistory();
-          refreshGuests();
-          showToast('Class finalized and synced!', 'success');
-          $('#class-modal').classList.add('hidden');
-      } else {
-          cls.status = 'draft'; // Revert on failure
-          showToast('Sync failed. Class saved as draft.', 'error');
-      }
-      setLoading($('#finalize-modal'), false);
-  }
- function handleModalDelete() {
-    const cls = state.selectedClass;
-    if (!cls) return;
-    if (confirm('Are you sure you want to delete this class?')) {
-        const key = createDateTimeKey(cls.date, cls.time);
-        state.weeklyPlan.delete(key);
-        saveStateToLocalStorage();
-        renderWeeklyCalendar();
-        showToast('Class deleted.', 'info');
-        $('#class-modal').classList.add('hidden');
+function calcRecs() {
+    if(store.selected.size === 0) return;
+    document.getElementById('rec-box').classList.remove('hidden');
+
+    // Map: Guest -> Map(PlaylistString -> DateStr)
+    const guestHist = new Map(); 
+    store.history.forEach(r => {
+        const pStr = String(r.playlist); // Normalize to string
+        if(!guestHist.has(r.guest)) guestHist.set(r.guest, new Map());
+        const pm = guestHist.get(r.guest);
+        if(!pm.has(pStr) || new Date(r.date) > new Date(pm.get(pStr))) {
+            pm.set(pStr, r.date);
+        }
+    });
+
+    const scores = [];
+    // Iterate over ALL known playlists (strings included)
+    store.playlists.forEach(plID => {
+        let never = 0, stale = 0;
+        let days = [];
+        
+        store.selected.forEach(g => {
+            const last = guestHist.get(g)?.get(plID);
+            if(!last) {
+                never++; stale++;
+            } else {
+                const diff = Math.floor((new Date() - new Date(last))/(86400000));
+                days.push(diff);
+                if(diff > 45) stale++;
+            }
+        });
+
+        days.sort((a,b)=>a-b);
+        const median = days.length ? days[Math.floor(days.length/2)] : 0;
+        const staleRate = Math.round((stale / store.selected.size) * 100);
+        // Score Algo
+        const score = (staleRate * 2) + (never * 4) + (median * 0.2);
+        scores.push({ id: plID, never, median, staleRate, score });
+    });
+
+    scores.sort((a,b) => b.score - a.score);
+    const top = scores[0];
+
+    // Format Display Name for Top Pick
+    const topName = !isNaN(parseFloat(top.id)) && isFinite(top.id) ? `Playlist #${top.id}` : top.id;
+    document.getElementById('rec-id').innerText = topName;
+    
+    document.getElementById('rec-never').innerText = top.never;
+    document.getElementById('rec-median').innerText = top.median;
+    document.getElementById('rec-stale').innerText = top.staleRate + '%';
+
+    const alts = document.getElementById('rec-alts');
+    alts.innerHTML = '';
+    scores.slice(1, 4).forEach(s => {
+        const d = document.createElement('div');
+        d.className = 'metric-box';
+        d.style.minWidth = '80px';
+        // Shorten name for runner up bubbles
+        let shortName = s.id.length > 8 ? s.id.substring(0,6)+'..' : s.id;
+        if(!isNaN(parseFloat(s.id))) shortName = `#${s.id}`;
+
+        d.innerHTML = `<div style="color:var(--accent); font-weight:bold; font-size:11px;">${shortName}</div><div class="metric-lbl">${s.staleRate}%</div>`;
+        alts.appendChild(d);
+    });
+    return scores; 
+}
+
+// --- WEEKLY PLANNER ---
+function renderCalendar() {
+    const con = document.getElementById('cal-container');
+    con.innerHTML = '';
+    const start = new Date(store.weekStart);
+    const end = new Date(start); end.setDate(end.getDate() + 6);
+    document.getElementById('week-label').innerText = 
+        `${start.toLocaleDateString('en-US',{month:'short',day:'numeric'})} - ${end.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`;
+
+    let hasData = false;
+    for(let i=0; i<7; i++) {
+        const curr = new Date(start);
+        curr.setDate(curr.getDate() + i);
+        const key = curr.toISOString().split('T')[0];
+        
+        const dayPlans = Array.from(store.plans.values())
+            .filter(p => p.date === key)
+            .sort((a,b) => a.time.localeCompare(b.time));
+        
+        if(dayPlans.length) {
+            hasData = true;
+            const wrap = document.createElement('div');
+            wrap.innerHTML = `<div class="subtle" style="margin:16px 0 8px 4px; font-weight:700;">${curr.toLocaleDateString('en-US',{weekday:'long'})}</div>`;
+            dayPlans.forEach(p => {
+                const el = document.createElement('div');
+                el.className = `cal-entry ${p.status === 'draft' ? 'draft' : 'final'}`;
+                el.onclick = () => openModal({ id: p.id });
+                
+                // Display Name Check
+                const plName = !isNaN(parseFloat(p.playlist)) ? `Playlist #${p.playlist}` : p.playlist;
+
+                el.innerHTML = `
+                    <div>
+                        <div style="font-size:16px; font-weight:700; margin-bottom:4px;">${fmtTime(p.time)} • ${plName}</div>
+                        <div class="subtle">${p.attendees.size} Guests • ${p.status.toUpperCase()}</div>
+                    </div>
+                    <div style="opacity:0.3">›</div>
+                `;
+                wrap.appendChild(el);
+            });
+            con.appendChild(wrap);
+        }
+    }
+    document.getElementById('cal-empty').style.display = hasData ? 'none' : 'block';
+}
+
+function changeWeek(days) {
+    store.weekStart.setDate(store.weekStart.getDate() + days);
+    renderCalendar();
+}
+
+// --- MODAL SYSTEM ---
+function openModal(opts = {}) {
+    const now = new Date();
+    store.editId = opts.id || null;
+    
+    if(opts.id) {
+        const p = store.plans.get(opts.id);
+        document.getElementById('m-date').value = p.date;
+        document.getElementById('m-time').value = p.time;
+        document.getElementById('m-playlist').value = p.playlist;
+        store.modalGuests = new Set(p.attendees);
+        
+        document.getElementById('m-delete').classList.remove('hidden');
+        document.getElementById('modal-title').innerText = "Edit Class";
+        const draftBtn = document.getElementById('m-save');
+        if(p.status === 'final') {
+            draftBtn.disabled = true; draftBtn.innerText = "Finalized";
+        } else {
+            draftBtn.disabled = false; draftBtn.innerText = "Save Draft";
+        }
+    } else {
+        document.getElementById('m-date').value = opts.date || now.toISOString().split('T')[0];
+        document.getElementById('m-time').value = opts.time || '09:00';
+        document.getElementById('m-playlist').value = opts.playlist || '';
+        store.modalGuests = new Set(opts.attendees || []);
+        
+        document.getElementById('m-delete').classList.add('hidden');
+        document.getElementById('modal-title').innerText = "Plan Class";
+        document.getElementById('m-save').disabled = false;
+        document.getElementById('m-save').innerText = "Save Draft";
+    }
+    renderModalChips();
+    renderModalList();
+    document.getElementById('modal-backdrop').classList.add('open');
+    document.body.classList.add('ios-locked');
+}
+
+function closeModal() {
+    document.getElementById('modal-backdrop').classList.remove('open');
+    document.body.classList.remove('ios-locked');
+}
+
+function renderModalChips() {
+    const con = document.getElementById('m-chips');
+    document.getElementById('m-count').innerText = store.modalGuests.size;
+    con.innerHTML = '';
+    store.modalGuests.forEach(g => {
+        const c = document.createElement('div');
+        c.className = 'chip';
+        c.innerHTML = `${g} <span style="opacity:0.6">×</span>`;
+        c.onclick = () => { store.modalGuests.delete(g); renderModalChips(); renderModalList(); };
+        con.appendChild(c);
+    });
+}
+
+function renderModalList(filter='') {
+    const list = document.getElementById('m-list');
+    list.innerHTML = '';
+    const term = filter.toLowerCase();
+    Array.from(store.guests).sort().forEach(g => {
+        if(!store.modalGuests.has(g) && g.toLowerCase().includes(term)) {
+            const d = document.createElement('div');
+            d.className = 'list-item';
+            d.innerText = g;
+            d.onclick = () => { store.modalGuests.add(g); renderModalChips(); renderModalList(filter); };
+            list.appendChild(d);
+        }
+    });
+}
+
+function commitClass(status) {
+    const date = document.getElementById('m-date').value;
+    const time = document.getElementById('m-time').value;
+    const pl = document.getElementById('m-playlist').value;
+    
+    if(!date || !pl) { toast('Date & Playlist required', 'error'); return; }
+    
+    const id = store.editId || Date.now().toString(36) + Math.random().toString(36).substr(2);
+    const obj = {
+        id, date, time, 
+        playlist: pl, // Store as string now
+        attendees: new Set(store.modalGuests),
+        status
+    };
+    
+    store.plans.set(id, obj);
+    saveData();
+    
+    if(status === 'final') {
+        obj.attendees.forEach(g => {
+            store.history.push({date, time, guest:g, playlist:obj.playlist});
+        });
+        syncSheet(obj);
+        saveData();
+        rebuildPlaylistSet(); // New playlist might have been created
+        refreshPlaylistDropdown();
+    } else {
+        toast('Draft Saved', 'success');
+    }
+    closeModal();
+    renderCalendar();
+}
+
+function deleteClass() {
+    if(confirm("Delete this class?")) {
+        store.plans.delete(store.editId);
+        saveData();
+        closeModal();
+        renderCalendar();
+        toast('Deleted', 'success');
     }
 }
-  // --- CSV Import/Export ---
-  function exportToCsv() {
-      if (state.records.length === 0) {
-          showToast('No data to export.', 'info');
-          return;
-      }
-      const headers = ['Date', 'Time', 'Guest', 'Playlist'];
-      const csvRows = [headers.join(',')];
-      state.records.forEach(r => {
-          csvRows.push([r.date, r.time, `"${r.guest}"`, `"${r.playlist}"`].join(','));
-      });
-      const csvString = csvRows.join('\r\n');
-      const blob = new Blob([csvString], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `hilo_playlist_export_${new Date().toISOString().slice(0,10)}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast('CSV export complete.', 'success');
-  }
 
-  function handleCsvImport(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-          const text = e.target.result;
-          const rows = text.split('\n').slice(1); // Skip header
-          let importedCount = 0;
-          rows.forEach(row => {
-              if (!row.trim()) return;
-              
-              // FIX: Better regex to handle quoted CSV fields containing commas
-              const regex = /(?:^|,)(?:"([^"]*)"|([^",]*))/g;
-              const cols = [];
-              let match;
-              while ((match = regex.exec(row)) !== null) {
-                  // match[1] is quoted value, match[2] is unquoted
-                  if(match[1] !== undefined) cols.push(match[1]);
-                  else if(match[2] !== undefined) cols.push(match[2]);
-              }
-              
-              // Simple fallback if regex fails to get 4 columns
-              if (cols.length < 4) {
-                  const fallback = row.split(',');
-                  if (fallback.length >= 4) {
-                    cols.push(...fallback);
-                  }
-              }
-              
-              if (cols.length >= 4) {
-                  const [date, time, guest, playlist] = cols;
-                  if (date && guest && playlist) {
-                      const cleanGuest = guest.trim();
-                      const cleanPlaylist = playlist.trim(); // Keep as string
-                      if(cleanPlaylist) {
-                        state.records.push({ date: date.trim(), time: time.trim(), guest: cleanGuest, playlist: cleanPlaylist });
-                        state.allGuests.add(cleanGuest);
-                        state.playlists.add(cleanPlaylist);
-                        importedCount++;
-                      }
-                  }
-              }
-          });
-          saveStateToLocalStorage();
-          populateGuestList();
-          refreshAll();
-          showToast(`Imported ${importedCount} records.`, 'success');
-      };
-      reader.readAsText(file);
-      $('#fileInput').value = ''; // Reset for next import
-  }
-  // --- Start the App ---
-  document.addEventListener('DOMContentLoaded', initializeApp);
+function renderExplorer() {
+    const scores = calcRecs();
+    const tbody = document.getElementById('expl-body');
+    if(!scores) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Select guests on dashboard</td></tr>'; return; }
+    
+    tbody.innerHTML = scores.map(s => {
+        const name = !isNaN(parseFloat(s.id)) ? `#${s.id}` : s.id;
+        return `<tr>
+            <td style="font-weight:bold; color:var(--accent)">${name}</td>
+            <td>${s.never}</td>
+            <td>${s.median}</td>
+            <td>${s.score.toFixed(1)}</td>
+        </tr>`
+    }).join('');
+}
+
+function renderHistory() {
+    const term = document.getElementById('hist-search').value.toLowerCase();
+    const tbody = document.getElementById('hist-body');
+    const sorted = [...store.history].sort((a,b) => new Date(b.date) - new Date(a.date));
+    
+    tbody.innerHTML = sorted
+        .filter(h => h.guest.toLowerCase().includes(term) || h.date.includes(term))
+        .slice(0, 50)
+        .map(h => {
+            const plName = !isNaN(parseFloat(h.playlist)) ? `#${h.playlist}` : h.playlist;
+            return `<tr>
+                <td>${h.date}<br><span class="subtle">${h.time}</span></td>
+                <td style="color:var(--accent)">${plName}</td>
+                <td>${h.guest}</td>
+            </tr>`
+        }).join('');
+}
+
+// --- CONNECTIVITY ---
+async function checkConnectivity() {
+    const badge = document.getElementById('conn-status');
+    try {
+        await jsonp('test');
+        store.connected = true;
+        badge.className = 'pill pill-ok';
+        badge.innerText = 'Online';
+        // AUTO PULL ON CONNECT
+        await pullSheets(true);
+    } catch(e) {
+        store.connected = false;
+        badge.className = 'pill pill-warn';
+        badge.innerText = 'Offline';
+    }
+}
+
+async function syncSheet(obj) {
+    if(!store.connected) { toast('Saved locally. Offline.', 'warn'); return; }
+    const rows = Array.from(obj.attendees).map(g => [obj.date, obj.time, g, obj.playlist]);
+    try {
+        await jsonp('append', {rows: JSON.stringify(rows)});
+        toast('Synced to Google Sheets', 'success');
+    } catch(e) { toast('Sync Error', 'error'); }
+}
+
+async function pullSheets(isAuto = false) {
+    if(!isAuto) toast('Fetching...', 'normal');
+    try {
+        const res = await jsonp('read');
+        if(res.success && res.data) {
+            let count = 0;
+            const sigs = new Set(store.history.map(r => `${r.date}|${r.time}|${r.guest}`));
+            
+            res.data.forEach(row => {
+                const [d,t,g,p] = row;
+                const cleanDate = d.split('T')[0];
+                if(g && p) {
+                    const sig = `${cleanDate}|${t}|${g}`;
+                    if(!sigs.has(sig)) {
+                        store.history.push({
+                            date:cleanDate, 
+                            time:t||'00:00', 
+                            guest:g, 
+                            playlist: String(p).trim() // Force string, trim whitespace
+                        });
+                        store.guests.add(g);
+                        count++;
+                    }
+                }
+            });
+            saveData();
+            rebuildPlaylistSet();
+            refreshPlaylistDropdown();
+            if(count > 0) toast(`Synced: ${count} new records`, 'success');
+            else if(!isAuto) toast('Up to date', 'success');
+            renderDashboardList();
+        }
+    } catch(e) { if(!isAuto) toast('Fetch failed', 'error'); }
+}
+
+// --- HELPERS ---
+function jsonp(action, params={}) {
+    return new Promise((resolve, reject) => {
+        const cb = 'cb_' + Math.random().toString(36).substr(2, 9);
+        window[cb] = (data) => { delete window[cb]; document.body.removeChild(script); resolve(data); };
+        const url = new URL(CONFIG.scriptUrl);
+        url.searchParams.append('token', CONFIG.token);
+        url.searchParams.append('action', action);
+        url.searchParams.append('callback', cb);
+        Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
+        const script = document.createElement('script');
+        script.src = url.href;
+        script.onerror = () => { delete window[cb]; if(script.parentNode) document.body.removeChild(script); reject(); };
+        document.body.appendChild(script);
+        setTimeout(() => { if(window[cb]) { delete window[cb]; reject(); } }, 8000);
+    });
+}
+
+function toast(msg, type='normal') {
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerText = msg;
+    document.getElementById('toast-area').appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+}
+
+function getMonday(d) {
+    const date = new Date(d);
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(date.setDate(diff));
+}
+
+function fmtTime(str) {
+    if(!str) return '';
+    const [h,m] = str.split(':');
+    const hr = parseInt(h);
+    const ampm = hr >= 12 ? 'PM' : 'AM';
+    const dh = hr % 12 || 12;
+    return `${dh}:${m} ${ampm}`;
+}
+
+function updateClock() {
+    const now = new Date();
+    const hrs = now.getHours();
+    document.getElementById('greeting').innerText = hrs < 12 ? 'Good Morning' : hrs < 18 ? 'Good Afternoon' : 'Good Evening';
+    document.getElementById('currentDateTime').innerText = now.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
+}
+
+function parseCSV() {
+    const f = this.files[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = (e) => {
+        const lines = e.target.result.split('\n').slice(1);
+        let count = 0;
+        lines.forEach(l => {
+            const c = l.split(',');
+            if(c.length >= 4) {
+                const [d,t,g,p] = c;
+                if(g && p) {
+                    store.history.push({
+                        date: d.trim(), time: t.trim(), 
+                        guest: g.replace(/"/g,'').trim(), 
+                        playlist: p.trim() // No parseInt
+                    });
+                    store.guests.add(g.replace(/"/g,'').trim());
+                    count++;
+                }
+            }
+        });
+        saveData();
+        rebuildPlaylistSet();
+        refreshPlaylistDropdown();
+        toast(`CSV: ${count} records added`, 'success');
+        renderDashboardList();
+    };
+    r.readAsText(f);
+}
 </script>
 </body>
 </html>
