@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Hilo Playlist – Instructor Edition</title>
   <meta name="description" content="Professional class planning with playlist optimization and cloud sync" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='22' stroke='%23c9a15d' stroke-width='2' fill='none'/><path d='M14 30C16 20 20 16 24 16C28 16 32 20 34 30' stroke='%23c9a15d' stroke-width='3' stroke-linecap='round'/><path d='M12 36H36' stroke='%23c9a15d' stroke-width='2' stroke-linecap='round'/></svg>" />
@@ -52,6 +55,7 @@
       position: sticky; top: 0; z-index: 20;
       display: flex; align-items: center; justify-content: space-between;
       padding: calc(14px + var(--safe-top)) clamp(14px, 3vw, 28px) 14px;
+      min-height: calc(58px + var(--safe-top));
       background: rgba(20, 34, 28, .85);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,.06);
@@ -1517,6 +1521,7 @@
         gap: 8px;
         padding-top: calc(10px + var(--safe-top));
         padding-bottom: 10px;
+        min-height: calc(52px + var(--safe-top));
       }
       .brand span { font-size: 15px; }
       #auth-container {
