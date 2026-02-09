@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Hilo Playlist – Instructor Edition</title>
   <meta name="description" content="Professional class planning with playlist optimization and cloud sync" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='22' stroke='%23c9a15d' stroke-width='2' fill='none'/><path d='M14 30C16 20 20 16 24 16C28 16 32 20 34 30' stroke='%23c9a15d' stroke-width='3' stroke-linecap='round'/><path d='M12 36H36' stroke='%23c9a15d' stroke-width='2' stroke-linecap='round'/></svg>" />
@@ -28,6 +28,10 @@
       --warning: #f39c12;
       --danger: #e74c3c;
       --info: #3498db;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
     }
     /* Apple-like base */
     html, body {
@@ -38,14 +42,16 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      -webkit-text-size-adjust: 100%;
       min-height: 100vh;
+      min-height: 100dvh;
     }
     * { box-sizing: border-box; }
     a { color: inherit; text-decoration: none; }
     .nav {
       position: sticky; top: 0; z-index: 20;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 14px clamp(14px, 3vw, 28px);
+      padding: calc(14px + var(--safe-top)) clamp(14px, 3vw, 28px) 14px;
       background: rgba(20, 34, 28, .85);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,.06);
@@ -457,14 +463,26 @@
       transition: all .15s ease;
       font-weight: 600;
       font-size: 14px;
+      min-height: 44px;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
     }
     .btn:hover {
       background: linear-gradient(180deg, rgba(201,161,93,.3), rgba(201,161,93,.15));
       box-shadow: 0 8px 22px rgba(201,161,93,.25);
       transform: translateY(-1px);
+    }
+    .btn,
+    .tab-btn,
+    .btn-xs,
+    .status-toggle,
+    .btn-remove-playlist,
+    .search-clear,
+    .modal__close,
+    .manager-tags-cell .add-tag-btn {
+      touch-action: manipulation;
     }
     .btn:active { transform: translateY(1px) scale(.99); }
     .btn:disabled {
@@ -496,14 +514,126 @@
       border-color: var(--info);
     }
     .suggestions { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--gap); }
-    .suggestion-card { 
-      padding: 14px; 
-      cursor: pointer;
-      transition: all .2s ease;
+    .recommender-explain {
+      margin-top: 10px;
+      font-size: 13px;
+      color: rgba(255,255,255,.72);
     }
-    .suggestion-card:hover { 
+    .best-strength-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .rec-strength-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .rec-strength-pill.strong {
+      background: rgba(46, 204, 113, .18);
+      border: 1px solid rgba(46, 204, 113, .45);
+      color: #91efbe;
+    }
+    .rec-strength-pill.moderate {
+      background: rgba(241, 196, 15, .18);
+      border: 1px solid rgba(241, 196, 15, .45);
+      color: #f8da7a;
+    }
+    .rec-strength-pill.close {
+      background: rgba(52, 152, 219, .2);
+      border: 1px solid rgba(52, 152, 219, .45);
+      color: #9fd0f5;
+    }
+    .best-summary-title {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-top: 8px;
+    }
+    .best-summary-meta {
+      margin-top: 6px;
+      color: rgba(255,255,255,.72);
+      font-size: 13px;
+    }
+    .best-insight-list {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+    .best-insight {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: rgba(255,255,255,.9);
+      background: rgba(0,0,0,.14);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+    .best-insight b {
+      color: var(--accent);
+      min-width: 38px;
+      text-align: right;
+      font-size: 14px;
+    }
+    .suggestion-card {
+      padding: 14px;
+      transition: all .2s ease;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+    }
+    .suggestion-card:hover {
       background: rgba(255,255,255,.08);
       transform: translateY(-2px);
+      border-color: rgba(201,161,93,.35);
+    }
+    .runner-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .runner-score-delta {
+      font-size: 12px;
+      color: rgba(255,255,255,.72);
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      white-space: nowrap;
+    }
+    .runner-meta {
+      margin-top: 8px;
+      font-size: 12px;
+      color: rgba(255,255,255,.7);
+    }
+    .runner-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .rec-empty-action {
+      margin-top: 10px;
+    }
+    .rank-row-assigned td {
+      background: rgba(46, 204, 113, .12);
+    }
+    .rank-score {
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .dashboard-rankings-wrap {
+      overflow-x: auto;
     }
     /* Date/Time Selection */
     .datetime-selector {
@@ -648,8 +778,8 @@
       background: rgba(255,255,255,.12);
       border: none;
       border-radius: 50%;
-      width: 22px;
-      height: 22px;
+      width: 30px;
+      height: 30px;
       display: none;
       align-items: center;
       justify-content: center;
@@ -839,8 +969,9 @@
       margin-top: 12px;
     }
     .btn-sm {
-      padding: 6px 10px;
-      font-size: 12px;
+      padding: 8px 12px;
+      font-size: 13px;
+      min-height: 36px;
     }
     /* Guest Grid */
     .guests-grid {
@@ -966,8 +1097,8 @@
       color: rgba(255,255,255,.7);
       cursor: pointer;
       padding: 0;
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1047,6 +1178,15 @@
       color: rgba(255,255,255,.6);
       margin-top: 2px;
     }
+    .modal-rec-strength {
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,.8);
+    }
+    .modal-rec-strength strong {
+      color: var(--accent);
+      margin-right: 4px;
+    }
     .modal-rec-alternatives {
       display: flex;
       flex-wrap: wrap;
@@ -1072,6 +1212,11 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+    }
+    .modal-rec-alt-pill .meta {
+      opacity: .75;
+      font-size: 11px;
+      font-weight: 500;
     }
     .modal-rec-alt-pill:hover {
       background: rgba(201,161,93,.2);
@@ -1246,8 +1391,8 @@
     /* Toast notifications */
     #toast-container {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
+      bottom: calc(24px + var(--safe-bottom));
+      right: calc(24px + var(--safe-right));
       z-index: 9999;
       display: flex;
       flex-direction: column;
@@ -1317,6 +1462,26 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    @media (hover: none) {
+      .tab-btn:hover,
+      .pill:hover,
+      .card:hover,
+      .suggestion-card:hover,
+      .day-card:hover,
+      .class-item:hover,
+      .guest-card:hover,
+      .btn:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
     .hidden { display: none !important; }
     .fade-in { animation: fadeIn .3s ease both; }
     /* Debug Panel */
@@ -1346,44 +1511,85 @@
     }
     /* Responsive - Mobile */
     @media (max-width: 768px) {
-      body { padding-bottom: 80px; }
-      .nav { flex-wrap: wrap; gap: 8px; }
+      body { padding-bottom: calc(88px + var(--safe-bottom)); }
+      .nav {
+        flex-wrap: nowrap;
+        gap: 8px;
+        padding-top: calc(10px + var(--safe-top));
+        padding-bottom: 10px;
+      }
+      .brand span { font-size: 15px; }
+      #auth-container {
+        margin-left: auto;
+      }
+      #auth-container #userDisplay {
+        display: none !important;
+      }
+      #auth-container .btn {
+        min-height: 40px;
+        padding: 8px 12px;
+        font-size: 13px;
+      }
       .nav .tabs {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        z-index: 100;
+        z-index: 200;
         background: rgba(13, 21, 18, .97);
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(14px);
         border-top: 1px solid rgba(255,255,255,.08);
-        padding: 6px 8px env(safe-area-inset-bottom, 6px);
-        display: flex;
-        justify-content: space-around;
-        gap: 2px;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
+        padding: 8px calc(8px + var(--safe-right)) calc(8px + var(--safe-bottom)) calc(8px + var(--safe-left));
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 4px;
       }
-      .nav .tabs::-webkit-scrollbar { display: none; }
       .nav .tabs .tab-btn {
         flex-direction: column;
-        gap: 2px;
-        padding: 6px 8px;
-        border-radius: 10px;
-        font-size: 9px;
-        min-width: 56px;
-        min-height: 52px;
-        border: none;
+        justify-content: center;
+        gap: 4px;
+        padding: 6px 4px;
+        border-radius: 12px;
+        font-size: 11px;
+        min-width: 0;
+        min-height: 56px;
+        border: 1px solid transparent;
         background: transparent;
       }
-      .nav .tabs .tab-btn .tab-icon { font-size: 16px; }
-      .nav .tabs .tab-btn .tab-label { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 56px; }
+      .nav .tabs .tab-btn .tab-icon { font-size: 18px; }
+      .nav .tabs .tab-btn .tab-label {
+        display: block;
+        max-width: none;
+        font-size: 11px;
+        line-height: 1.05;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       .nav .tabs .tab-btn[aria-selected="true"] {
-        background: rgba(201,161,93,.18);
-        border: none;
-        box-shadow: none;
+        background: rgba(201,161,93,.25);
+        border-color: rgba(201,161,93,.5);
+        box-shadow: inset 0 0 0 1px rgba(201,161,93,.32);
+      }
+      .search-container { max-width: 100%; width: 100%; }
+      .btn-sm, .search-clear, .modal__close, .status-toggle, .manager-tags-cell .add-tag-btn, .btn-remove-playlist { min-height: 44px; }
+      .search-clear, .modal__close {
+        width: 44px;
+        height: 44px;
+      }
+      .search-container input {
+        padding-right: 52px;
+      }
+      .search-container input,
+      .search,
+      .select,
+      .form-group input,
+      .form-group select,
+      .form-group textarea,
+      .add-playlist-form .input-field,
+      .datetime-selector input,
+      .tag-input-wrapper input {
+        font-size: 16px;
       }
       .calendar-grid {
         grid-template-columns: 1fr;
@@ -1391,6 +1597,10 @@
       .metric-row {
         grid-template-columns: repeat(3, 1fr);
       }
+      .best-summary-title { font-size: 20px; }
+      .best-insight { font-size: 12px; }
+      .best-insight b { min-width: 32px; }
+      .runner-actions .btn { width: 100%; justify-content: center; }
       .form-row {
         grid-template-columns: 1fr;
       }
@@ -1398,8 +1608,120 @@
         flex-direction: column;
         align-items: stretch;
       }
+      .modal {
+        padding: 0;
+        align-items: flex-end;
+      }
+      .modal__content {
+        width: 100%;
+        max-width: none;
+        max-height: calc(100dvh - var(--safe-top));
+        border-radius: 20px 20px 0 0;
+      }
+      .modal__header {
+        padding: 16px 16px 12px;
+      }
+      .modal__header h3 {
+        font-size: 18px;
+      }
+      .modal__body {
+        padding: 16px;
+      }
+      .modal__footer {
+        position: sticky;
+        bottom: 0;
+        background: rgba(28, 45, 38, .98);
+        padding: 12px 16px calc(12px + var(--safe-bottom));
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .modal__footer .btn,
+      .modal__footer .tooltip-wrapper,
+      .modal__footer .tooltip-wrapper .btn {
+        width: 100%;
+      }
+      .modal__footer .tooltip-wrapper { order: 1; }
+      #save-draft-modal { order: 2; }
+      #cancel-modal { order: 3; }
+      #delete-class-modal {
+        order: 4;
+        margin-right: 0 !important;
+      }
+      .modal__footer .tooltip-text {
+        display: none;
+      }
+      #history .table-container,
+      #explorer .table-container {
+        background: transparent;
+        border: none;
+        overflow: visible;
+      }
+      #history-table,
+      #playlist-manager-table {
+        display: block;
+        width: 100%;
+      }
+      #history-table thead,
+      #playlist-manager-table thead {
+        display: none;
+      }
+      #history-table tbody,
+      #playlist-manager-table tbody {
+        display: grid;
+        gap: 10px;
+      }
+      #history-table tr,
+      #playlist-manager-table tr {
+        display: block;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      #history-table td,
+      #playlist-manager-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+      }
+      #history-table td::before,
+      #playlist-manager-table td::before {
+        content: attr(data-label);
+        flex: 0 0 38%;
+        color: rgba(255,255,255,.62);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        line-height: 1.3;
+      }
+      #history-table td:last-child,
+      #playlist-manager-table td:last-child {
+        border-bottom: none;
+      }
+      #history-table td > :last-child,
+      #playlist-manager-table td > :last-child {
+        text-align: right;
+      }
+      #history-table td[colspan],
+      #playlist-manager-table td[colspan],
+      #playlist-manager-table .tag-editor-row td {
+        display: block;
+      }
+      #history-table td[colspan]::before,
+      #playlist-manager-table td[colspan]::before,
+      #playlist-manager-table .tag-editor-row td::before {
+        content: none;
+      }
+      #history-table .guest-names-short,
+      #history-table .guest-names-full {
+        text-align: right;
+      }
       #toast-container {
-        bottom: 80px;
+        bottom: calc(96px + var(--safe-bottom));
         right: 12px;
         left: 12px;
       }
@@ -1442,98 +1764,77 @@
           <span>Not signed in</span>
         </div>
         
-        <div class="step-label"><span class="step-num">1</span> Set Date, Time &amp; Guests</div>
-
-        <div class="datetime-selector">
-          <div style="flex: 1;">
-            <label for="class-date-dashboard">Class Date</label>
-            <input type="date" id="class-date-dashboard">
-          </div>
-          <div style="flex: 1;">
-            <label for="class-time-dashboard">Class Time</label>
-            <input type="time" id="class-time-dashboard" value="09:00">
-          </div>
-          <button id="todayBtn" class="btn btn-info btn-sm">Set to Now</button>
-        </div>
-
-        <div style="margin-top:12px;">
-          <div class="guest-selector">
-            <div class="guest-selector-header">
-              <div class="search-container" style="max-width:100%; flex:1;">
-                <input type="text" id="guest-search" placeholder="Search guests...">
-                <button type="button" class="search-clear" id="guest-search-clear" aria-label="Clear search">✕</button>
-              </div>
-              <div class="search-result-count" id="guest-search-count"></div>
-              <div class="guest-selector-actions">
-                <button id="selectAllGuestsBtn" class="btn-xs" title="Select all guests">Select All</button>
-                <button id="clearAllGuestsBtn" class="btn-xs" title="Clear selection">Clear All</button>
-              </div>
-            </div>
-
-            <div class="selected-guests-container">
-              <div class="selected-guests" id="rosterChips">
-                <div class="no-selection" id="no-selection-message">No guests selected -- tap names below to add</div>
-              </div>
-            </div>
-
-            <div class="guest-list-container">
-              <div class="guest-list" id="guest-list"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="step-label" style="margin-top:16px;"><span class="step-num">2</span> Filters &amp; Actions</div>
-
+        <div class="step-label"><span class="step-num">1</span> Select Planned Class</div>
         <div class="row" style="margin-top:0;">
           <div class="search-wrap" style="flex:1;">
-            <select id="classTypeSelector" class="select" title="Class type">
-              <option value="">All Types</option>
+            <select id="plannedClassSelector" class="select" title="Planned class">
+              <option value="">Select a planned class...</option>
             </select>
-            <select id="playlistWindow" class="select" title="Stale window">
-              <option value="45" selected>Stale ≥ 45 days</option>
-              <option value="30">Stale ≥ 30 days</option>
-              <option value="60">Stale ≥ 60 days</option>
-              <option value="90">Stale ≥ 90 days</option>
+            <select id="playlistWindow" class="select" title="Replay-ready window">
+              <option value="45" selected>Replay-ready ≥ 45 days</option>
+              <option value="30">Replay-ready ≥ 30 days</option>
+              <option value="60">Replay-ready ≥ 60 days</option>
+              <option value="90">Replay-ready ≥ 90 days</option>
             </select>
           </div>
         </div>
         <div class="row" style="margin-top:10px;">
-          <span class="pill" id="rosterCountPill">0 attendees</span>
+          <span class="pill" id="selectedClassPill">No planned class selected</span>
+          <span class="pill" id="selectedClassTypePill">Class type: --</span>
+          <span class="pill" id="selectedPlaylistPill">Assigned playlist: --</span>
           <span class="pill" id="recordsCountPill">0 records</span>
         </div>
       </div>
-      <div class="step-label" style="margin-top:18px;"><span class="step-num">3</span> Recommendation</div>
+      <div class="step-label" style="margin-top:18px;"><span class="step-num">2</span> Recommendation</div>
       <div class="cards">
         <div class="card primary-card" id="bestCard">
           <div class="body">
             <div class="title">Best Fit Playlist</div>
-            <div class="muted">Maximizes freshness for the current roster</div>
+            <div class="muted">Based on the selected class roster, date, and class type</div>
             <div id="bestSummary" style="margin-top:10px;"></div>
+            <div id="bestStrength" class="best-strength-row"></div>
+            <div class="recommender-explain">Ranked by never-heard coverage, replay-ready coverage, and median days since last played.</div>
             <div class="metric-row">
               <div class="metric">
                 <div class="value" id="bestNever">--</div>
-                <div class="label">Never-heard <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">% of attendees who have never heard this playlist — higher means fresher</span></span></div>
+                <div class="label">Never-heard <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">% of attendees who have never heard this playlist — higher means better novelty</span></span></div>
               </div>
               <div class="metric">
                 <div class="value" id="bestMedian">--</div>
-                <div class="label">Median days <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">Typical days since attendees last heard this — higher means fresher</span></span></div>
+                <div class="label">Median days <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">Typical days since attendees last heard this playlist — higher means less recent repetition</span></span></div>
               </div>
               <div class="metric">
-                <div class="value" id="bestStale">--</div>
-                <div class="label">Stale % <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">% of attendees who heard this within the staleness window — lower is fresher</span></span></div>
+                <div class="value" id="bestReady">--</div>
+                <div class="label">Replay-ready <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">% of attendees who last heard this at or before the replay-ready window</span></span></div>
               </div>
             </div>
             <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="btn btn-primary" id="planThisClassBtn">&#128197; Plan This Class</button>
+              <button class="btn btn-primary" id="assignBestPlaylistBtn">Assign Best Playlist</button>
               <button class="btn" id="previewRosterBtn">View Details</button>
             </div>
           </div>
         </div>
         <div class="card">
           <div class="body">
-            <div class="title">Runner-ups</div>
-            <div class="muted">Alternatives ranked by freshness</div>
-            <div class="suggestions" id="runnerUps"></div>
+            <div class="title">All Ranked Playlists</div>
+            <div class="muted">Most recommended to least recommended for the selected class</div>
+          </div>
+          <div class="table-container dashboard-rankings-wrap" style="margin: 0 16px 16px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width:64px;">Rank</th>
+                  <th>Playlist</th>
+                  <th>Never-heard</th>
+                  <th>Replay-ready</th>
+                  <th>Median days</th>
+                  <th>Recently heard</th>
+                  <th>Score</th>
+                  <th style="width:130px;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="runnerUps"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -1606,6 +1907,7 @@
             <thead>
               <tr>
                 <th class="sortable" data-sort="datetime">Date & Time</th>
+                <th class="sortable" data-sort="classType">Class Type</th>
                 <th class="sortable" data-sort="playlist">Playlist</th>
                 <th class="sortable" data-sort="count">Attendees</th>
                 <th>Guest Names</th>
@@ -1688,22 +1990,11 @@
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group" style="flex:2;">
-              <label for="modal-class-type">Class Type</label>
-              <select id="modal-class-type">
-                <option value="">All Types</option>
-              </select>
-            </div>
-            <div class="form-group" style="flex:1;">
-              <label for="modal-stale-window">Stale Window</label>
-              <select id="modal-stale-window" class="select">
-                <option value="45" selected>45 days</option>
-                <option value="30">30 days</option>
-                <option value="60">60 days</option>
-                <option value="90">90 days</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label for="modal-class-type">Class Type</label>
+            <select id="modal-class-type">
+              <option value="">All Types</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -1732,19 +2023,11 @@
             </div>
           </div>
 
-          <div id="modal-recommendation" class="modal-recommendation" style="display:none;">
-            <div class="modal-rec-header">
-              <span class="modal-rec-title">Recommended Playlist</span>
-            </div>
-            <div id="modal-rec-best" class="modal-rec-best"></div>
-            <div id="modal-rec-alternatives" class="modal-rec-alternatives"></div>
-          </div>
-
           <div class="form-group">
-            <label for="modal-class-playlist">Playlist</label>
-            <select id="modal-class-playlist">
-              <option value="">Select playlist...</option>
-            </select>
+            <label>Playlist</label>
+            <div id="modal-class-playlist-display" class="pill status-info" style="display:flex; width:100%; justify-content:flex-start;">No playlist assigned yet</div>
+            <input id="modal-class-playlist" type="hidden" value="">
+            <div class="subtle" style="font-size:12px; margin-top:8px;">Assign playlist from the Recommender tab.</div>
           </div>
 
           <div class="form-group">
@@ -1823,7 +2106,6 @@
   // --- App State ---
   const DEFAULT_PLAYLISTS = Array.from({ length: 12 }, (_, i) => String(i + 1));
   const state = {
-    attendees: new Set(),
     modalAttendees: new Set(),
     playlists: [...DEFAULT_PLAYLISTS],
     records: [], // Historical records with date, time, guest, playlist
@@ -1848,14 +2130,11 @@
     currentWeekStart: null,
     selectedClass: null, // Holds the class being edited in the modal
 
-    // Current selection for dashboard
-    selectedDate: null,
-    selectedTime: null,
-    selectedClassType: ''
+    // Current selection for recommender
+    selectedRecommendationClassKey: ''
   };
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-  const PREDEFINED_CLASS_TYPES = ['Yoga', 'Pilates', 'Spin', 'HIIT', 'Strength', 'Stretch', 'Dance', 'Barre'];
   function normalizePlaylistId(value) {
     if (value === null || value === undefined) return '';
     let raw = typeof value === 'number'
@@ -1886,6 +2165,7 @@
     const lower = raw.toLowerCase();
     if (lower === 'active') return 'Active';
     if (lower === 'retired') return 'Retired';
+    if (lower === 'removed') return 'Removed';
     return raw;
   }
   function ensurePlaylistInState(playlistId) {
@@ -1898,23 +2178,36 @@
   }
   function rebuildPlaylistsFromData() {
     const found = new Set();
+    const removed = new Set();
+    state.playlistStatus.forEach((status, playlistId) => {
+      const normalized = normalizePlaylistId(playlistId);
+      if (!normalized) return;
+      if (normalizePlaylistStatus(status) === 'Removed') {
+        removed.add(normalized);
+      }
+    });
+    const addIfVisible = (playlistId) => {
+      const normalized = normalizePlaylistId(playlistId);
+      if (!normalized || removed.has(normalized)) return;
+      found.add(normalized);
+    };
     state.records.forEach(r => {
-      const playlistId = normalizePlaylistId(r.playlist);
-      if (playlistId) found.add(playlistId);
+      addIfVisible(r.playlist);
     });
     state.weeklyPlan.forEach(cls => {
-      const playlistId = normalizePlaylistId(cls.playlist);
-      if (playlistId) found.add(playlistId);
+      addIfVisible(cls.playlist);
     });
     state.playlistTags.forEach((_, playlistId) => {
-      const normalized = normalizePlaylistId(playlistId);
-      if (normalized) found.add(normalized);
+      addIfVisible(playlistId);
     });
-    state.playlistStatus.forEach((_, playlistId) => {
+    state.playlistStatus.forEach((status, playlistId) => {
       const normalized = normalizePlaylistId(playlistId);
-      if (normalized) found.add(normalized);
+      if (!normalized) return;
+      if (normalizePlaylistStatus(status) === 'Removed') return;
+      found.add(normalized);
     });
-    state.playlists = (found.size > 0 ? Array.from(found) : [...DEFAULT_PLAYLISTS]).sort(comparePlaylistIds);
+    const fallbackPlaylists = [...DEFAULT_PLAYLISTS].filter(playlistId => !removed.has(playlistId));
+    state.playlists = (found.size > 0 ? Array.from(found) : fallbackPlaylists).sort(comparePlaylistIds);
   }
   // HTML escape for safe innerHTML interpolation
   function esc(str) {
@@ -1929,14 +2222,8 @@
     const cls = opts.compact ? 'class-type-tag compact' : 'class-type-tag';
     return '<span class="playlist-tags-inline">' + tags.map(t => `<span class="${cls}">${esc(t)}</span>`).join('') + '</span>';
   }
-  function getAllUsedTags() {
-    const used = new Set();
-    state.playlistTags.forEach(tags => tags.forEach(t => used.add(t)));
-    return Array.from(used).sort();
-  }
   function getAllClassTypes() {
     const types = new Set();
-    PREDEFINED_CLASS_TYPES.forEach(t => types.add(t));
     state.playlistTags.forEach(tags => tags.forEach(t => types.add(t)));
     state.records.forEach(r => { if (r.classType) types.add(r.classType); });
     state.weeklyPlan.forEach(cls => { if (cls.classType) types.add(cls.classType); });
@@ -1967,8 +2254,23 @@
     if (meridiem === 'AM' && hours === 12) hours = 0;
     return `${String(Math.max(0, Math.min(23, hours))).padStart(2, '0')}:${String(Math.max(0, Math.min(59, minutes))).padStart(2, '0')}`;
   }
+  function normalizeClassNumber(value) {
+    return (value || '').toString().trim().replace(/\s+/g, ' ');
+  }
+  function parseImportedPlaylist(rawValue) {
+    const raw = (rawValue || '').toString().trim();
+    if (!raw) return { playlistId: '', inferredStatus: '' };
+    const direct = normalizePlaylistId(raw);
+    const inferredStatus = /\bretired\b/i.test(raw) ? 'Retired' : '';
+    if (direct) return { playlistId: direct, inferredStatus };
+    const match = raw.match(/\d+(\.\d+)?/);
+    if (!match) return { playlistId: '', inferredStatus };
+    return { playlistId: normalizePlaylistId(match[0]), inferredStatus };
+  }
   function buildRecordKey(record) {
-    return `${record.date}|${normalizeTime(record.time)}|${(record.guest || '').trim()}|${record.playlist}`;
+    const classNumber = normalizeClassNumber(record.classNumber);
+    const base = `${record.date}|${normalizeTime(record.time)}|${(record.guest || '').trim()}|${record.playlist}`;
+    return classNumber ? `${base}|${classNumber}` : base;
   }
   function normalizeRecord(record) {
     if (!record) return null;
@@ -2000,7 +2302,8 @@
       time: normalizeTime(record.time),
       guest,
       playlist,
-      classType: (record.classType || '').toString().trim()
+      classType: (record.classType || '').toString().trim(),
+      classNumber: normalizeClassNumber(record.classNumber || record.classNum)
     };
   }
   // Deduplicate records before pushing
@@ -2066,8 +2369,6 @@
           (cls.attendees instanceof Set ? cls.attendees : []).forEach(g => state.allGuests.add(g));
         });
         rebuildPlaylistsFromData();
-        populateModalPlaylistOptions();
-        populateGuestList();
         updateRecordsPill();
         refreshAll();
         refreshHistory();
@@ -2081,6 +2382,7 @@
     state.unsubClasses = db.collection('users').doc(uid).collection('classes')
       .onSnapshot(snapshot => {
         state.weeklyPlan = new Map();
+        state.allGuests = new Set(state.records.map(r => r.guest).filter(Boolean));
         snapshot.forEach(doc => {
           const cls = doc.data();
           cls.id = doc.id;
@@ -2092,9 +2394,9 @@
           cls.attendees.forEach(g => state.allGuests.add(g));
         });
         rebuildPlaylistsFromData();
-        populateModalPlaylistOptions();
         renderWeeklyCalendar();
-        updateDashboardStatus();
+        refreshAll();
+        refreshGuests();
         saveStateToLocalStorage();
       }, error => {
         console.error('Classes listener error:', error);
@@ -2116,7 +2418,6 @@
           if (status) state.playlistStatus.set(playlistId, status);
         });
         rebuildPlaylistsFromData();
-        populateModalPlaylistOptions();
         refreshAll();
         saveStateToLocalStorage();
       }, error => {
@@ -2154,7 +2455,6 @@
         if (infoEl) infoEl.textContent = 'Not signed in';
         state.firestoreConnected = false;
         rebuildPlaylistsFromData();
-        populateModalPlaylistOptions();
         updateConnectionStatus();
       }
     });
@@ -2318,7 +2618,6 @@
     state.playlistStatus.set(playlistId, 'Active');
     saveStateToLocalStorage();
     refreshAll();
-    populateModalPlaylistOptions();
     if (state.firebaseUser) {
       try {
         await upsertPlaylistMetadata(playlistId, { status: 'Active', classTypes: [] });
@@ -2343,16 +2642,14 @@
     }
     state.playlists = state.playlists.filter(p => p !== playlistId);
     state.playlistTags.delete(playlistId);
-    state.playlistStatus.delete(playlistId);
+    state.playlistStatus.set(playlistId, 'Removed');
     if (state.expandedPlaylist === playlistId) state.expandedPlaylist = null;
     rebuildPlaylistsFromData();
     saveStateToLocalStorage();
     refreshAll();
-    populateModalPlaylistOptions();
     if (state.firebaseUser) {
       try {
-        await db.collection('users').doc(state.firebaseUser.uid)
-          .collection('playlists').doc(playlistId).delete();
+        await upsertPlaylistMetadata(playlistId, { status: 'Removed', classTypes: [] });
       } catch (err) {
         showToast('Playlist delete failed: ' + err.message, 'error');
       }
@@ -2438,9 +2735,21 @@
     if (typeof d === 'number' || (typeof d === 'string' && /^\d+(\.\d+)?$/.test(d.trim()))) {
       const serial = Number(d);
       if (Number.isFinite(serial) && serial > 59) {
-        const ms = Math.round((serial - 25569) * 86400 * 1000);
-        const excelDate = new Date(ms);
-        if (!Number.isNaN(excelDate.getTime())) return excelDate;
+        const wholeDays = Math.trunc(serial);
+        const dayFraction = serial - wholeDays;
+        const utcMs = Date.UTC(1899, 11, 30) + (wholeDays * 86400 * 1000) + Math.round(dayFraction * 86400 * 1000);
+        const excelDate = new Date(utcMs);
+        if (!Number.isNaN(excelDate.getTime())) {
+          return new Date(
+            excelDate.getUTCFullYear(),
+            excelDate.getUTCMonth(),
+            excelDate.getUTCDate(),
+            excelDate.getUTCHours(),
+            excelDate.getUTCMinutes(),
+            excelDate.getUTCSeconds(),
+            excelDate.getUTCMilliseconds()
+          );
+        }
       }
     }
     const parsed = (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d))
@@ -2513,36 +2822,16 @@
     const d = String(date.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
   };
-  const setsEqual = (a, b) => {
-    const aSet = a instanceof Set ? a : new Set(a || []);
-    const bSet = b instanceof Set ? b : new Set(b || []);
-    if (aSet.size !== bSet.size) return false;
-    for (const value of aSet) {
-      if (!bSet.has(value)) return false;
-    }
-    return true;
-  };
-  
   // --- Initialize App ---
   async function initializeApp() {
     debugLog('Initializing app...');
     loadStateFromLocalStorage();
 
     const today = new Date();
-    const currentTime = `${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}`;
-
-    $("#class-date-dashboard").value = formatDateKey(today);
-    $("#class-date-dashboard").min = formatDateKey(today);
-    $("#class-time-dashboard").value = currentTime;
-
-    state.selectedDate = formatDateKey(today);
-    state.selectedTime = currentTime;
     state.currentWeekStart = getWeekStart(today);
 
     // Wire up UI immediately so the app is interactive while Firebase loads
     addEventListeners();
-    populateGuestList();
-    renderSelectedGuests();
     updateConnectionStatus();
     updateDashboardStatus();
     updateRecordsPill();
@@ -2643,95 +2932,119 @@
       classType: classType || ''
     };
   }
-  async function saveDraftClass() {
-    if (state.attendees.size === 0) {
-      showToast('Please select at least one attendee', 'error');
+  function getRecommenderClassEntries() {
+    return Array.from(state.weeklyPlan.entries())
+      .map(([key, cls]) => ({ key, cls }))
+      .sort((a, b) => a.key.localeCompare(b.key));
+  }
+  function getSelectedRecommenderClassEntry() {
+    const entries = getRecommenderClassEntries();
+    if (entries.length === 0) {
+      state.selectedRecommendationClassKey = '';
+      return null;
+    }
+    const selected = entries.find(entry => entry.key === state.selectedRecommendationClassKey);
+    if (selected) return selected;
+    const now = new Date();
+    const nowKey = createDateTimeKey(
+      formatDateKey(now),
+      normalizeTime(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`)
+    );
+    const nextDraft = entries.find(entry => entry.cls.status !== 'finalized' && entry.key >= nowKey)
+      || entries.find(entry => entry.cls.status !== 'finalized')
+      || entries[0];
+    state.selectedRecommendationClassKey = nextDraft.key;
+    return nextDraft;
+  }
+  function formatRecommenderClassOption(entry) {
+    const cls = entry.cls || {};
+    const attendeeCount = cls.attendees instanceof Set ? cls.attendees.size : (cls.attendees || []).length;
+    const classType = (cls.classType || '').trim() || 'All Types';
+    const status = cls.status === 'finalized' ? 'finalized' : 'draft';
+    return `${formatDate(cls.date)} ${formatTime(cls.time)} • ${classType} • ${attendeeCount} guest${attendeeCount !== 1 ? 's' : ''} • ${status}`;
+  }
+  function populatePlannedClassSelector(selectedEntry = getSelectedRecommenderClassEntry()) {
+    const select = $('#plannedClassSelector');
+    if (!select) return;
+    const entries = getRecommenderClassEntries();
+    select.innerHTML = '<option value="">Select a planned class...</option>';
+    entries.forEach(entry => {
+      const opt = document.createElement('option');
+      opt.value = entry.key;
+      opt.textContent = formatRecommenderClassOption(entry);
+      select.appendChild(opt);
+    });
+    if (selectedEntry && select.querySelector(`option[value="${selectedEntry.key}"]`)) {
+      select.value = selectedEntry.key;
+    }
+  }
+  function getMetricsForSelectedClass(selectedEntry = getSelectedRecommenderClassEntry()) {
+    if (!selectedEntry) return [];
+    const cls = selectedEntry.cls || {};
+    const attendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+    if (attendees.size === 0) return [];
+    return computeMetrics({
+      attendees,
+      classType: (cls.classType || '').trim(),
+      window: state.selectedWindow,
+      date: cls.date || formatDateKey(new Date())
+    });
+  }
+  async function assignPlaylistToSelectedClass(playlistId) {
+    const selectedEntry = getSelectedRecommenderClassEntry();
+    if (!selectedEntry) {
+      showToast('Select a planned class first.', 'error');
       return;
     }
-    const metrics = computeMetrics();
-    const bestPlaylist = metrics[0]?.playlist;
-
-    if (!bestPlaylist) {
-      showToast('No playlist recommendation available', 'error');
+    const normalizedPlaylist = normalizePlaylistId(playlistId);
+    if (!normalizedPlaylist) {
+      showToast('Playlist format is invalid.', 'error');
       return;
     }
-    const dateTimeKey = createDateTimeKey(state.selectedDate, state.selectedTime);
-    const classData = {
-      date: state.selectedDate,
-      time: state.selectedTime,
-      playlist: bestPlaylist,
-      attendees: new Set(state.attendees),
-      status: 'draft',
-      notes: '',
-      classType: state.selectedClassType || ''
+    const { key, cls } = selectedEntry;
+    if (cls.status === 'finalized') {
+      showToast('Class is finalized. Re-open and finalize again to change playlist.', 'info');
+      return;
+    }
+    const updatedClass = {
+      ...cls,
+      playlist: normalizedPlaylist,
+      attendees: cls.attendees instanceof Set ? new Set(cls.attendees) : new Set(cls.attendees || [])
     };
-
     if (state.firebaseUser) {
-      await saveClassToFirestore(dateTimeKey, classData);
-      // onSnapshot listener will update local state
+      const saved = await saveClassToFirestore(key, updatedClass);
+      if (!saved) return;
+      state.weeklyPlan.set(key, updatedClass);
     } else {
-      state.weeklyPlan.set(dateTimeKey, classData);
-      updateDashboardStatus();
+      state.weeklyPlan.set(key, updatedClass);
       saveStateToLocalStorage();
     }
-    showToast('Draft saved!', 'success');
+    renderWeeklyCalendar();
+    if (state.selectedClass && createDateTimeKey(state.selectedClass.date, state.selectedClass.time) === key) {
+      state.selectedClass = updatedClass;
+      const modalPlaylistInput = $('#modal-class-playlist');
+      if (modalPlaylistInput) modalPlaylistInput.value = normalizedPlaylist;
+      updateModalPlaylistDisplay(normalizedPlaylist);
+    }
+    showToast(`Playlist #${normalizedPlaylist} assigned`, 'success');
+    refreshAll();
   }
-  async function finalizeClass() {
-    const dateTimeKey = createDateTimeKey(state.selectedDate, state.selectedTime);
-    const draftClass = state.weeklyPlan.get(dateTimeKey);
-
-    if (!draftClass || state.attendees.size === 0) {
-      showToast('No valid draft found. Please select attendees and save a draft first.', 'error');
+  function updateDashboardStatus(selectedEntry = getSelectedRecommenderClassEntry()) {
+    const selectedClassPill = $("#selectedClassPill");
+    const selectedClassTypePill = $("#selectedClassTypePill");
+    const selectedPlaylistPill = $("#selectedPlaylistPill");
+    if (!selectedClassPill || !selectedClassTypePill || !selectedPlaylistPill) return;
+    if (!selectedEntry) {
+      selectedClassPill.textContent = 'No planned class selected';
+      selectedClassTypePill.textContent = 'Class type: --';
+      selectedPlaylistPill.textContent = 'Assigned playlist: --';
       return;
     }
-    if (!setsEqual(draftClass.attendees, state.attendees)) {
-      showToast('Attendee list changed since draft save. Save draft again before finalizing.', 'error');
-      return;
-    }
-    if (draftClass.status === 'finalized') {
-      showToast('This class has already been finalized.', 'info');
-      return;
-    }
-    // finalizeClass is deprecated — use handleModalFinalize instead
-
-    try {
-      if (state.firebaseUser) {
-        const uid = state.firebaseUser.uid;
-        const batch = db.batch();
-        // Update class status
-        const classDocId = safeDocId(dateTimeKey);
-        const classRef = db.collection('users').doc(uid).collection('classes').doc(classDocId);
-        batch.set(classRef, {
-          date: draftClass.date,
-          time: draftClass.time,
-          playlist: draftClass.playlist,
-          attendees: Array.from(draftClass.attendees),
-          status: 'finalized',
-          notes: draftClass.notes || '',
-          classType: draftClass.classType || '',
-          dateTimeKey
-        });
-        // Write attendance records
-        const recordsRef = db.collection('users').doc(uid).collection('records');
-        for (const guest of draftClass.attendees) {
-          const recordKey = buildRecordKey({ date: draftClass.date, time: normalizeTime(draftClass.time), guest, playlist: draftClass.playlist });
-          batch.set(recordsRef.doc(safeDocId(recordKey)), {
-            date: draftClass.date, time: normalizeTime(draftClass.time), guest, playlist: draftClass.playlist, classType: draftClass.classType || '', recordKey
-          });
-        }
-        await batch.commit();
-        showToast('Class finalized!', 'success');
-      } else {
-        showToast('Please sign in to finalize.', 'error');
-      }
-    } catch (error) {
-      showToast('Finalize failed: ' + error.message, 'error');
-    } finally {
-      // finalizeBtn removed — use modal finalize instead
-    }
-  }
-  function updateDashboardStatus() {
-    $("#rosterCountPill").textContent = `${state.attendees.size} attendee${state.attendees.size !== 1 ? 's' : ''}`;
+    const cls = selectedEntry.cls || {};
+    const attendeeCount = cls.attendees instanceof Set ? cls.attendees.size : (cls.attendees || []).length;
+    selectedClassPill.textContent = `${formatDate(cls.date)} ${formatTime(cls.time)} • ${attendeeCount} guest${attendeeCount !== 1 ? 's' : ''} • ${cls.status || 'draft'}`;
+    selectedClassTypePill.textContent = `Class type: ${(cls.classType || '').trim() || 'All Types'}`;
+    selectedPlaylistPill.textContent = cls.playlist ? `Assigned playlist: #${cls.playlist}` : 'Assigned playlist: --';
   }
   function updateRecordsPill() {
     $("#recordsCountPill").textContent = `${state.records.length} records`;
@@ -2762,9 +3075,9 @@
           <div class="class-item" onclick="openClassModal('${cls.dateTimeKey}')">
             <div class="class-time">${formatTime(cls.time)}</div>
             <div class="class-info">
-              ${cls.classType ? esc(cls.classType) + ' • ' : ''}Playlist #${cls.playlist} • ${cls.attendees.size} guests
+              ${cls.classType ? esc(cls.classType) + ' • ' : ''}${cls.playlist ? `Playlist #${esc(cls.playlist)}` : 'No playlist assigned'} • ${cls.attendees.size} guests
             </div>
-            ${renderPlaylistTags(cls.playlist, { compact: true })}
+            ${cls.playlist ? renderPlaylistTags(cls.playlist, { compact: true }) : ''}
             <div class="pill ${cls.status === 'draft' ? 'status-draft' : 'status-finalized'} " style="margin-top: 4px; font-size: 11px; padding: 4px 8px;">
               ${cls.status}
             </div>
@@ -2829,14 +3142,12 @@
     $("#modal-class-date").value = dateKey;
     $("#modal-class-time").value = '09:00';
     populateClassTypeDropdown($("#modal-class-type"), '');
-    $("#modal-stale-window").value = String(state.selectedWindow);
     $("#modal-class-playlist").value = '';
+    updateModalPlaylistDisplay('');
     $("#modal-class-notes").value = '';
 
-    populateModalPlaylistOptions('');
     populateModalGuestList();
     renderModalSelectedGuests();
-    refreshModalRecommendation();
 
     $("#delete-class-modal").classList.add('hidden');
     $("#class-modal").classList.remove('hidden');
@@ -2852,132 +3163,22 @@
     $("#modal-class-date").value = classData.date;
     $("#modal-class-time").value = classData.time;
     populateClassTypeDropdown($("#modal-class-type"), classData.classType || '');
-    $("#modal-stale-window").value = String(state.selectedWindow);
     $("#modal-class-notes").value = classData.notes || '';
-
-    const classType = classData.classType || '';
-    populateModalPlaylistOptions(classType);
     $("#modal-class-playlist").value = classData.playlist || '';
+    updateModalPlaylistDisplay(classData.playlist || '');
     populateModalGuestList();
     renderModalSelectedGuests();
-    refreshModalRecommendation();
 
     $("#delete-class-modal").classList.remove('hidden');
     $("#class-modal").classList.remove('hidden');
   };
-  function populateModalPlaylistOptions(classTypeFilter) {
-    const select = $("#modal-class-playlist");
-    const currentVal = select.value;
-    select.innerHTML = '<option value="">Select playlist...</option>';
-    const filter = classTypeFilter || '';
-    state.playlists.forEach(pl => {
-      const tags = state.playlistTags.get(pl) || [];
-      const status = state.playlistStatus.get(pl) || 'Active';
-      if (filter && !tags.includes(filter)) return;
-      if (status === 'Retired') return;
-      const option = document.createElement('option');
-      option.value = pl;
-      option.textContent = tags.length > 0
-        ? `Playlist #${pl} (${tags.join(', ')})`
-        : `Playlist #${pl}`;
-      select.appendChild(option);
-    });
-    // Restore previous selection if it's still in the filtered list
-    if (currentVal && select.querySelector(`option[value="${currentVal}"]`)) {
-      select.value = currentVal;
-    }
-  }
-  function refreshModalRecommendation() {
-    const panel = $('#modal-recommendation');
-    const bestDiv = $('#modal-rec-best');
-    const altDiv = $('#modal-rec-alternatives');
-    if (state.modalAttendees.size === 0) {
-      panel.style.display = 'none';
-      return;
-    }
-    const classType = $('#modal-class-type').value || '';
-    const windowDays = parseInt($('#modal-stale-window').value, 10) || 45;
-    const dateVal = $('#modal-class-date').value || state.selectedDate || formatDateKey(new Date());
-    const metrics = computeMetrics({
-      attendees: state.modalAttendees,
-      classType: classType,
-      window: windowDays,
-      date: dateVal
-    });
-    if (metrics.length === 0) {
-      panel.style.display = 'block';
-      bestDiv.innerHTML = classType
-        ? `<div style="color:rgba(255,255,255,.6); font-size:13px;">No playlists tagged for <strong>${esc(classType)}</strong>. Tag playlists in the Playlists tab or select "All Types".</div>`
-        : '<div style="color:rgba(255,255,255,.6); font-size:13px;">No playlist data available.</div>';
-      altDiv.innerHTML = '';
-      return;
-    }
-    panel.style.display = 'block';
-    const best = metrics[0];
-    bestDiv.innerHTML = `
-      <div class="modal-rec-best-row">
-        <span class="modal-rec-best-name">Playlist <span class="accent">#${esc(best.playlist)}</span></span>
-        <button type="button" class="modal-rec-use-btn" data-playlist="${esc(best.playlist)}">Use This</button>
-      </div>
-      <div class="modal-rec-metrics">
-        <div class="modal-rec-metric"><div class="val">${best.never}</div><div class="lbl">Never-heard</div></div>
-        <div class="modal-rec-metric"><div class="val">${best.median}</div><div class="lbl">Median days</div></div>
-        <div class="modal-rec-metric"><div class="val">${best.stalePct}%</div><div class="lbl">Stale</div></div>
-      </div>
-    `;
-    bestDiv.querySelector('.modal-rec-use-btn').addEventListener('click', () => {
-      setModalPlaylist(best.playlist);
-    });
-    const runners = metrics.slice(1, 4);
-    if (runners.length > 0) {
-      altDiv.innerHTML = '<span class="alt-label">Also consider:</span>';
-      runners.forEach(r => {
-        const pill = document.createElement('button');
-        pill.type = 'button';
-        pill.className = 'modal-rec-alt-pill';
-        pill.innerHTML = `#${esc(r.playlist)}`;
-        pill.addEventListener('click', () => setModalPlaylist(r.playlist));
-        altDiv.appendChild(pill);
-      });
-    } else {
-      altDiv.innerHTML = '';
-    }
-  }
-  function setModalPlaylist(playlistId) {
-    const select = $('#modal-class-playlist');
-    // Ensure the option exists in the filtered dropdown
-    if (!select.querySelector(`option[value="${playlistId}"]`)) {
-      const option = document.createElement('option');
-      option.value = playlistId;
-      const tags = state.playlistTags.get(playlistId) || [];
-      option.textContent = tags.length > 0
-        ? `Playlist #${playlistId} (${tags.join(', ')})`
-        : `Playlist #${playlistId}`;
-      select.appendChild(option);
-    }
-    select.value = playlistId;
+  function updateModalPlaylistDisplay(playlistId) {
+    const display = $('#modal-class-playlist-display');
+    if (!display) return;
+    const normalized = normalizePlaylistId(playlistId);
+    display.textContent = normalized ? `Playlist #${normalized}` : 'No playlist assigned yet';
   }
   // --- Guest Selection System ---
-  function populateGuestList() {
-    const guestList = $("#guest-list");
-    guestList.innerHTML = "";
-    const sortedGuests = Array.from(state.allGuests).sort();
-    
-    if (sortedGuests.length === 0) {
-      guestList.innerHTML = '<div class="no-selection" style="padding: 20px;">No guests found. Import data to get started.</div>';
-      return;
-    }
-    
-    sortedGuests.forEach(guest => {
-      const guestElement = document.createElement("div");
-      guestElement.className = `guest-list-item ${state.attendees.has(guest) ? 'selected' : ''}`;
-      guestElement.dataset.guest = guest;
-      guestElement.textContent = guest;
-      
-      guestElement.addEventListener("click", () => toggleGuestSelection(guest, true));
-      guestList.appendChild(guestElement);
-    });
-  }
   function populateModalGuestList() {
     const modalGuestList = $("#modal-guest-list");
     modalGuestList.innerHTML = "";
@@ -2996,50 +3197,9 @@
         }
         renderModalSelectedGuests();
         updateModalGuestListSelection();
-        refreshModalRecommendation();
       });
       modalGuestList.appendChild(guestElement);
     });
-  }
-  function toggleGuestSelection(guest, refresh = true) {
-    if (state.attendees.has(guest)) {
-      state.attendees.delete(guest);
-    } else {
-      state.attendees.add(guest);
-    }
-    
-    if (refresh) {
-      renderSelectedGuests();
-      updateGuestListSelection();
-      refreshAll();
-    }
-  }
-  function renderSelectedGuests() {
-    const rosterChips = $("#rosterChips");
-    const rosterCountPill = $("#rosterCountPill");
-    
-    rosterChips.innerHTML = "";
-    
-    if (state.attendees.size === 0) {
-      rosterChips.innerHTML = `<div class="no-selection">No guests selected -- tap names below to add</div>`;
-    } else {
-      [...state.attendees].sort().forEach(name => {
-        const guestChip = document.createElement("div");
-        guestChip.className = "selected-guest-item";
-        guestChip.innerHTML = `<span>${esc(name)}</span><span class="remove-guest" data-guest="${esc(name)}">✕</span>`;
-        guestChip.querySelector(".remove-guest").addEventListener("click", (e) => {
-          e.stopPropagation();
-          state.attendees.delete(name);
-          renderSelectedGuests();
-          updateGuestListSelection();
-          refreshAll();
-        });
-        rosterChips.appendChild(guestChip);
-      });
-    }
-    
-    rosterCountPill.textContent = `${state.attendees.size} attendee${state.attendees.size !== 1 ? 's' : ''}`;
-    updateDashboardStatus();
   }
   function renderModalSelectedGuests() {
     const container = $("#modal-selected-guests");
@@ -3057,16 +3217,10 @@
           state.modalAttendees.delete(name);
           renderModalSelectedGuests();
           updateModalGuestListSelection();
-          refreshModalRecommendation();
         });
         container.appendChild(guestChip);
       });
     }
-  }
-  function updateGuestListSelection() {
-    $$("#guest-list .guest-list-item").forEach(item => {
-      item.classList.toggle("selected", state.attendees.has(item.dataset.guest));
-    });
   }
   function updateModalGuestListSelection() {
     $$("#modal-guest-list .guest-list-item").forEach(item => {
@@ -3091,25 +3245,32 @@
     return map;
   }
   function computeMetrics(opts = {}) {
-    const refDateISO = opts.date || state.selectedDate || formatDateKey(new Date());
+    const refDateISO = opts.date || formatDateKey(new Date());
     const lm = lastHeardMap(refDateISO);
-    const roster = [...(opts.attendees || state.attendees)];
-    const windowDays = opts.window || state.selectedWindow;
-    const classTypeFilter = opts.classType !== undefined ? opts.classType : (state.selectedClassType || '');
-    const filteredPlaylists = classTypeFilter
-      ? state.playlists.filter(pl => {
-          const tags = state.playlistTags.get(pl) || [];
-          return tags.includes(classTypeFilter);
-        })
-      : state.playlists;
+    const rosterSource = opts.attendees instanceof Set ? Array.from(opts.attendees) : Array.from(opts.attendees || []);
+    const roster = rosterSource.filter(Boolean);
+    if (roster.length === 0) return [];
+    const windowDays = Number.isFinite(opts.window) ? opts.window : state.selectedWindow;
+    const classTypeFilter = opts.classType !== undefined ? opts.classType : '';
+    const filteredPlaylists = state.playlists.filter(pl => {
+      const status = normalizePlaylistStatus(state.playlistStatus.get(pl) || 'Active');
+      if (status === 'Retired' || status === 'Removed') return false;
+      if (classTypeFilter) {
+        const tags = state.playlistTags.get(pl) || [];
+        return tags.includes(classTypeFilter);
+      }
+      return true;
+    });
     const byPlaylist = filteredPlaylists.map(pl => {
       let never = 0;
       let deltas = [];
-      let staleCount = 0;
+      let dueCount = 0;
+      let recentCount = 0;
       roster.forEach(g => {
         const last = lm.get(g)?.get(pl);
         if (!last) {
           never++;
+          return;
         } else {
           const d = daysBetween(refDateISO, last);
           if (d < 0) {
@@ -3117,76 +3278,193 @@
             return;
           }
           deltas.push(d);
-          if (d >= windowDays) staleCount++;
+          if (d >= windowDays) {
+            dueCount++;
+          } else {
+            recentCount++;
+          }
         }
       });
       const medianDays = deltas.length ? median(deltas) : 0;
-      const stalePct = roster.length ? Math.round((staleCount / roster.length) * 100) : 0;
-      // Score: high stale %, high never-heard %, and high median days are all "good"
-      const neverPct = roster.length ? Math.round((never / roster.length) * 100) : 0;
-      const score = (stalePct * 2) + (neverPct * 3) + (medianDays * 0.1);
+      const rosterSize = roster.length;
+      const neverPct = rosterSize ? Math.round((never / rosterSize) * 100) : 0;
+      const duePct = rosterSize ? Math.round((dueCount / rosterSize) * 100) : 0;
+      const recentPct = rosterSize ? Math.round((recentCount / rosterSize) * 100) : 0;
+      // Favor never-heard and replay-ready coverage while penalizing recently-heard overlap.
+      const score = (neverPct * 3.4) + (duePct * 2.2) + (medianDays * 0.12) - (recentPct * 2.6);
 
-      return { playlist: pl, never, median: medianDays, stalePct, score };
+      return {
+        playlist: pl,
+        never,
+        dueCount,
+        recentCount,
+        heardCount: deltas.length,
+        median: medianDays,
+        stalePct: duePct, // Backward compatible alias
+        readyPct: duePct,
+        neverPct,
+        recentPct,
+        rosterSize,
+        score
+      };
     });
-    // Sort by score descending
-    byPlaylist.sort((a, b) => b.score - a.score);
+    byPlaylist.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (b.neverPct !== a.neverPct) return b.neverPct - a.neverPct;
+      if (b.readyPct !== a.readyPct) return b.readyPct - a.readyPct;
+      if (b.median !== a.median) return b.median - a.median;
+      return comparePlaylistIds(a.playlist, b.playlist);
+    });
     return byPlaylist;
+  }
+  function getRecommendationStrength(metrics) {
+    const best = metrics[0];
+    if (!best) return null;
+    const second = metrics[1];
+    if (!second) {
+      return {
+        tone: 'strong',
+        label: 'High confidence',
+        detail: 'Only one active playlist matches current filters.',
+        gap: null
+      };
+    }
+    const gap = Math.max(0, best.score - second.score);
+    const roundedGap = Math.round(gap * 10) / 10;
+    if (gap >= 18) {
+      return {
+        tone: 'strong',
+        label: 'High confidence',
+        detail: `${roundedGap} points ahead of #${second.playlist}.`,
+        gap: roundedGap
+      };
+    }
+    if (gap >= 8) {
+      return {
+        tone: 'moderate',
+        label: 'Medium confidence',
+        detail: `${roundedGap} points ahead of #${second.playlist}.`,
+        gap: roundedGap
+      };
+    }
+    return {
+      tone: 'close',
+      label: 'Close decision',
+      detail: `${roundedGap} points ahead of #${second.playlist}. Check runner-ups.`,
+      gap: roundedGap
+    };
   }
   // --- UI Refresh Functions ---
   function refreshAll() {
-      populateClassTypeDropdown($('#classTypeSelector'), state.selectedClassType);
-      const metrics = computeMetrics();
-      refreshDashboard(metrics);
-      refreshExplorer(metrics);
-      updateDashboardStatus();
+      const selectedEntry = getSelectedRecommenderClassEntry();
+      populatePlannedClassSelector(selectedEntry);
+      const metrics = getMetricsForSelectedClass(selectedEntry);
+      refreshDashboard(metrics, selectedEntry);
+      refreshExplorer();
+      updateDashboardStatus(selectedEntry);
   }
-  function refreshDashboard(metrics) {
+  function refreshDashboard(metrics, selectedEntry = getSelectedRecommenderClassEntry()) {
     const best = metrics[0];
-    
-    if (!best || state.attendees.size === 0) {
-      const noTypeMatch = state.attendees.size > 0 && metrics.length === 0 && state.selectedClassType;
-      $("#bestSummary").innerHTML = noTypeMatch
-        ? `<div class="muted">No playlists tagged for <strong>${esc(state.selectedClassType)}</strong>. Tag playlists in the Playlist Manager or select "All Types".</div>`
-        : '<div class="muted">Add attendees above to see the best recommendation.</div>';
+    const bestSummary = $("#bestSummary");
+    const bestStrength = $("#bestStrength");
+    const rankingsBody = $("#runnerUps");
+    if (!bestSummary || !bestStrength || !rankingsBody) return;
+    const assignBestBtn = $("#assignBestPlaylistBtn");
+    if (assignBestBtn) {
+      assignBestBtn.disabled = true;
+      assignBestBtn.dataset.playlist = '';
+      assignBestBtn.textContent = 'Assign Best Playlist';
+    }
+
+    if (!selectedEntry) {
+      bestSummary.innerHTML = '<div class="muted">Add a class in Weekly Planner, then select it here for recommendations.</div>';
+      bestStrength.innerHTML = '';
       $("#bestNever").textContent = "--";
       $("#bestMedian").textContent = "--";
-      $("#bestStale").textContent = "--";
-      $("#runnerUps").innerHTML = '<div class="empty-state"><p>Select attendees to see alternatives</p></div>';
+      $("#bestReady").textContent = "--";
+      rankingsBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,.6);">No planned classes available.</td></tr>';
+      return;
+    }
+
+    const cls = selectedEntry.cls || {};
+    const attendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+    const rosterSize = attendees.size;
+    const classType = (cls.classType || '').trim();
+    const assignedPlaylist = normalizePlaylistId(cls.playlist);
+    const isFinalized = cls.status === 'finalized';
+
+    if (!best || rosterSize === 0) {
+      bestSummary.innerHTML = rosterSize === 0
+        ? '<div class="muted">Selected class has no attendees yet. Add attendees in Weekly Planner.</div>'
+        : (classType
+          ? `<div class="muted">No playlists tagged for <strong>${esc(classType)}</strong>. Tag playlists in the Playlist Manager or update class type.</div>`
+          : '<div class="muted">No active playlists are available for ranking.</div>');
+      bestStrength.innerHTML = '';
+      $("#bestNever").textContent = "--";
+      $("#bestMedian").textContent = "--";
+      $("#bestReady").textContent = "--";
+      rankingsBody.innerHTML = rosterSize === 0
+        ? '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,.6);">No ranking yet because this class has no attendees.</td></tr>'
+        : '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,.6);">No playlists match the selected class type.</td></tr>';
       return;
     }
     
-    $("#bestSummary").innerHTML = `
-      <div style="font-size:20px; font-weight:700; margin-top:10px;">
+    const strength = getRecommendationStrength(metrics);
+    const assignedText = assignedPlaylist ? `#${esc(assignedPlaylist)}` : 'None';
+    bestSummary.innerHTML = `
+      <div class="best-summary-title">
         Playlist <span style="color: var(--accent);">#${best.playlist}</span>${renderPlaylistTags(best.playlist)}
       </div>
-      <div class="subtle" style="margin-top:4px;">Optimized for ${state.attendees.size} attendees • Stale threshold: ${state.selectedWindow} days${state.selectedClassType ? ' • ' + esc(state.selectedClassType) : ''}</div>
+      <div class="best-summary-meta">Selected class: ${esc(formatDateTime(cls.date, cls.time))} • ${rosterSize} attendees</div>
+      <div class="best-summary-meta">Replay-ready threshold: ${state.selectedWindow} days${classType ? ' • ' + esc(classType) : ''} • Current assignment: ${assignedText}</div>
+      <div class="best-insight-list">
+        <div class="best-insight"><b>${best.never}</b><span>attendees have never heard this playlist</span></div>
+        <div class="best-insight"><b>${best.dueCount}</b><span>attendees are replay-ready (&ge; ${state.selectedWindow} days)</span></div>
+        <div class="best-insight"><b>${best.recentCount}</b><span>attendees heard it recently (&lt; ${state.selectedWindow} days)</span></div>
+      </div>
     `;
+    bestStrength.innerHTML = strength
+      ? `<span class="rec-strength-pill ${strength.tone}">${esc(strength.label)}</span><span class="subtle" style="font-size:13px;">${esc(strength.detail)}</span>`
+      : '';
     
-    $("#bestNever").textContent = best.never;
-    $("#bestMedian").textContent = best.median;
-    $("#bestStale").textContent = best.stalePct + "%";
-    
-    const runners = metrics.slice(1, 4);
-    const wrap = $("#runnerUps");
-    wrap.innerHTML = "";
-    
-    if (runners.length === 0) {
-      wrap.innerHTML = '<div class="empty-state"><p>No alternative playlists available</p></div>';
-    } else {
-      runners.forEach(r => {
-        wrap.innerHTML += `
-          <div class="card suggestion-card">
-            <div class="title">Playlist #${r.playlist}${renderPlaylistTags(r.playlist, { compact: true })}</div>
-            <div class="metric-row" style="margin-top:8px;">
-              <div class="metric"><div class="value">${r.never}</div><div class="label">Never</div></div>
-              <div class="metric"><div class="value">${r.median}</div><div class="label">Median</div></div>
-              <div class="metric"><div class="value">${r.stalePct}%</div><div class="label">Stale</div></div>
-            </div>
-          </div>`;
-      });
+    $("#bestNever").textContent = `${best.never} (${best.neverPct}%)`;
+    $("#bestMedian").textContent = `${best.median}d`;
+    $("#bestReady").textContent = `${best.readyPct}%`;
+
+    if (assignBestBtn) {
+      assignBestBtn.dataset.playlist = best.playlist;
+      const alreadyAssigned = assignedPlaylist === best.playlist;
+      assignBestBtn.disabled = isFinalized || alreadyAssigned;
+      if (isFinalized) {
+        assignBestBtn.textContent = 'Class Finalized';
+      } else if (alreadyAssigned) {
+        assignBestBtn.textContent = `Best Already Assigned (#${best.playlist})`;
+      } else {
+        assignBestBtn.textContent = `Assign Best (#${best.playlist})`;
+      }
     }
+
+    rankingsBody.innerHTML = metrics.map((row, index) => {
+      const isAssigned = assignedPlaylist === row.playlist;
+      const scoreLabel = (Math.round(row.score * 10) / 10).toFixed(1);
+      const actionHTML = isFinalized
+        ? '<span class="pill status-finalized" style="font-size:11px; padding:4px 8px;">Finalized</span>'
+        : `<button type="button" class="btn btn-sm"${isAssigned ? ' disabled' : ''} data-assign-playlist="${esc(row.playlist)}">${isAssigned ? 'Assigned' : 'Assign'}</button>`;
+      return `
+        <tr${isAssigned ? ' class="rank-row-assigned"' : ''}>
+          <td>${index + 1}</td>
+          <td><strong>#${esc(row.playlist)}</strong>${renderPlaylistTags(row.playlist, { compact: true })}</td>
+          <td>${row.never}/${row.rosterSize} (${row.neverPct}%)</td>
+          <td>${row.dueCount}/${row.rosterSize} (${row.readyPct}%)</td>
+          <td>${row.median}d</td>
+          <td>${row.recentCount}/${row.rosterSize} (${row.recentPct}%)</td>
+          <td><span class="rank-score">${scoreLabel}</span></td>
+          <td>${actionHTML}</td>
+        </tr>
+      `;
+    }).join('');
   }
-  function refreshExplorer(metrics) {
+  function refreshExplorer() {
     const tbody = $("#explorerTbody");
     tbody.innerHTML = "";
     const { column, ascending } = state.explorerSortOrder;
@@ -3219,10 +3497,12 @@
 
       // Playlist name cell
       const tdName = document.createElement('td');
+      tdName.dataset.label = 'Playlist';
       tdName.innerHTML = `<strong>Playlist #${esc(pl)}</strong>`;
 
       // Tags cell
       const tdTags = document.createElement('td');
+      tdTags.dataset.label = 'Tags';
       const tagsDiv = document.createElement('div');
       tagsDiv.className = 'manager-tags-cell';
       tags.forEach(t => {
@@ -3247,13 +3527,14 @@
         } else {
           state.expandedPlaylist = pl;
         }
-        refreshExplorer(computeMetrics());
+        refreshExplorer();
       });
       tagsDiv.appendChild(addTagBtn);
       tdTags.appendChild(tagsDiv);
 
       // Status cell
       const tdStatus = document.createElement('td');
+      tdStatus.dataset.label = 'Status';
       const statusPill = document.createElement('span');
       statusPill.className = 'status-toggle ' + (isRetired ? 'retired' : 'active');
       statusPill.textContent = status;
@@ -3265,6 +3546,7 @@
 
       // Actions cell
       const tdActions = document.createElement('td');
+      tdActions.dataset.label = 'Actions';
       const removeBtn = document.createElement('button');
       removeBtn.className = 'btn-remove-playlist';
       removeBtn.textContent = 'Remove';
@@ -3321,8 +3603,7 @@
 
     function getSuggestions(query) {
       const currentTags = state.playlistTags.get(playlistNum) || [];
-      const usedTags = getAllUsedTags();
-      const all = [...new Set([...PREDEFINED_CLASS_TYPES, ...usedTags])];
+      const all = getAllClassTypes();
       return all.filter(t =>
         !currentTags.includes(t) &&
         t.toLowerCase().includes(query.toLowerCase())
@@ -3388,12 +3669,16 @@
     .forEach(r => {
         if (!r.playlist) return;
         const normalizedTime = normalizeTime(r.time, '00:00');
-        const key = `${r.date}T${normalizedTime}::${r.playlist}`;
+        const classNumber = normalizeClassNumber(r.classNumber);
+        const key = classNumber
+          ? `${r.date}T${normalizedTime}::${r.playlist}::${classNumber}`
+          : `${r.date}T${normalizedTime}::${r.playlist}`;
         if (!byClass.has(key)) {
-            byClass.set(key, { date: r.date, time: normalizedTime, playlist: r.playlist, classType: r.classType || '', guests: new Set(), status: 'finalized' });
+            byClass.set(key, { date: r.date, time: normalizedTime, playlist: r.playlist, classType: r.classType || '', classNumber, guests: new Set(), status: 'finalized' });
         }
         const entry = byClass.get(key);
         if (!entry.classType && r.classType) entry.classType = r.classType;
+        if (!entry.classNumber && classNumber) entry.classNumber = classNumber;
         if (r.guest) {
             entry.guests.add(r.guest);
         } else if (r.attendees) {
@@ -3404,7 +3689,9 @@
     let rows = [...byClass.values()].filter(row => {
         if (!searchTerm) return true;
         const guestNames = [...row.guests].join(' ').toLowerCase();
-        return row.date.includes(searchTerm) || row.playlist.toString().includes(searchTerm) || guestNames.includes(searchTerm);
+        const classType = (row.classType || '').toLowerCase();
+        const classNumber = (row.classNumber || '').toLowerCase();
+        return row.date.includes(searchTerm) || row.playlist.toString().includes(searchTerm) || classType.includes(searchTerm) || classNumber.includes(searchTerm) || guestNames.includes(searchTerm);
     });
     
     const { column, ascending } = state.sortOrder;
@@ -3438,23 +3725,24 @@
 
     tbody.innerHTML = "";
     if (rows.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px 20px; color:rgba(255,255,255,.6);">No class history yet. Finalize classes from the Weekly Planner to build your history.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:40px 20px; color:rgba(255,255,255,.6);">No class history yet. Finalize classes from the Weekly Planner to build your history.</td></tr>`;
       return;
     }
     rows.forEach(row => {
       const guestArray = [...row.guests].sort();
-      const classTypeLabel = row.classType ? `<span class="pill" style="font-size:11px; margin-left:4px;">${esc(row.classType)}</span>` : '';
+      const classTypeText = row.classType ? esc(row.classType) : '<span style="color:rgba(255,255,255,.45);">-</span>';
       const moreCount = guestArray.length - 3;
       const moreText = moreCount > 0
         ? ` <span class="history-expand-guests" style="color:var(--accent); cursor:pointer;" data-guests="${guestArray.map(g => esc(g)).join('|||')}">+${moreCount} more</span>`
         : '';
       const tr = `
         <tr>
-          <td>${formatDate(row.date)} ${formatTime(row.time)}</td>
-          <td><strong>Playlist #${row.playlist}</strong>${classTypeLabel}${renderPlaylistTags(row.playlist, { compact: true })}</td>
-          <td><span class="pill">${guestArray.length}</span></td>
-          <td><span class="guest-names-short">${guestArray.slice(0, 3).map(g => esc(g)).join(", ")}${moreText}</span><span class="guest-names-full" style="display:none;">${guestArray.map(g => esc(g)).join(", ")} <span class="history-collapse-guests" style="color:var(--accent); cursor:pointer;">show less</span></span></td>
-          <td><span class="pill status-finalized">Completed</span></td>
+          <td data-label="Date & Time">${formatDate(row.date)} ${formatTime(row.time)}</td>
+          <td data-label="Class Type">${classTypeText}</td>
+          <td data-label="Playlist"><strong>Playlist #${row.playlist}</strong></td>
+          <td data-label="Attendees"><span class="pill">${guestArray.length}</span></td>
+          <td data-label="Guest Names"><span class="guest-names-short">${guestArray.slice(0, 3).map(g => esc(g)).join(", ")}${moreText}</span><span class="guest-names-full" style="display:none;">${guestArray.map(g => esc(g)).join(", ")} <span class="history-collapse-guests" style="color:var(--accent); cursor:pointer;">show less</span></span></td>
+          <td data-label="Status"><span class="pill status-finalized">Completed</span></td>
         </tr>
       `;
       tbody.innerHTML += tr;
@@ -3568,94 +3856,62 @@
           });
       });
       // Dashboard controls
-      $('#class-date-dashboard').addEventListener('change', (e) => {
-          state.selectedDate = e.target.value;
+      const plannedClassSelector = $('#plannedClassSelector');
+      if (plannedClassSelector) {
+        plannedClassSelector.addEventListener('change', (e) => {
+          state.selectedRecommendationClassKey = e.target.value || '';
           refreshAll();
-      });
-      $('#class-time-dashboard').addEventListener('change', (e) => {
-          state.selectedTime = normalizeTime(e.target.value);
-          $('#class-time-dashboard').value = state.selectedTime;
-          refreshAll();
-      });
-      $('#todayBtn').addEventListener('click', () => {
-          const now = new Date();
-          state.selectedDate = formatDateKey(now);
-          state.selectedTime = normalizeTime(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`);
-          $('#class-date-dashboard').value = state.selectedDate;
-          $('#class-time-dashboard').value = state.selectedTime;
-          refreshAll();
-      });
-      $('#classTypeSelector').addEventListener('change', (e) => {
-          state.selectedClassType = e.target.value;
-          refreshAll();
-      });
-      $('#playlistWindow').addEventListener('change', (e) => {
+        });
+      }
+      const playlistWindow = $('#playlistWindow');
+      if (playlistWindow) {
+        playlistWindow.addEventListener('change', (e) => {
           state.selectedWindow = parseInt(e.target.value, 10);
           refreshAll();
-      });
-      // "Plan This Class" on Recommender tab opens the modal pre-populated
-      $('#planThisClassBtn').addEventListener('click', () => {
-        const dateKey = state.selectedDate || formatDateKey(new Date());
-        const time = state.selectedTime || '09:00';
-        const dateTimeKey = createDateTimeKey(dateKey, time);
-        const existing = state.weeklyPlan.get(dateTimeKey);
-        if (existing) {
-          openClassModal(dateTimeKey);
-        } else {
-          state.selectedClass = createClass(dateKey, time);
-          state.modalAttendees = new Set(state.attendees);
-          $("#class-modal-title").textContent = 'Plan New Class';
-          $("#modal-class-date").value = dateKey;
-          $("#modal-class-time").value = time;
-          const classType = state.selectedClassType || '';
-          populateClassTypeDropdown($("#modal-class-type"), classType);
-          $("#modal-stale-window").value = String(state.selectedWindow);
-          populateModalPlaylistOptions(classType);
-          // Auto-select the best playlist from recommender
-          const metrics = computeMetrics();
-          if (metrics.length > 0) {
-            setModalPlaylist(metrics[0].playlist);
-          }
-          $("#modal-class-notes").value = '';
-          populateModalGuestList();
-          renderModalSelectedGuests();
-          refreshModalRecommendation();
-          $("#delete-class-modal").classList.add('hidden');
-          $("#class-modal").classList.remove('hidden');
-        }
-      });
-
-      // Select All / Clear All guest buttons
-      $('#selectAllGuestsBtn').addEventListener('click', () => {
-        const visibleGuests = $$("#guest-list .guest-list-item").filter(el => el.style.display !== 'none');
-        visibleGuests.forEach(el => {
-          const guest = el.dataset.guest;
-          if (!state.attendees.has(guest)) state.attendees.add(guest);
         });
-        renderSelectedGuests();
-        updateGuestListSelection();
-        refreshAll();
-      });
-      $('#clearAllGuestsBtn').addEventListener('click', () => {
-        state.attendees.clear();
-        renderSelectedGuests();
-        updateGuestListSelection();
-        refreshAll();
-      });
-      $('#previewRosterBtn').addEventListener('click', () => {
-        const metrics = computeMetrics();
+      }
+      const assignBestBtn = $('#assignBestPlaylistBtn');
+      if (assignBestBtn) {
+        assignBestBtn.addEventListener('click', async () => {
+          const playlistId = assignBestBtn.dataset.playlist || '';
+          if (!playlistId) {
+            showToast('No recommendation available to assign.', 'error');
+            return;
+          }
+          await assignPlaylistToSelectedClass(playlistId);
+        });
+      }
+      const rankingsBody = $('#runnerUps');
+      if (rankingsBody) {
+        rankingsBody.addEventListener('click', async (e) => {
+          const btn = e.target.closest('[data-assign-playlist]');
+          if (!btn || btn.disabled) return;
+          await assignPlaylistToSelectedClass(btn.dataset.assignPlaylist || '');
+        });
+      }
+      const previewRosterBtn = $('#previewRosterBtn');
+      if (previewRosterBtn) {
+        previewRosterBtn.addEventListener('click', () => {
+        const selectedEntry = getSelectedRecommenderClassEntry();
+        const metrics = getMetricsForSelectedClass(selectedEntry);
         const best = metrics[0];
-        if (!best || state.attendees.size === 0) {
-          showToast('Add attendees to see playlist details.', 'error');
+        if (!selectedEntry || !best) {
+          showToast('Select a planned class with attendees to view details.', 'error');
           return;
         }
-        const refDate = state.selectedDate || formatDateKey(new Date());
+        const cls = selectedEntry.cls || {};
+        const attendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+        const roster = [...attendees].sort();
+        if (roster.length === 0) {
+          showToast('Add attendees to this planned class first.', 'error');
+          return;
+        }
+        const refDate = cls.date || formatDateKey(new Date());
         const lm = lastHeardMap(refDate);
-        const roster = [...state.attendees].sort();
         const windowDays = state.selectedWindow;
         const neverList = [];
-        const staleList = [];
-        const freshList = [];
+        const readyList = [];
+        const recentList = [];
         roster.forEach(g => {
           const last = lm.get(g)?.get(best.playlist);
           if (!last) {
@@ -3665,29 +3921,30 @@
             if (d < 0) {
               neverList.push(g);
             } else if (d >= windowDays) {
-              staleList.push({ name: g, days: d });
+              readyList.push({ name: g, days: d });
             } else {
-              freshList.push({ name: g, days: d });
+              recentList.push({ name: g, days: d });
             }
           }
         });
-        staleList.sort((a, b) => b.days - a.days);
-        freshList.sort((a, b) => a.days - b.days);
+        readyList.sort((a, b) => b.days - a.days);
+        recentList.sort((a, b) => a.days - b.days);
         let html = `<h4 style="margin-bottom:12px;">Playlist #${best.playlist} — Roster Breakdown</h4>`;
-        html += `<p class="muted" style="margin-bottom:12px;">${roster.length} attendees • Stale threshold: ${windowDays} days</p>`;
+        html += `<p class="muted" style="margin-bottom:12px;">${esc(formatDateTime(cls.date, cls.time))} • ${roster.length} attendees • Replay-ready threshold: ${windowDays} days</p>`;
         if (neverList.length > 0) {
           html += `<div style="margin-bottom:12px;"><strong>Never Heard (${neverList.length})</strong><div style="margin-top:4px;">${neverList.map(g => `<span class="pill">${esc(g)}</span>`).join(' ')}</div></div>`;
         }
-        if (staleList.length > 0) {
-          html += `<div style="margin-bottom:12px;"><strong>Stale (${staleList.length})</strong><div style="margin-top:4px;">${staleList.map(g => `<span class="pill status-draft">${esc(g.name)} — ${g.days}d ago</span>`).join(' ')}</div></div>`;
+        if (readyList.length > 0) {
+          html += `<div style="margin-bottom:12px;"><strong>Replay-ready (${readyList.length})</strong><div style="margin-top:4px;">${readyList.map(g => `<span class="pill status-draft">${esc(g.name)} — ${g.days}d ago</span>`).join(' ')}</div></div>`;
         }
-        if (freshList.length > 0) {
-          html += `<div style="margin-bottom:12px;"><strong>Fresh (${freshList.length})</strong><div style="margin-top:4px;">${freshList.map(g => `<span class="pill status-finalized">${esc(g.name)} — ${g.days}d ago</span>`).join(' ')}</div></div>`;
+        if (recentList.length > 0) {
+          html += `<div style="margin-bottom:12px;"><strong>Recently heard (${recentList.length})</strong><div style="margin-top:4px;">${recentList.map(g => `<span class="pill status-finalized">${esc(g.name)} — ${g.days}d ago</span>`).join(' ')}</div></div>`;
         }
         $('#guest-modal-title').textContent = 'Playlist Detail';
         $('#guest-modal-content').innerHTML = html;
         $('#guest-modal').classList.remove('hidden');
-      });
+        });
+      }
       
       // Guest search
       // Search with clear buttons
@@ -3699,23 +3956,6 @@
         input.addEventListener('input', syncBtn);
         btn.addEventListener('click', () => { input.value = ''; syncBtn(); if (onClear) onClear(); });
       }
-      // Dashboard guest search
-      $('#guest-search').addEventListener("input", (e) => {
-          const term = e.target.value.toLowerCase();
-          const items = $$("#guest-list .guest-list-item");
-          let showing = 0;
-          items.forEach(item => {
-              const vis = item.dataset.guest.toLowerCase().includes(term);
-              item.style.display = vis ? '' : 'none';
-              if (vis) showing++;
-          });
-          const countEl = $('#guest-search-count');
-          countEl.textContent = term ? `Showing ${showing} of ${items.length}` : '';
-      });
-      setupSearchClear('#guest-search', '#guest-search-clear', () => {
-        $$("#guest-list .guest-list-item").forEach(i => i.style.display = '');
-        $('#guest-search-count').textContent = '';
-      });
       // Guests tab search
       $('#guest-search-filter').addEventListener('input', refreshGuests);
       setupSearchClear('#guest-search-filter', '#guest-filter-clear', refreshGuests);
@@ -3783,7 +4023,7 @@
               header.closest('table').querySelectorAll('.sortable').forEach(h => h.classList.remove('asc', 'desc'));
               header.classList.add(sortState.ascending ? 'asc' : 'desc');
               
-              if (isExplorer) refreshExplorer(computeMetrics()); else refreshHistory();
+              if (isExplorer) refreshExplorer(); else refreshHistory();
           });
       });
 
@@ -3812,25 +4052,36 @@
         setLoading($('#syncAllBtn'), true);
         try {
           const uid = state.firebaseUser.uid;
+          let finalizedCount = 0;
+          let skippedCount = 0;
           for (const { key, cls } of drafts) {
-            if (!cls.playlist || cls.attendees.size === 0) continue;
+            if (!cls.playlist || cls.attendees.size === 0) {
+              skippedCount++;
+              continue;
+            }
             const batch = db.batch();
             const classRef = db.collection('users').doc(uid).collection('classes').doc(safeDocId(key));
             batch.set(classRef, {
               date: cls.date, time: cls.time, playlist: cls.playlist,
               attendees: Array.from(cls.attendees), status: 'finalized',
-              notes: cls.notes || '', dateTimeKey: key
+              notes: cls.notes || '', classType: cls.classType || '', dateTimeKey: key
             });
             const recordsRef = db.collection('users').doc(uid).collection('records');
             for (const guest of cls.attendees) {
               const recordKey = buildRecordKey({ date: cls.date, time: normalizeTime(cls.time), guest, playlist: cls.playlist });
               batch.set(recordsRef.doc(safeDocId(recordKey)), {
-                date: cls.date, time: normalizeTime(cls.time), guest, playlist: cls.playlist, recordKey
+                date: cls.date, time: normalizeTime(cls.time), guest, playlist: cls.playlist, classType: cls.classType || '', recordKey
               });
             }
             await batch.commit();
+            finalizedCount++;
           }
-          showToast(`Finalized ${drafts.length} class${drafts.length !== 1 ? 'es' : ''}!`, 'success');
+          if (finalizedCount === 0) {
+            showToast('No drafts were ready to finalize. Assign playlists and attendees first.', 'info');
+          } else {
+            const skippedMsg = skippedCount > 0 ? ` (${skippedCount} skipped)` : '';
+            showToast(`Finalized ${finalizedCount} class${finalizedCount !== 1 ? 'es' : ''}!${skippedMsg}`, 'success');
+          }
         } catch (error) {
           showToast('Finalize failed: ' + error.message, 'error');
         } finally {
@@ -3888,13 +4139,6 @@
       $('#save-draft-modal').addEventListener('click', handleModalSave);
       $('#finalize-modal').addEventListener('click', handleModalFinalize);
       $('#delete-class-modal').addEventListener('click', handleModalDelete);
-      // Modal class type changes filter playlist dropdown and recommendations
-      $('#modal-class-type').addEventListener('change', () => {
-        const classType = $('#modal-class-type').value;
-        populateModalPlaylistOptions(classType);
-        refreshModalRecommendation();
-      });
-      $('#modal-stale-window').addEventListener('change', () => refreshModalRecommendation());
       // Modal Select All / Clear All
       $('#modalSelectAllBtn').addEventListener('click', () => {
         const term = $('#modal-guest-search').value.toLowerCase();
@@ -3905,13 +4149,11 @@
         });
         renderModalSelectedGuests();
         updateModalGuestListSelection();
-        refreshModalRecommendation();
       });
       $('#modalClearAllBtn').addEventListener('click', () => {
         state.modalAttendees.clear();
         renderModalSelectedGuests();
         updateModalGuestListSelection();
-        refreshModalRecommendation();
       });
   }
 
@@ -3919,19 +4161,28 @@
   async function handleModalSave() {
       const cls = state.selectedClass;
       if (!cls) return;
+      if (cls.status === 'finalized') {
+          showToast('This class is finalized. Use Finalize to apply changes.', 'info');
+          return;
+      }
       if (state.modalAttendees.size === 0) {
           showToast('Please select at least one guest.', 'error');
           return;
       }
-      const newPlaylist = $('#modal-class-playlist').value;
-      if (!newPlaylist) {
-          showToast('Please select a playlist.', 'error');
-          return;
-      }
+      const preservedPlaylist = normalizePlaylistId($('#modal-class-playlist').value || cls.playlist);
 
       const oldKey = createDateTimeKey(cls.date, cls.time);
-      const newDate = $('#modal-class-date').value;
-      const newTime = normalizeTime($('#modal-class-time').value);
+      const newDate = ($('#modal-class-date').value || '').trim();
+      const rawTime = ($('#modal-class-time').value || '').trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
+          showToast('Please choose a valid class date.', 'error');
+          return;
+      }
+      const newTime = normalizeTime(rawTime, '');
+      if (!newTime) {
+          showToast('Please choose a valid class time.', 'error');
+          return;
+      }
       const newKey = createDateTimeKey(newDate, newTime);
       const collision = state.weeklyPlan.get(newKey);
       if (oldKey !== newKey && collision && collision !== cls) {
@@ -3942,15 +4193,14 @@
       const classData = {
         date: newDate,
         time: newTime,
-        playlist: normalizePlaylistId(newPlaylist),
+        playlist: preservedPlaylist,
         attendees: new Set(state.modalAttendees),
         status: 'draft',
         notes: $('#modal-class-notes').value || '',
         classType: $('#modal-class-type').value || ''
       };
-      if (!classData.playlist) {
-        showToast('Playlist format is invalid.', 'error');
-        return;
+      if (state.selectedRecommendationClassKey === oldKey) {
+        state.selectedRecommendationClassKey = newKey;
       }
 
       if (state.firebaseUser) {
@@ -3971,29 +4221,37 @@
         saveStateToLocalStorage();
         renderWeeklyCalendar();
       }
+      refreshAll();
       showToast('Draft saved!', 'success');
       $('#class-modal').classList.add('hidden');
   }
 
   async function handleModalFinalize() {
       const cls = state.selectedClass;
-      if (!cls || state.modalAttendees.size === 0 || !$('#modal-class-playlist').value) {
-          showToast('Please select attendees and a playlist.', 'error');
+      if (!cls || state.modalAttendees.size === 0) {
+          showToast('Please select attendees.', 'error');
           return;
       }
       if (!state.firebaseUser) {
           showToast('Please sign in to finalize.', 'error');
           return;
       }
-      if (cls.status === 'finalized') {
-          showToast('This class is already finalized.', 'info');
-          return;
-      }
       setLoading($('#finalize-modal'), true);
 
       const oldKey = createDateTimeKey(cls.date, cls.time);
-      const targetDate = $('#modal-class-date').value;
-      const targetTime = normalizeTime($('#modal-class-time').value);
+      const targetDate = ($('#modal-class-date').value || '').trim();
+      const rawTargetTime = ($('#modal-class-time').value || '').trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
+          setLoading($('#finalize-modal'), false);
+          showToast('Please choose a valid class date.', 'error');
+          return;
+      }
+      const targetTime = normalizeTime(rawTargetTime, '');
+      if (!targetTime) {
+          setLoading($('#finalize-modal'), false);
+          showToast('Please choose a valid class time.', 'error');
+          return;
+      }
       const newKey = createDateTimeKey(targetDate, targetTime);
       const collision = state.weeklyPlan.get(newKey);
       if (oldKey !== newKey && collision && collision !== cls) {
@@ -4007,18 +4265,46 @@
         const batch = db.batch();
         const classesRef = db.collection('users').doc(uid).collection('classes');
         const recordsRef = db.collection('users').doc(uid).collection('records');
-        const playlist = normalizePlaylistId($('#modal-class-playlist').value);
+        const latestClass = state.weeklyPlan.get(oldKey) || cls;
+        const playlist = normalizePlaylistId($('#modal-class-playlist').value || latestClass.playlist || cls.playlist);
         if (!playlist) {
-          showToast('Playlist format is invalid.', 'error');
+          showToast('Assign a playlist in Recommender before finalizing.', 'error');
           return;
         }
         const attendees = new Set(state.modalAttendees);
         const notes = $('#modal-class-notes').value || '';
         const classType = $('#modal-class-type').value || '';
+        const wasFinalized = cls.status === 'finalized';
+        if (state.selectedRecommendationClassKey === oldKey) {
+          state.selectedRecommendationClassKey = newKey;
+        }
 
         // Delete old class doc if date/time changed
         if (oldKey !== newKey) {
           batch.delete(classesRef.doc(safeDocId(oldKey)));
+        }
+        // Remove old finalized attendance records that no longer match the edited class
+        if (wasFinalized) {
+          const oldPlaylist = normalizePlaylistId(cls.playlist);
+          if (oldPlaylist) {
+            const oldAttendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+            const oldTime = normalizeTime(cls.time);
+            oldAttendees.forEach(guest => {
+              const oldRecordKey = buildRecordKey({
+                date: cls.date,
+                time: oldTime,
+                guest,
+                playlist: oldPlaylist
+              });
+              const stillPresent = attendees.has(guest) &&
+                oldKey === newKey &&
+                oldPlaylist === playlist &&
+                oldTime === targetTime;
+              if (!stillPresent) {
+                batch.delete(recordsRef.doc(safeDocId(oldRecordKey)));
+              }
+            });
+          }
         }
         // Write finalized class
         batch.set(classesRef.doc(safeDocId(newKey)), {
@@ -4034,7 +4320,9 @@
           });
         }
         await batch.commit();
-        showToast('Class finalized!', 'success');
+        showToast(wasFinalized ? 'Finalized class updated!' : 'Class finalized!', 'success');
+        refreshAll();
+        renderWeeklyCalendar();
         $('#class-modal').classList.add('hidden');
       } catch (error) {
         showToast('Finalize failed: ' + error.message, 'error');
@@ -4047,6 +4335,9 @@
     if (!cls) return;
     if (confirm('Are you sure you want to delete this class?')) {
         const key = createDateTimeKey(cls.date, cls.time);
+        if (state.selectedRecommendationClassKey === key) {
+          state.selectedRecommendationClassKey = '';
+        }
         if (state.firebaseUser) {
           await deleteClassFromFirestore(key);
           // onSnapshot listener will update local state
@@ -4055,6 +4346,7 @@
           saveStateToLocalStorage();
           renderWeeklyCalendar();
         }
+        refreshAll();
         showToast('Class deleted.', 'info');
         $('#class-modal').classList.add('hidden');
     }
@@ -4065,10 +4357,10 @@
           showToast('No data to export.', 'info');
           return;
       }
-      const headers = ['Date', 'Time', 'Guest', 'Playlist', 'Class Type'];
+      const headers = ['Date', 'Time', 'Guest', 'Playlist', 'Class Type', 'Class Number'];
       const csvRows = [headers.join(',')];
       state.records.forEach(r => {
-          csvRows.push([r.date, r.time, `"${r.guest.replace(/"/g, '""')}"`, r.playlist, `"${(r.classType || '').replace(/"/g, '""')}"`].join(','));
+          csvRows.push([r.date, r.time, `"${r.guest.replace(/"/g, '""')}"`, r.playlist, `"${(r.classType || '').replace(/"/g, '""')}"`, `"${(r.classNumber || '').replace(/"/g, '""')}"`].join(','));
       });
       const csvString = csvRows.join('\r\n');
       const blob = new Blob([csvString], { type: 'text/csv' });
@@ -4110,6 +4402,59 @@
       fields.push(current);
       return fields;
   }
+  function parseCsvText(text) {
+      const rows = [];
+      let currentRow = [];
+      let currentField = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+          const ch = text[i];
+          if (inQuotes) {
+              if (ch === '"' && text[i + 1] === '"') {
+                  currentField += '"';
+                  i++;
+              } else if (ch === '"') {
+                  inQuotes = false;
+              } else {
+                  currentField += ch;
+              }
+              continue;
+          }
+          if (ch === '"') {
+              inQuotes = true;
+          } else if (ch === ',') {
+              currentRow.push(currentField);
+              currentField = '';
+          } else if (ch === '\n') {
+              currentRow.push(currentField);
+              currentField = '';
+              if (currentRow.some(col => (col || '').trim().length > 0)) {
+                  rows.push(currentRow);
+              }
+              currentRow = [];
+          } else if (ch === '\r') {
+              if (text[i + 1] !== '\n') {
+                  currentRow.push(currentField);
+                  currentField = '';
+                  if (currentRow.some(col => (col || '').trim().length > 0)) {
+                      rows.push(currentRow);
+                  }
+                  currentRow = [];
+              }
+          } else {
+              currentField += ch;
+          }
+      }
+
+      if (currentField.length > 0 || currentRow.length > 0) {
+          currentRow.push(currentField);
+          if (currentRow.some(col => (col || '').trim().length > 0)) {
+              rows.push(currentRow);
+          }
+      }
+      return rows;
+  }
   function normalizeCsvHeader(header) {
       return (header || '').toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
   }
@@ -4140,18 +4485,19 @@
       const reader = new FileReader();
       reader.onload = async function(e) {
           const text = (e.target.result || '').toString();
-          const rows = text.split(/\r?\n/).filter(row => row.trim().length > 0);
+          const rows = parseCsvText(text);
           if (rows.length === 0) {
               showToast('CSV appears empty.', 'error');
               return;
           }
 
-          const headerCols = parseCsvRow(rows[0]);
+          const headerCols = rows[0];
           const headerLookup = buildCsvHeaderLookup(headerCols);
           const knownHeaders = new Set([
             'date', 'time', 'guest', 'playlist',
             'date of class', 'class time', 'guest name', 'playlist number', 'class type',
-            'class level', 'level', 'status', 'playlist status'
+            'class level', 'level', 'status', 'playlist status',
+            'class number', 'class id', 'class', 'class no'
           ]);
           const hasKnownHeaders = headerCols.some(h => knownHeaders.has(normalizeCsvHeader(h)));
           const dataRows = hasKnownHeaders ? rows.slice(1) : rows;
@@ -4160,11 +4506,13 @@
           const importedRecords = [];
           const taggedPlaylists = new Set();
           const statusPlaylists = new Set();
-          dataRows.forEach(row => {
-              if (!row.trim()) return;
-              const cols = parseCsvRow(row);
-              const playlistId = normalizePlaylistId(getCsvValue(cols, headerLookup, ['playlist', 'playlist number', 'playlist id'], 3));
-              const playlistStatus = normalizePlaylistStatus(getCsvValue(cols, headerLookup, ['status', 'playlist status']));
+          dataRows.forEach(cols => {
+              if (!Array.isArray(cols) || cols.every(col => !(col || '').trim())) return;
+              const rawPlaylistValue = getCsvValue(cols, headerLookup, ['playlist', 'playlist number', 'playlist id'], 3);
+              const parsedPlaylist = parseImportedPlaylist(rawPlaylistValue);
+              const playlistId = parsedPlaylist.playlistId;
+              const explicitStatus = normalizePlaylistStatus(getCsvValue(cols, headerLookup, ['status', 'playlist status']));
+              const playlistStatus = explicitStatus || parsedPlaylist.inferredStatus;
               if (playlistId && playlistStatus) {
                 if (state.playlistStatus.get(playlistId) !== playlistStatus) {
                   state.playlistStatus.set(playlistId, playlistStatus);
@@ -4176,7 +4524,8 @@
               const time = normalizeTime(getCsvValue(cols, headerLookup, ['time', 'class time'], 1), '09:00');
               const guest = getCsvValue(cols, headerLookup, ['guest', 'guest name', 'name'], 2);
               const classType = getCsvValue(cols, headerLookup, ['class type', 'type', 'class level', 'level'], 4).replace(/\s+/g, ' ').trim();
-              const normalized = normalizeRecord({ date, time, guest, playlist: playlistId, classType });
+              const classNumber = normalizeClassNumber(getCsvValue(cols, headerLookup, ['class number', 'class id', 'class no', 'class'], -1));
+              const normalized = normalizeRecord({ date, time, guest, playlist: playlistId, classType, classNumber });
               if (!normalized) return;
               if (addRecordIfNew(normalized)) {
                   importedCount++;
@@ -4192,9 +4541,7 @@
               }
           });
           rebuildPlaylistsFromData();
-          populateModalPlaylistOptions();
           saveStateToLocalStorage();
-          populateGuestList();
           updateRecordsPill();
           refreshAll();
 
