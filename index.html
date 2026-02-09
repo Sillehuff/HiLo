@@ -219,6 +219,108 @@
     }
     .explorer-row { cursor: pointer; transition: background .15s; }
     .explorer-row:hover { background: rgba(255,255,255,.08) !important; }
+    .explorer-row.retired-row { opacity: .55; }
+    /* Add Playlist form */
+    .add-playlist-form {
+      margin-bottom: 0;
+    }
+    .add-playlist-form .input-field {
+      padding: 8px 12px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+    }
+    .add-playlist-form .input-field:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201,161,93,.2);
+    }
+    /* Status pill toggle */
+    .status-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid;
+      transition: all .2s ease;
+      user-select: none;
+    }
+    .status-toggle.active {
+      background: rgba(46, 204, 113, .18);
+      border-color: rgba(46, 204, 113, .45);
+      color: #2ecc71;
+    }
+    .status-toggle.retired {
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.15);
+      color: rgba(255,255,255,.5);
+    }
+    .status-toggle:hover {
+      transform: scale(1.05);
+    }
+    /* Remove playlist button */
+    .btn-remove-playlist {
+      background: rgba(231, 76, 60, .12);
+      border: 1px solid rgba(231, 76, 60, .3);
+      color: rgba(231, 76, 60, .85);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+    .btn-remove-playlist:hover {
+      background: rgba(231, 76, 60, .25);
+      border-color: rgba(231, 76, 60, .5);
+      color: #e74c3c;
+    }
+    /* Ghost button */
+    .btn-ghost {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.7);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,.12);
+      color: #fff;
+    }
+    /* Tags cell in manager table */
+    .manager-tags-cell {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+    .manager-tags-cell .add-tag-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px dashed rgba(255,255,255,.2);
+      color: rgba(255,255,255,.5);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all .15s ease;
+    }
+    .manager-tags-cell .add-tag-btn:hover {
+      background: rgba(52, 152, 219, .2);
+      border-color: rgba(52, 152, 219, .4);
+      color: #fff;
+    }
     /* Status indicators */
     .status-connected { background: rgba(46, 204, 113, .18); border-color: rgba(46, 204, 113, .45); }
     .status-disconnected { background: rgba(231, 76, 60, .18); border-color: rgba(231, 76, 60, .45); }
@@ -981,7 +1083,7 @@
     <div class="tabs" role="tablist">
       <button class="tab-btn" role="tab" aria-selected="true" data-tab="dashboard">Dashboard</button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="weekly">Weekly Planner</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="explorer">Playlist Explorer</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="explorer">Playlist Manager</button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="history">History</button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="guests">Guests</button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="settings">Settings</button>
@@ -1114,19 +1216,28 @@
     </section>
     <section id="explorer" class="hidden fade-in">
       <div class="hero">
-        <h1>Playlist Explorer</h1>
-        <div class="subtle">Compare all playlists by freshness metrics for the current roster</div>
+        <h1>Playlist Manager</h1>
+        <div class="subtle">Manage playlists, tags, and status</div>
+        <button class="btn btn-primary" id="addPlaylistBtn" style="margin-top:12px;">+ Add Playlist</button>
+      </div>
+      <div id="addPlaylistForm" class="card add-playlist-form" style="display:none;">
+        <div style="font-weight:600; font-size:14px; margin-bottom:8px;">New Playlist</div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <input type="text" id="newPlaylistId" placeholder="Playlist number (e.g. 13)" class="input-field" style="width:180px;" />
+          <button class="btn btn-primary" id="confirmAddPlaylist">Add</button>
+          <button class="btn btn-ghost" id="cancelAddPlaylist">Cancel</button>
+        </div>
+        <div id="addPlaylistError" style="color:var(--danger); font-size:13px; margin-top:6px; display:none;"></div>
       </div>
       <div class="card">
         <div class="table-container">
-          <table class="data-table">
+          <table class="data-table" id="playlist-manager-table">
             <thead>
               <tr>
                 <th class="sortable" data-sort="playlist">Playlist</th>
-                <th class="sortable" data-sort="never">Never-heard</th>
-                <th class="sortable" data-sort="median">Median days</th>
-                <th class="sortable" data-sort="stalePct">Stale %</th>
-                <th class="sortable" data-sort="score">Score</th>
+                <th>Tags</th>
+                <th class="sortable" data-sort="status">Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="explorerTbody"></tbody>
@@ -1330,7 +1441,7 @@
     selectedWindow: 45,
     allGuests: new Set(),
     sortOrder: { column: 'datetime', ascending: false },
-    explorerSortOrder: { column: 'score', ascending: false },
+    explorerSortOrder: { column: 'playlist', ascending: true },
     
     // Firebase integration
     firebaseUser: null,
@@ -1785,6 +1896,56 @@
         showToast('Tag remove failed: ' + err.message, 'error');
       }
     }
+  }
+  async function addNewPlaylist(rawId) {
+    const playlistId = normalizePlaylistId(rawId);
+    if (!playlistId) return { ok: false, error: 'Invalid playlist number. Use a numeric value (e.g. 13 or 2.5).' };
+    if (state.playlists.includes(playlistId)) return { ok: false, error: `Playlist #${playlistId} already exists.` };
+    state.playlists.push(playlistId);
+    state.playlists.sort(comparePlaylistIds);
+    state.playlistStatus.set(playlistId, 'Active');
+    saveStateToLocalStorage();
+    refreshAll();
+    populateModalPlaylistOptions();
+    if (state.firebaseUser) {
+      try {
+        await upsertPlaylistMetadata(playlistId, { status: 'Active', classTypes: [] });
+      } catch (err) {
+        showToast('Playlist save failed: ' + err.message, 'error');
+      }
+    }
+    showToast(`Playlist #${playlistId} added`, 'success');
+    return { ok: true };
+  }
+  async function removePlaylist(playlistNum) {
+    const playlistId = normalizePlaylistId(playlistNum);
+    if (!playlistId) return;
+    // Check for upcoming classes using this playlist
+    const upcoming = Array.from(state.weeklyPlan.values()).filter(
+      c => normalizePlaylistId(c.playlist) === playlistId && c.status !== 'finalized'
+    );
+    if (upcoming.length > 0) {
+      if (!confirm(`Playlist #${playlistId} is assigned to ${upcoming.length} upcoming class(es). Remove anyway?`)) return;
+    } else {
+      if (!confirm(`Remove Playlist #${playlistId}? Historical records will be kept.`)) return;
+    }
+    state.playlists = state.playlists.filter(p => p !== playlistId);
+    state.playlistTags.delete(playlistId);
+    state.playlistStatus.delete(playlistId);
+    if (state.expandedPlaylist === playlistId) state.expandedPlaylist = null;
+    rebuildPlaylistsFromData();
+    saveStateToLocalStorage();
+    refreshAll();
+    populateModalPlaylistOptions();
+    if (state.firebaseUser) {
+      try {
+        await db.collection('users').doc(state.firebaseUser.uid)
+          .collection('playlists').doc(playlistId).delete();
+      } catch (err) {
+        showToast('Playlist delete failed: ' + err.message, 'error');
+      }
+    }
+    showToast(`Playlist #${playlistId} removed`, 'success');
   }
   // --- Local Storage Persistence ---
   function saveStateToLocalStorage() {
@@ -2542,38 +2703,103 @@
     tbody.innerHTML = "";
     const { column, ascending } = state.explorerSortOrder;
 
-    metrics.sort((a, b) => {
-        if (a[column] < b[column]) return ascending ? -1 : 1;
-        if (a[column] > b[column]) return ascending ? 1 : -1;
-        return 0;
+    // Build playlist data array for sorting
+    const rows = state.playlists.map(pl => {
+      const status = state.playlistStatus.get(pl) || 'Active';
+      return { playlist: pl, status };
     });
 
-    metrics.forEach(m => {
+    rows.sort((a, b) => {
+      if (column === 'playlist') {
+        const cmp = comparePlaylistIds(a.playlist, b.playlist);
+        return ascending ? cmp : -cmp;
+      }
+      if (column === 'status') {
+        const cmp = a.status.localeCompare(b.status);
+        return ascending ? cmp : -cmp;
+      }
+      return 0;
+    });
+
+    rows.forEach(row => {
+      const pl = row.playlist;
+      const status = row.status;
+      const tags = state.playlistTags.get(pl) || [];
+      const isRetired = status === 'Retired';
       const tr = document.createElement('tr');
-      tr.className = 'explorer-row';
-      tr.innerHTML = `
-          <td><strong>Playlist #${m.playlist}</strong>${renderPlaylistTags(m.playlist)}</td>
-          <td>${m.never}</td>
-          <td>${m.median}</td>
-          <td>${m.stalePct}%</td>
-          <td><span class="pill status-info">${m.score.toFixed(1)}</span></td>`;
-      tr.addEventListener('click', () => {
-        if (state.expandedPlaylist === m.playlist) {
+      tr.className = 'explorer-row' + (isRetired ? ' retired-row' : '');
+
+      // Playlist name cell
+      const tdName = document.createElement('td');
+      tdName.innerHTML = `<strong>Playlist #${esc(pl)}</strong>`;
+
+      // Tags cell
+      const tdTags = document.createElement('td');
+      const tagsDiv = document.createElement('div');
+      tagsDiv.className = 'manager-tags-cell';
+      tags.forEach(t => {
+        const chip = document.createElement('span');
+        chip.className = 'tag-chip-removable';
+        chip.dataset.tag = t;
+        chip.innerHTML = `<span>${esc(t)}</span><span class="remove-tag">✕</span>`;
+        chip.querySelector('.remove-tag').addEventListener('click', e => {
+          e.stopPropagation();
+          removePlaylistTag(pl, t);
+        });
+        tagsDiv.appendChild(chip);
+      });
+      const addTagBtn = document.createElement('span');
+      addTagBtn.className = 'add-tag-btn';
+      addTagBtn.textContent = '+';
+      addTagBtn.title = 'Add tag';
+      addTagBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (state.expandedPlaylist === pl) {
           state.expandedPlaylist = null;
         } else {
-          state.expandedPlaylist = m.playlist;
+          state.expandedPlaylist = pl;
         }
         refreshExplorer(computeMetrics());
       });
+      tagsDiv.appendChild(addTagBtn);
+      tdTags.appendChild(tagsDiv);
+
+      // Status cell
+      const tdStatus = document.createElement('td');
+      const statusPill = document.createElement('span');
+      statusPill.className = 'status-toggle ' + (isRetired ? 'retired' : 'active');
+      statusPill.textContent = status;
+      statusPill.addEventListener('click', e => {
+        e.stopPropagation();
+        setPlaylistStatus(pl, isRetired ? 'Active' : 'Retired');
+      });
+      tdStatus.appendChild(statusPill);
+
+      // Actions cell
+      const tdActions = document.createElement('td');
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'btn-remove-playlist';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        removePlaylist(pl);
+      });
+      tdActions.appendChild(removeBtn);
+
+      tr.appendChild(tdName);
+      tr.appendChild(tdTags);
+      tr.appendChild(tdStatus);
+      tr.appendChild(tdActions);
       tbody.appendChild(tr);
 
-      if (state.expandedPlaylist === m.playlist) {
+      // Expanded tag editor row
+      if (state.expandedPlaylist === pl) {
         const editorTr = document.createElement('tr');
         editorTr.className = 'tag-editor-row';
-        editorTr.innerHTML = `<td colspan="5">${buildTagEditorHTML(m.playlist)}</td>`;
+        editorTr.innerHTML = `<td colspan="4">${buildTagEditorHTML(pl)}</td>`;
         editorTr.addEventListener('click', e => e.stopPropagation());
         tbody.appendChild(editorTr);
-        wireTagEditor(m.playlist, editorTr);
+        wireTagEditor(pl, editorTr);
       }
     });
   }
@@ -2902,6 +3128,39 @@
           });
       });
       $('#history-search').addEventListener('input', refreshHistory);
+
+      // Add Playlist form handlers
+      $('#addPlaylistBtn').addEventListener('click', () => {
+        const form = $('#addPlaylistForm');
+        form.style.display = form.style.display === 'none' ? '' : 'none';
+        if (form.style.display !== 'none') {
+          $('#newPlaylistId').value = '';
+          $('#addPlaylistError').style.display = 'none';
+          $('#newPlaylistId').focus();
+        }
+      });
+      $('#cancelAddPlaylist').addEventListener('click', () => {
+        $('#addPlaylistForm').style.display = 'none';
+      });
+      $('#confirmAddPlaylist').addEventListener('click', async () => {
+        const input = $('#newPlaylistId');
+        const result = await addNewPlaylist(input.value);
+        if (!result.ok) {
+          const errEl = $('#addPlaylistError');
+          errEl.textContent = result.error;
+          errEl.style.display = '';
+        } else {
+          $('#addPlaylistForm').style.display = 'none';
+        }
+      });
+      $('#newPlaylistId').addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          $('#confirmAddPlaylist').click();
+        } else if (e.key === 'Escape') {
+          $('#addPlaylistForm').style.display = 'none';
+        }
+      });
 
       // Sorting table headers
       $$('#history-table .sortable, #explorer thead .sortable').forEach(header => {
