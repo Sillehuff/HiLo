@@ -1137,6 +1137,9 @@
         
         <div class="row" style="margin-top:14px;">
           <div class="search-wrap" style="flex:1;">
+            <select id="classTypeSelector" class="select" title="Class type">
+              <option value="">All Types</option>
+            </select>
             <select id="playlistWindow" class="select" title="Stale window">
               <option value="45" selected>Stale ≥ 45 days</option>
               <option value="30">Stale ≥ 30 days</option>
@@ -1336,6 +1339,13 @@
           </div>
           
           <div class="form-group">
+            <label for="modal-class-type">Class Type</label>
+            <select id="modal-class-type">
+              <option value="">All Types</option>
+            </select>
+          </div>
+
+          <div class="form-group">
             <label for="modal-class-playlist">Playlist</label>
             <select id="modal-class-playlist">
               <option value="">Select playlist...</option>
@@ -1461,7 +1471,8 @@
 
     // Current selection for dashboard
     selectedDate: null,
-    selectedTime: null
+    selectedTime: null,
+    selectedClassType: ''
   };
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -1544,6 +1555,25 @@
     state.playlistTags.forEach(tags => tags.forEach(t => used.add(t)));
     return Array.from(used).sort();
   }
+  function getAllClassTypes() {
+    const types = new Set();
+    PREDEFINED_CLASS_TYPES.forEach(t => types.add(t));
+    state.playlistTags.forEach(tags => tags.forEach(t => types.add(t)));
+    state.records.forEach(r => { if (r.classType) types.add(r.classType); });
+    state.weeklyPlan.forEach(cls => { if (cls.classType) types.add(cls.classType); });
+    return Array.from(types).sort();
+  }
+  function populateClassTypeDropdown(selectEl, selectedValue) {
+    const current = selectedValue || '';
+    selectEl.innerHTML = '<option value="">All Types</option>';
+    getAllClassTypes().forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = t;
+      if (t === current) opt.selected = true;
+      selectEl.appendChild(opt);
+    });
+  }
   function normalizeTime(timeStr, fallback = '09:00') {
     const raw = (timeStr ?? '').toString().trim();
     if (!raw) return fallback;
@@ -1590,7 +1620,8 @@
       date,
       time: normalizeTime(record.time),
       guest,
-      playlist
+      playlist,
+      classType: (record.classType || '').toString().trim()
     };
   }
   // Deduplicate records before pushing
@@ -1676,6 +1707,7 @@
           cls.id = doc.id;
           cls.playlist = normalizePlaylistId(cls.playlist);
           cls.attendees = new Set(cls.attendees || []);
+          cls.classType = (cls.classType || '').toString().trim();
           const key = createDateTimeKey(cls.date, cls.time);
           state.weeklyPlan.set(key, cls);
           cls.attendees.forEach(g => state.allGuests.add(g));
@@ -1801,6 +1833,7 @@
         attendees: Array.from(classData.attendees),
         status: classData.status || 'draft',
         notes: classData.notes || '',
+        classType: classData.classType || '',
         dateTimeKey
       });
       return true;
@@ -2218,7 +2251,7 @@
     updateDashboardStatus();
   }
   // --- Class Management ---
-  function createClass(date, time, playlist = null, attendees = new Set(), notes = '', status = 'draft') {
+  function createClass(date, time, playlist = null, attendees = new Set(), notes = '', status = 'draft', classType = '') {
     return {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       date: date,
@@ -2226,7 +2259,8 @@
       playlist: playlist,
       attendees: new Set(attendees),
       status: status,
-      notes: notes
+      notes: notes,
+      classType: classType || ''
     };
   }
   async function saveDraftClass() {
@@ -2248,7 +2282,8 @@
       playlist: bestPlaylist,
       attendees: new Set(state.attendees),
       status: 'draft',
-      notes: ''
+      notes: '',
+      classType: state.selectedClassType || ''
     };
 
     if (state.firebaseUser) {
@@ -2293,6 +2328,7 @@
           attendees: Array.from(draftClass.attendees),
           status: 'finalized',
           notes: draftClass.notes || '',
+          classType: draftClass.classType || '',
           dateTimeKey
         });
         // Write attendance records
@@ -2300,7 +2336,7 @@
         for (const guest of draftClass.attendees) {
           const recordKey = buildRecordKey({ date: draftClass.date, time: normalizeTime(draftClass.time), guest, playlist: draftClass.playlist });
           batch.set(recordsRef.doc(safeDocId(recordKey)), {
-            date: draftClass.date, time: normalizeTime(draftClass.time), guest, playlist: draftClass.playlist, recordKey
+            date: draftClass.date, time: normalizeTime(draftClass.time), guest, playlist: draftClass.playlist, classType: draftClass.classType || '', recordKey
           });
         }
         await batch.commit();
@@ -2369,7 +2405,7 @@
           <div class="class-item" onclick="openClassModal('${cls.dateTimeKey}')">
             <div class="class-time">${formatTime(cls.time)}</div>
             <div class="class-info">
-              Playlist #${cls.playlist} • ${cls.attendees.size} guests
+              ${cls.classType ? esc(cls.classType) + ' • ' : ''}Playlist #${cls.playlist} • ${cls.attendees.size} guests
             </div>
             ${renderPlaylistTags(cls.playlist, { compact: true })}
             <div class="pill ${cls.status === 'draft' ? 'status-draft' : 'status-finalized'} " style="margin-top: 4px; font-size: 11px; padding: 4px 8px;">
@@ -2431,37 +2467,39 @@
   window.openNewClassModal = function(dateKey) {
     state.selectedClass = createClass(dateKey, '09:00');
     state.modalAttendees = new Set(); // Start with empty roster for new class
-    
+
     $("#class-modal-title").textContent = 'Plan New Class';
     $("#modal-class-date").value = dateKey;
     $("#modal-class-time").value = '09:00';
+    populateClassTypeDropdown($("#modal-class-type"), '');
     $("#modal-class-playlist").value = '';
     $("#modal-class-notes").value = '';
-    
+
     populateModalPlaylistOptions();
     populateModalGuestList();
     renderModalSelectedGuests();
-    
+
     $("#delete-class-modal").classList.add('hidden');
     $("#class-modal").classList.remove('hidden');
   };
   window.openClassModal = function(dateTimeKey) {
     const classData = state.weeklyPlan.get(dateTimeKey);
     if (!classData) return;
-    
+
     state.selectedClass = classData;
     state.modalAttendees = new Set(classData.attendees); // Load roster from class
 
     $("#class-modal-title").textContent = 'Edit Class';
     $("#modal-class-date").value = classData.date;
     $("#modal-class-time").value = classData.time;
+    populateClassTypeDropdown($("#modal-class-type"), classData.classType || '');
     $("#modal-class-notes").value = classData.notes || '';
 
     populateModalPlaylistOptions();
     $("#modal-class-playlist").value = classData.playlist || '';
     populateModalGuestList();
     renderModalSelectedGuests();
-    
+
     $("#delete-class-modal").classList.remove('hidden');
     $("#class-modal").classList.remove('hidden');
   };
@@ -2616,7 +2654,14 @@
     const lm = lastHeardMap(refDateISO);
     const roster = [...state.attendees];
     const windowDays = state.selectedWindow;
-    const byPlaylist = state.playlists.map(pl => {
+    const classTypeFilter = state.selectedClassType || '';
+    const filteredPlaylists = classTypeFilter
+      ? state.playlists.filter(pl => {
+          const tags = state.playlistTags.get(pl) || [];
+          return tags.includes(classTypeFilter);
+        })
+      : state.playlists;
+    const byPlaylist = filteredPlaylists.map(pl => {
       let never = 0;
       let deltas = [];
       let staleCount = 0;
@@ -2648,6 +2693,7 @@
   }
   // --- UI Refresh Functions ---
   function refreshAll() {
+      populateClassTypeDropdown($('#classTypeSelector'), state.selectedClassType);
       const metrics = computeMetrics();
       refreshDashboard(metrics);
       refreshExplorer(metrics);
@@ -2657,7 +2703,10 @@
     const best = metrics[0];
     
     if (!best || state.attendees.size === 0) {
-      $("#bestSummary").innerHTML = '<div class="muted">Add attendees above to see the best recommendation.</div>';
+      const noTypeMatch = state.attendees.size > 0 && metrics.length === 0 && state.selectedClassType;
+      $("#bestSummary").innerHTML = noTypeMatch
+        ? `<div class="muted">No playlists tagged for <strong>${esc(state.selectedClassType)}</strong>. Tag playlists in the Playlist Explorer or select "All Types".</div>`
+        : '<div class="muted">Add attendees above to see the best recommendation.</div>';
       $("#bestNever").textContent = "—";
       $("#bestMedian").textContent = "—";
       $("#bestStale").textContent = "—";
@@ -2671,7 +2720,7 @@
       <div style="font-size:20px; font-weight:700; margin-top:10px;">
         Playlist <span style="color: var(--accent);">#${best.playlist}</span>${renderPlaylistTags(best.playlist)}
       </div>
-      <div class="subtle" style="margin-top:4px;">Optimized for ${state.attendees.size} attendees • Stale threshold: ${state.selectedWindow} days</div>
+      <div class="subtle" style="margin-top:4px;">Optimized for ${state.attendees.size} attendees • Stale threshold: ${state.selectedWindow} days${state.selectedClassType ? ' • ' + esc(state.selectedClassType) : ''}</div>
     `;
     
     $("#bestNever").textContent = best.never;
@@ -2902,12 +2951,14 @@
         const normalizedTime = normalizeTime(r.time, '00:00');
         const key = `${r.date}T${normalizedTime}::${r.playlist}`;
         if (!byClass.has(key)) {
-            byClass.set(key, { date: r.date, time: normalizedTime, playlist: r.playlist, guests: new Set(), status: 'finalized' });
+            byClass.set(key, { date: r.date, time: normalizedTime, playlist: r.playlist, classType: r.classType || '', guests: new Set(), status: 'finalized' });
         }
+        const entry = byClass.get(key);
+        if (!entry.classType && r.classType) entry.classType = r.classType;
         if (r.guest) {
-            byClass.get(key).guests.add(r.guest);
+            entry.guests.add(r.guest);
         } else if (r.attendees) {
-            r.attendees.forEach(g => byClass.get(key).guests.add(g));
+            r.attendees.forEach(g => entry.guests.add(g));
         }
     });
 
@@ -2938,10 +2989,11 @@
     tbody.innerHTML = "";
     rows.forEach(row => {
       const guestArray = [...row.guests].sort();
+      const classTypeLabel = row.classType ? `<span class="pill" style="font-size:11px; margin-left:4px;">${esc(row.classType)}</span>` : '';
       const tr = `
         <tr>
           <td>${formatDate(row.date)} ${formatTime(row.time)}</td>
-          <td><strong>Playlist #${row.playlist}</strong>${renderPlaylistTags(row.playlist, { compact: true })}</td>
+          <td><strong>Playlist #${row.playlist}</strong>${classTypeLabel}${renderPlaylistTags(row.playlist, { compact: true })}</td>
           <td><span class="pill">${guestArray.length}</span></td>
           <td>${guestArray.slice(0, 3).map(g => esc(g)).join(", ")}${guestArray.length > 3 ? ` +${guestArray.length - 3} more` : ""}</td>
           <td><span class="pill status-finalized">Completed</span></td>
@@ -3048,6 +3100,10 @@
           state.selectedTime = normalizeTime(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`);
           $('#class-date-dashboard').value = state.selectedDate;
           $('#class-time-dashboard').value = state.selectedTime;
+          refreshAll();
+      });
+      $('#classTypeSelector').addEventListener('change', (e) => {
+          state.selectedClassType = e.target.value;
           refreshAll();
       });
       $('#playlistWindow').addEventListener('change', (e) => {
@@ -3316,7 +3372,8 @@
         playlist: normalizePlaylistId(newPlaylist),
         attendees: new Set(state.modalAttendees),
         status: 'draft',
-        notes: $('#modal-class-notes').value || ''
+        notes: $('#modal-class-notes').value || '',
+        classType: $('#modal-class-type').value || ''
       };
       if (!classData.playlist) {
         showToast('Playlist format is invalid.', 'error');
@@ -3384,6 +3441,7 @@
         }
         const attendees = new Set(state.modalAttendees);
         const notes = $('#modal-class-notes').value || '';
+        const classType = $('#modal-class-type').value || '';
 
         // Delete old class doc if date/time changed
         if (oldKey !== newKey) {
@@ -3393,13 +3451,13 @@
         batch.set(classesRef.doc(safeDocId(newKey)), {
           date: targetDate, time: targetTime, playlist,
           attendees: Array.from(attendees), status: 'finalized',
-          notes, dateTimeKey: newKey
+          notes, classType, dateTimeKey: newKey
         });
         // Write attendance records
         for (const guest of attendees) {
           const recordKey = buildRecordKey({ date: targetDate, time: normalizeTime(targetTime), guest, playlist });
           batch.set(recordsRef.doc(safeDocId(recordKey)), {
-            date: targetDate, time: normalizeTime(targetTime), guest, playlist, recordKey
+            date: targetDate, time: normalizeTime(targetTime), guest, playlist, classType, recordKey
           });
         }
         await batch.commit();
@@ -3434,10 +3492,10 @@
           showToast('No data to export.', 'info');
           return;
       }
-      const headers = ['Date', 'Time', 'Guest', 'Playlist'];
+      const headers = ['Date', 'Time', 'Guest', 'Playlist', 'Class Type'];
       const csvRows = [headers.join(',')];
       state.records.forEach(r => {
-          csvRows.push([r.date, r.time, `"${r.guest.replace(/"/g, '""')}"`, r.playlist].join(','));
+          csvRows.push([r.date, r.time, `"${r.guest.replace(/"/g, '""')}"`, r.playlist, `"${(r.classType || '').replace(/"/g, '""')}"`].join(','));
       });
       const csvString = csvRows.join('\r\n');
       const blob = new Blob([csvString], { type: 'text/csv' });
@@ -3520,7 +3578,7 @@
           const knownHeaders = new Set([
             'date', 'time', 'guest', 'playlist',
             'date of class', 'class time', 'guest name', 'playlist number', 'class type',
-            'status', 'playlist status'
+            'class level', 'level', 'status', 'playlist status'
           ]);
           const hasKnownHeaders = headerCols.some(h => knownHeaders.has(normalizeCsvHeader(h)));
           const dataRows = hasKnownHeaders ? rows.slice(1) : rows;
@@ -3544,8 +3602,8 @@
               const date = normalizeImportedDate(getCsvValue(cols, headerLookup, ['date', 'date of class', 'class date'], 0));
               const time = normalizeTime(getCsvValue(cols, headerLookup, ['time', 'class time'], 1), '09:00');
               const guest = getCsvValue(cols, headerLookup, ['guest', 'guest name', 'name'], 2);
-              const classType = getCsvValue(cols, headerLookup, ['class type', 'type'], 5).replace(/\s+/g, ' ').trim();
-              const normalized = normalizeRecord({ date, time, guest, playlist: playlistId });
+              const classType = getCsvValue(cols, headerLookup, ['class type', 'type', 'class level', 'level'], 4).replace(/\s+/g, ' ').trim();
+              const normalized = normalizeRecord({ date, time, guest, playlist: playlistId, classType });
               if (!normalized) return;
               if (addRecordIfNew(normalized)) {
                   importedCount++;
