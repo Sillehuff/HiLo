@@ -68,7 +68,12 @@
       transition: all .15s ease;
       font-size: 14px;
       font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
+    .tab-btn .tab-icon { font-size: 15px; line-height: 1; }
+    .tab-btn .tab-label { white-space: nowrap; }
     .tab-btn[aria-selected="true"] {
       background: linear-gradient(180deg, rgba(201,161,93,.28), rgba(201,161,93,.14));
       border-color: rgba(201,161,93,.55);
@@ -104,7 +109,7 @@
       font-weight: 800;
       letter-spacing: .2px;
     }
-    .subtle { color: rgba(255,255,255,.75); font-weight: 500; }
+    .subtle { color: rgba(255,255,255,.8); font-weight: 500; font-size: 15px; }
     .hero .row {
       display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 10px;
     }
@@ -348,12 +353,13 @@
     }
     .card .body { padding: 16px; }
     .card .title { font-weight: 700; letter-spacing:.2px; margin-bottom: 4px; }
-    .card .muted { color: rgba(255,255,255,.74); font-size: 14px; }
+    .card .muted { color: rgba(255,255,255,.8); font-size: 14px; }
     .primary-card {
       background: linear-gradient(180deg, rgba(36,59,51,.82), rgba(36,59,51,.68));
       border-color: rgba(201,161,93,.55);
+      border-width: 2px;
     }
-    .primary-card .title { color: #fff; font-size: 18px; }
+    .primary-card .title { color: #fff; font-size: 18px; font-weight: 800; }
     .metric-row {
       display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px;
     }
@@ -364,8 +370,8 @@
       padding: 12px;
       text-align:center;
     }
-    .metric .value { font-weight: 800; font-size: 22px; }
-    .metric .label { color: rgba(255,255,255,.74); font-size: 12px; margin-top: 4px; }
+    .metric .value { font-weight: 800; font-size: 26px; color: var(--accent); }
+    .metric .label { color: rgba(255,255,255,.8); font-size: 12px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     .btn { 
       padding: 10px 16px;
       border-radius: 12px;
@@ -669,9 +675,16 @@
       background: rgba(255,255,255,.1);
       transform: translateY(-2px);
     }
+    .day-card.today {
+      border-color: rgba(52, 152, 219, .5);
+      box-shadow: 0 0 0 1px rgba(52, 152, 219, .2), var(--shadow);
+    }
     .day-card.has-classes {
       border-color: rgba(201,161,93,.4);
       background: rgba(201,161,93,.08);
+    }
+    .day-card.today.has-classes {
+      border-color: rgba(201,161,93,.5);
     }
     .day-header {
       display: flex;
@@ -938,11 +951,85 @@
       padding: 60px 20px;
       color: rgba(255,255,255,.6);
     }
-    
+
     .empty-state h3 {
       margin: 0 0 8px 0;
       font-size: 18px;
       color: rgba(255,255,255,.8);
+    }
+    /* Step labels for dashboard workflow */
+    .step-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(201,161,93,.85);
+    }
+    .step-label .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(201,161,93,.2);
+      border: 1px solid rgba(201,161,93,.4);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    /* Guest selector header row */
+    .guest-selector-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .guest-selector-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-xs {
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.8);
+      cursor: pointer;
+      transition: all .15s ease;
+      font-weight: 500;
+    }
+    .btn-xs:hover {
+      background: rgba(255,255,255,.15);
+      color: #fff;
+    }
+    /* Summary stats bar */
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      background: rgba(0,0,0,.12);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-bottom: 16px;
+    }
+    .stats-bar .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: rgba(255,255,255,.8);
+    }
+    .stats-bar .stat-value {
+      font-weight: 700;
+      color: var(--accent);
     }
     /* Toast notifications */
     #toast-container {
@@ -1039,34 +1126,70 @@
     .debug-panel.show {
       display: block;
     }
-    /* Responsive */
+    /* Responsive - Tablet */
+    @media (max-width: 1024px) {
+      .calendar-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    /* Responsive - Mobile */
     @media (max-width: 768px) {
+      body { padding-bottom: 72px; }
+      .nav { flex-wrap: wrap; gap: 8px; }
+      .nav .tabs {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(13, 21, 18, .97);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(255,255,255,.08);
+        padding: 6px 8px env(safe-area-inset-bottom, 6px);
+        display: flex;
+        justify-content: space-around;
+        gap: 2px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .nav .tabs::-webkit-scrollbar { display: none; }
+      .nav .tabs .tab-btn {
+        flex-direction: column;
+        gap: 2px;
+        padding: 6px 8px;
+        border-radius: 10px;
+        font-size: 10px;
+        min-width: 52px;
+        border: none;
+        background: transparent;
+      }
+      .nav .tabs .tab-btn .tab-icon { font-size: 18px; }
+      .nav .tabs .tab-btn[aria-selected="true"] {
+        background: rgba(201,161,93,.18);
+        border: none;
+        box-shadow: none;
+      }
       .calendar-grid {
         grid-template-columns: 1fr;
       }
-      
       .metric-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
       }
-      
       .form-row {
         grid-template-columns: 1fr;
       }
-      
       .datetime-selector {
         flex-direction: column;
         align-items: stretch;
       }
-      
-      .tabs {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        flex-wrap: nowrap;
-        scrollbar-width: none; /* Firefox */
+      #toast-container {
+        bottom: 80px;
+        right: 12px;
+        left: 12px;
       }
-      .tabs::-webkit-scrollbar {
-        display: none; /* Safari and Chrome */
-      }
+      .toast { min-width: unset; max-width: unset; }
     }
   </style>
 </head>
@@ -1081,12 +1204,12 @@
       <span>Hilo Playlist</span>
     </div>
     <div class="tabs" role="tablist">
-      <button class="tab-btn" role="tab" aria-selected="true" data-tab="dashboard">Dashboard</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="weekly">Weekly Planner</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="explorer">Playlist Manager</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="history">History</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="guests">Guests</button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="settings">Settings</button>
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="dashboard"><span class="tab-icon" aria-hidden="true">&#9776;</span><span class="tab-label">Dashboard</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="weekly"><span class="tab-icon" aria-hidden="true">&#128197;</span><span class="tab-label">Weekly Planner</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="explorer"><span class="tab-icon" aria-hidden="true">&#9835;</span><span class="tab-label">Playlists</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="history"><span class="tab-icon" aria-hidden="true">&#128214;</span><span class="tab-label">History</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="guests"><span class="tab-icon" aria-hidden="true">&#128101;</span><span class="tab-label">Guests</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="settings"><span class="tab-icon" aria-hidden="true">&#9881;</span><span class="tab-label">Settings</span></button>
     </div>
     <div id="auth-container" style="display:flex; align-items:center; gap:8px;">
       <button id="signInBtn" class="btn btn-primary btn-sm">Sign In</button>
@@ -1105,6 +1228,8 @@
           <span>Not signed in</span>
         </div>
         
+        <div class="step-label"><span class="step-num">1</span> Set Date, Time &amp; Guests</div>
+
         <div class="datetime-selector">
           <div style="flex: 1;">
             <label for="class-date-dashboard">Class Date</label>
@@ -1114,28 +1239,36 @@
             <label for="class-time-dashboard">Class Time</label>
             <input type="time" id="class-time-dashboard" value="09:00">
           </div>
-          <button id="todayBtn" class="btn btn-info">Set to Now</button>
+          <button id="todayBtn" class="btn btn-info btn-sm">Set to Now</button>
         </div>
-        
-        <div style="margin-top:20px;">
+
+        <div style="margin-top:12px;">
           <div class="guest-selector">
-            <div class="search-container" style="max-width:100%;">
-              <input type="text" id="guest-search" placeholder="Search House Guests...">
-            </div>
-            
-            <div class="selected-guests-container">
-              <div class="selected-guests" id="rosterChips">
-                <div class="no-selection" id="no-selection-message">No House Guests selected</div>
+            <div class="guest-selector-header">
+              <div class="search-container" style="max-width:100%; flex:1;">
+                <input type="text" id="guest-search" placeholder="Search guests...">
+              </div>
+              <div class="guest-selector-actions">
+                <button id="selectAllGuestsBtn" class="btn-xs" title="Select all guests">Select All</button>
+                <button id="clearAllGuestsBtn" class="btn-xs" title="Clear selection">Clear All</button>
               </div>
             </div>
-            
+
+            <div class="selected-guests-container">
+              <div class="selected-guests" id="rosterChips">
+                <div class="no-selection" id="no-selection-message">No guests selected -- tap names below to add</div>
+              </div>
+            </div>
+
             <div class="guest-list-container">
               <div class="guest-list" id="guest-list"></div>
             </div>
           </div>
         </div>
-        
-        <div class="row" style="margin-top:14px;">
+
+        <div class="step-label" style="margin-top:16px;"><span class="step-num">2</span> Filters &amp; Actions</div>
+
+        <div class="row" style="margin-top:0;">
           <div class="search-wrap" style="flex:1;">
             <select id="classTypeSelector" class="select" title="Class type">
               <option value="">All Types</option>
@@ -1146,12 +1279,6 @@
               <option value="60">Stale ≥ 60 days</option>
               <option value="90">Stale ≥ 90 days</option>
             </select>
-            <button id="saveDraftBtn" class="btn btn-warning" title="Save as draft">
-              <span>💾</span> Save Draft
-            </button>
-            <button id="finalizeBtn" class="btn btn-success" title="Finalize and sync" disabled>
-              <span>✔</span> Finalize Class
-            </button>
           </div>
         </div>
         <div class="row" style="margin-top:10px;">
@@ -1160,28 +1287,30 @@
           <span id="draftStatusPill" class="pill hidden">No draft</span>
         </div>
       </div>
-      <div class="cards" style="margin-top:14px;">
+      <div class="step-label" style="margin-top:18px;"><span class="step-num">3</span> Recommendation</div>
+      <div class="cards">
         <div class="card primary-card" id="bestCard">
           <div class="body">
-            <div class="title">Best Fit Recommendation</div>
+            <div class="title">Best Fit Playlist</div>
             <div class="muted">Maximizes freshness for the current roster</div>
             <div id="bestSummary" style="margin-top:10px;"></div>
             <div class="metric-row">
               <div class="metric">
-                <div class="value" id="bestNever">—</div>
+                <div class="value" id="bestNever">--</div>
                 <div class="label">Never-heard</div>
               </div>
               <div class="metric">
-                <div class="value" id="bestMedian">—</div>
+                <div class="value" id="bestMedian">--</div>
                 <div class="label">Median days</div>
               </div>
               <div class="metric">
-                <div class="value" id="bestStale">—</div>
+                <div class="value" id="bestStale">--</div>
                 <div class="label">Stale %</div>
               </div>
             </div>
             <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="btn" id="selectPlaylistBtn">Use This Playlist</button>
+              <button class="btn btn-warning" id="saveDraftBtn" title="Save as draft"><span>&#128190;</span> Save Draft</button>
+              <button class="btn btn-success" id="finalizeBtn" title="Finalize and sync" disabled><span>&#10004;</span> Finalize</button>
               <button class="btn" id="previewRosterBtn">View Details</button>
             </div>
           </div>
@@ -1189,7 +1318,7 @@
         <div class="card">
           <div class="body">
             <div class="title">Runner-ups</div>
-            <div class="muted">Strong alternatives ranked by freshness</div>
+            <div class="muted">Alternatives ranked by freshness</div>
             <div class="suggestions" id="runnerUps"></div>
           </div>
         </div>
@@ -1255,6 +1384,7 @@
           <input type="text" id="history-search" placeholder="Search classes...">
         </div>
       </div>
+      <div id="history-stats" class="stats-bar"></div>
       <div class="card">
         <div class="table-container">
           <table id="history-table" class="data-table">
@@ -1279,6 +1409,7 @@
           <input type="text" id="guest-search-filter" placeholder="Search guests...">
         </div>
       </div>
+      <div id="guests-stats" class="stats-bar"></div>
       <div id="guests-grid" class="guests-grid">
         <div class="empty-state">
           <h3>No guest data available</h3>
@@ -1311,9 +1442,12 @@
             <div class="muted">Import/export your class data</div>
 
             <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
-              <button id="importCsvBtn" class="btn">📥 Import CSV (App/HiLo)</button>
-              <button id="exportCsvBtn" class="btn">📤 Export CSV</button>
-              <button id="clearDataBtn" class="btn btn-danger">🗑️ Clear All Data</button>
+              <button id="importCsvBtn" class="btn">&#128229; Import CSV</button>
+              <button id="exportCsvBtn" class="btn">&#128228; Export CSV</button>
+            </div>
+            <div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,.08);">
+              <button id="clearDataBtn" class="btn btn-danger">&#128465; Clear All Data</button>
+              <p style="margin:8px 0 0; font-size:12px; color:rgba(255,255,255,.5);">This permanently deletes all local and cloud data.</p>
             </div>
             <input id="fileInput" type="file" accept=".csv" class="hidden" />
           </div>
@@ -2397,7 +2531,7 @@
         .sort((a, b) => a.time.localeCompare(b.time));
       
       const dayCard = document.createElement('div');
-      dayCard.className = `day-card ${dayClasses.length > 0 ? 'has-classes' : ''}`;
+      dayCard.className = `day-card${isToday ? ' today' : ''}${dayClasses.length > 0 ? ' has-classes' : ''}`;
       
       let classesHTML = '';
       if (dayClasses.length > 0) {
@@ -2419,7 +2553,7 @@
       
       dayCard.innerHTML = `
         <div class="day-header">
-          <div class="day-name">${dayNames[index]} ${isToday ? '• Today' : ''}</div>
+          <div class="day-name">${dayNames[index]}${isToday ? ' <span style="color:var(--info); font-size:12px; font-weight:600; margin-left:4px;">TODAY</span>' : ''}</div>
           <div class="day-date">${day.getMonth() + 1}/${day.getDate()}</div>
         </div>
         <div class="class-list">${classesHTML}</div>
@@ -2581,7 +2715,7 @@
     rosterChips.innerHTML = "";
     
     if (state.attendees.size === 0) {
-      rosterChips.innerHTML = `<div class="no-selection">No House Guests selected</div>`;
+      rosterChips.innerHTML = `<div class="no-selection">No guests selected -- tap names below to add</div>`;
     } else {
       [...state.attendees].sort().forEach(name => {
         const guestChip = document.createElement("div");
@@ -2705,16 +2839,14 @@
     if (!best || state.attendees.size === 0) {
       const noTypeMatch = state.attendees.size > 0 && metrics.length === 0 && state.selectedClassType;
       $("#bestSummary").innerHTML = noTypeMatch
-        ? `<div class="muted">No playlists tagged for <strong>${esc(state.selectedClassType)}</strong>. Tag playlists in the Playlist Explorer or select "All Types".</div>`
+        ? `<div class="muted">No playlists tagged for <strong>${esc(state.selectedClassType)}</strong>. Tag playlists in the Playlist Manager or select "All Types".</div>`
         : '<div class="muted">Add attendees above to see the best recommendation.</div>';
-      $("#bestNever").textContent = "—";
-      $("#bestMedian").textContent = "—";
-      $("#bestStale").textContent = "—";
+      $("#bestNever").textContent = "--";
+      $("#bestMedian").textContent = "--";
+      $("#bestStale").textContent = "--";
       $("#runnerUps").innerHTML = '<div class="empty-state"><p>Select attendees to see alternatives</p></div>';
-      $("#selectPlaylistBtn").disabled = true;
       return;
     }
-     $("#selectPlaylistBtn").disabled = false;
     
     $("#bestSummary").innerHTML = `
       <div style="font-size:20px; font-weight:700; margin-top:10px;">
@@ -2986,6 +3118,17 @@
         return 0;
     });
 
+    // Update history summary stats
+    const histStats = $("#history-stats");
+    const totalClasses = rows.length;
+    const uniquePlaylists = new Set(rows.map(r => r.playlist)).size;
+    const uniqueGuests = new Set(rows.flatMap(r => [...r.guests])).size;
+    histStats.innerHTML = `
+      <div class="stat-item"><span class="stat-value">${totalClasses}</span> classes</div>
+      <div class="stat-item"><span class="stat-value">${uniquePlaylists}</span> playlists used</div>
+      <div class="stat-item"><span class="stat-value">${uniqueGuests}</span> unique guests</div>
+    `;
+
     tbody.innerHTML = "";
     rows.forEach(row => {
       const guestArray = [...row.guests].sort();
@@ -3006,7 +3149,9 @@
     const container = $("#guests-grid");
     const searchTerm = $("#guest-search-filter").value.toLowerCase();
     
+    const guestsStatsBar = $("#guests-stats");
     if (state.allGuests.size === 0) {
+      guestsStatsBar.innerHTML = '';
       container.innerHTML = `<div class="empty-state"><h3>No guest data available</h3><p>Sign in and import data to see guest profiles</p></div>`;
       return;
     }
@@ -3024,6 +3169,13 @@
       })
       .sort((a, b) => (a.daysSince ?? 9999) - (b.daysSince ?? 9999)); // Sort by most recent first
     
+    // Update guest summary stats
+    const activeGuests = guestStats.filter(g => g.daysSince !== null && g.daysSince <= 90).length;
+    guestsStatsBar.innerHTML = `
+      <div class="stat-item"><span class="stat-value">${guestStats.length}</span> total guests</div>
+      <div class="stat-item"><span class="stat-value">${activeGuests}</span> active (last 90 days)</div>
+    `;
+
     container.innerHTML = "";
     guestStats.forEach(guest => {
       const guestCard = document.createElement("div");
@@ -3112,15 +3264,23 @@
       });
       $('#saveDraftBtn').addEventListener('click', saveDraftClass);
       $('#finalizeBtn').addEventListener('click', finalizeClass);
-      
-      $('#selectPlaylistBtn').addEventListener('click', () => {
-        const metrics = computeMetrics();
-        const bestPlaylist = metrics[0]?.playlist;
-        if(bestPlaylist) {
-          saveDraftClass(); // This will use the best playlist
-        } else {
-          showToast('Cannot select playlist, no recommendation available.', 'error');
-        }
+
+      // Select All / Clear All guest buttons
+      $('#selectAllGuestsBtn').addEventListener('click', () => {
+        const visibleGuests = $$("#guest-list .guest-list-item").filter(el => el.style.display !== 'none');
+        visibleGuests.forEach(el => {
+          const guest = el.dataset.guest;
+          if (!state.attendees.has(guest)) state.attendees.add(guest);
+        });
+        renderSelectedGuests();
+        updateGuestListSelection();
+        refreshAll();
+      });
+      $('#clearAllGuestsBtn').addEventListener('click', () => {
+        state.attendees.clear();
+        renderSelectedGuests();
+        updateGuestListSelection();
+        refreshAll();
       });
       $('#previewRosterBtn').addEventListener('click', () => {
         const metrics = computeMetrics();
