@@ -371,7 +371,83 @@
       text-align:center;
     }
     .metric .value { font-weight: 800; font-size: 26px; color: var(--accent); }
-    .metric .label { color: rgba(255,255,255,.8); font-size: 12px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric .label { color: rgba(255,255,255,.8); font-size: 12px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+    /* Tooltips */
+    .info-tip {
+      position: relative;
+      cursor: help;
+      opacity: 0.5;
+      font-size: 12px;
+      font-style: normal;
+      transition: opacity .2s;
+    }
+    .info-tip:hover, .info-tip:focus { opacity: 1; }
+    .info-tip .tip-text {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(13, 21, 18, .97);
+      border: 1px solid rgba(201,161,93,.4);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      white-space: normal;
+      width: 200px;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s ease;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+      color: var(--cream);
+    }
+    .info-tip .tip-text::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: rgba(201,161,93,.4);
+    }
+    .info-tip:hover .tip-text, .info-tip:focus .tip-text { opacity: 1; }
+    .tooltip-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    .tooltip-wrapper .tooltip-text {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(13, 21, 18, .97);
+      border: 1px solid rgba(201,161,93,.4);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s ease;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+      color: var(--cream);
+    }
+    .tooltip-wrapper .tooltip-text::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: rgba(201,161,93,.4);
+    }
+    .tooltip-wrapper:hover .tooltip-text { opacity: 1; }
+    .btn:disabled { cursor: not-allowed; }
     .btn { 
       padding: 10px 16px;
       border-radius: 12px;
@@ -523,9 +599,12 @@
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 10px;
       padding: 10px 14px;
+      min-height: 44px;
       cursor: pointer;
       transition: all 0.2s ease;
       font-size: 14px;
+      display: flex;
+      align-items: center;
     }
     .guest-list-item:hover {
       background: rgba(255,255,255,.1);
@@ -545,15 +624,13 @@
     
     .search-container input {
       width: 100%;
-      padding: 12px 16px;
-      padding-left: 40px;
+      padding: 12px 40px 12px 40px;
       border-radius: 12px;
       background: rgba(255,255,255,.08);
       border: 1px solid rgba(255,255,255,.12);
       color: #fff;
       font-size: 14px;
     }
-    
     .search-container::before {
       content: '🔍';
       position: absolute;
@@ -561,6 +638,35 @@
       top: 50%;
       transform: translateY(-50%);
       opacity: 0.6;
+      pointer-events: none;
+    }
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,.12);
+      border: none;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: rgba(255,255,255,.7);
+      font-size: 13px;
+      line-height: 1;
+      transition: all .15s ease;
+      padding: 0;
+    }
+    .search-clear:hover { background: rgba(255,255,255,.25); color: #fff; }
+    .search-clear.visible { display: flex; }
+    .search-result-count {
+      font-size: 12px;
+      color: rgba(255,255,255,.5);
+      margin-top: 4px;
+      min-height: 16px;
     }
     .search-wrap { display:flex; gap:8px; flex-wrap:wrap; }
     .search { 
@@ -886,6 +992,108 @@
       gap: 8px;
       flex-shrink: 0;
     }
+    /* Modal Recommendation Panel */
+    .modal-recommendation {
+      background: rgba(36,59,51,.5);
+      border: 1px solid rgba(201,161,93,.35);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .modal-rec-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .modal-rec-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .modal-rec-best {
+      margin-bottom: 10px;
+    }
+    .modal-rec-best-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .modal-rec-best-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--cream);
+    }
+    .modal-rec-best-name .accent { color: var(--accent); }
+    .modal-rec-metrics {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .modal-rec-metric {
+      text-align: center;
+    }
+    .modal-rec-metric .val {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--cream);
+    }
+    .modal-rec-metric .lbl {
+      font-size: 11px;
+      color: rgba(255,255,255,.6);
+      margin-top: 2px;
+    }
+    .modal-rec-alternatives {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .modal-rec-alternatives .alt-label {
+      font-size: 12px;
+      color: rgba(255,255,255,.6);
+      margin-right: 4px;
+    }
+    .modal-rec-alt-pill {
+      padding: 6px 14px;
+      min-height: 36px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 999px;
+      color: var(--cream);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .modal-rec-alt-pill:hover {
+      background: rgba(201,161,93,.2);
+      border-color: rgba(201,161,93,.5);
+      transform: translateY(-1px);
+    }
+    .modal-rec-use-btn {
+      padding: 6px 16px;
+      min-height: 36px;
+      background: linear-gradient(180deg, rgba(201,161,93,.35), rgba(201,161,93,.2));
+      border: 1px solid rgba(201,161,93,.5);
+      border-radius: 8px;
+      color: var(--cream);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .modal-rec-use-btn:hover {
+      background: linear-gradient(180deg, rgba(201,161,93,.5), rgba(201,161,93,.3));
+      transform: translateY(-1px);
+    }
     /* Form styling */
     .form-group {
       margin-bottom: 16px;
@@ -995,8 +1203,9 @@
       gap: 6px;
     }
     .btn-xs {
-      padding: 4px 10px;
-      font-size: 12px;
+      padding: 8px 12px;
+      min-height: 44px;
+      font-size: 13px;
       border-radius: 8px;
       background: rgba(255,255,255,.08);
       border: 1px solid rgba(255,255,255,.12);
@@ -1004,6 +1213,9 @@
       cursor: pointer;
       transition: all .15s ease;
       font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .btn-xs:hover {
       background: rgba(255,255,255,.15);
@@ -1134,7 +1346,7 @@
     }
     /* Responsive - Mobile */
     @media (max-width: 768px) {
-      body { padding-bottom: 72px; }
+      body { padding-bottom: 80px; }
       .nav { flex-wrap: wrap; gap: 8px; }
       .nav .tabs {
         position: fixed;
@@ -1160,12 +1372,14 @@
         gap: 2px;
         padding: 6px 8px;
         border-radius: 10px;
-        font-size: 10px;
-        min-width: 52px;
+        font-size: 9px;
+        min-width: 56px;
+        min-height: 52px;
         border: none;
         background: transparent;
       }
-      .nav .tabs .tab-btn .tab-icon { font-size: 18px; }
+      .nav .tabs .tab-btn .tab-icon { font-size: 16px; }
+      .nav .tabs .tab-btn .tab-label { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 56px; }
       .nav .tabs .tab-btn[aria-selected="true"] {
         background: rgba(201,161,93,.18);
         border: none;
@@ -1204,8 +1418,8 @@
       <span>Hilo Playlist</span>
     </div>
     <div class="tabs" role="tablist">
-      <button class="tab-btn" role="tab" aria-selected="true" data-tab="dashboard"><span class="tab-icon" aria-hidden="true">&#9776;</span><span class="tab-label">Dashboard</span></button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="weekly"><span class="tab-icon" aria-hidden="true">&#128197;</span><span class="tab-label">Weekly Planner</span></button>
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="weekly"><span class="tab-icon" aria-hidden="true">&#128197;</span><span class="tab-label">Weekly Planner</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="dashboard"><span class="tab-icon" aria-hidden="true">&#9776;</span><span class="tab-label">Recommender</span></button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="explorer"><span class="tab-icon" aria-hidden="true">&#9835;</span><span class="tab-label">Playlists</span></button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="history"><span class="tab-icon" aria-hidden="true">&#128214;</span><span class="tab-label">History</span></button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="guests"><span class="tab-icon" aria-hidden="true">&#128101;</span><span class="tab-label">Guests</span></button>
@@ -1218,9 +1432,9 @@
     </div>
   </nav>
   <main class="container">
-    <section id="dashboard" class="fade-in">
+    <section id="dashboard" class="hidden fade-in">
       <div class="hero">
-        <h1>Class Planning Dashboard</h1>
+        <h1>Playlist Recommender</h1>
         <div class="subtle" id="currentDateTime"></div>
         
         <div id="connection-status" class="connection-status disconnected">
@@ -1247,7 +1461,9 @@
             <div class="guest-selector-header">
               <div class="search-container" style="max-width:100%; flex:1;">
                 <input type="text" id="guest-search" placeholder="Search guests...">
+                <button type="button" class="search-clear" id="guest-search-clear" aria-label="Clear search">✕</button>
               </div>
+              <div class="search-result-count" id="guest-search-count"></div>
               <div class="guest-selector-actions">
                 <button id="selectAllGuestsBtn" class="btn-xs" title="Select all guests">Select All</button>
                 <button id="clearAllGuestsBtn" class="btn-xs" title="Clear selection">Clear All</button>
@@ -1284,7 +1500,6 @@
         <div class="row" style="margin-top:10px;">
           <span class="pill" id="rosterCountPill">0 attendees</span>
           <span class="pill" id="recordsCountPill">0 records</span>
-          <span id="draftStatusPill" class="pill hidden">No draft</span>
         </div>
       </div>
       <div class="step-label" style="margin-top:18px;"><span class="step-num">3</span> Recommendation</div>
@@ -1297,20 +1512,19 @@
             <div class="metric-row">
               <div class="metric">
                 <div class="value" id="bestNever">--</div>
-                <div class="label">Never-heard</div>
+                <div class="label">Never-heard <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">% of attendees who have never heard this playlist — higher means fresher</span></span></div>
               </div>
               <div class="metric">
                 <div class="value" id="bestMedian">--</div>
-                <div class="label">Median days</div>
+                <div class="label">Median days <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">Typical days since attendees last heard this — higher means fresher</span></span></div>
               </div>
               <div class="metric">
                 <div class="value" id="bestStale">--</div>
-                <div class="label">Stale %</div>
+                <div class="label">Stale % <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">% of attendees who heard this within the staleness window — lower is fresher</span></span></div>
               </div>
             </div>
             <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="btn btn-warning" id="saveDraftBtn" title="Save as draft"><span>&#128190;</span> Save Draft</button>
-              <button class="btn btn-success" id="finalizeBtn" title="Finalize and sync" disabled><span>&#10004;</span> Finalize</button>
+              <button class="btn btn-primary" id="planThisClassBtn">&#128197; Plan This Class</button>
               <button class="btn" id="previewRosterBtn">View Details</button>
             </div>
           </div>
@@ -1324,7 +1538,7 @@
         </div>
       </div>
     </section>
-    <section id="weekly" class="hidden fade-in">
+    <section id="weekly" class="fade-in">
       <div class="hero">
         <h1>Weekly Class Planner</h1>
         <div class="subtle">Plan and manage your upcoming week of classes</div>
@@ -1382,6 +1596,7 @@
         <h2>Class History</h2>
         <div class="search-container">
           <input type="text" id="history-search" placeholder="Search classes...">
+          <button type="button" class="search-clear" id="history-search-clear" aria-label="Clear search">✕</button>
         </div>
       </div>
       <div id="history-stats" class="stats-bar"></div>
@@ -1407,13 +1622,14 @@
         <h2>Guest Profiles</h2>
         <div class="search-container">
           <input type="text" id="guest-search-filter" placeholder="Search guests...">
+          <button type="button" class="search-clear" id="guest-filter-clear" aria-label="Clear search">✕</button>
         </div>
       </div>
       <div id="guests-stats" class="stats-bar"></div>
       <div id="guests-grid" class="guests-grid">
         <div class="empty-state">
           <h3>No guest data available</h3>
-          <p>Sign in to see guest profiles</p>
+          <p>Sign in and import attendance data to see guest profiles</p>
         </div>
       </div>
     </section>
@@ -1471,12 +1687,57 @@
               <input type="time" id="modal-class-time" value="09:00">
             </div>
           </div>
-          
+
+          <div class="form-row">
+            <div class="form-group" style="flex:2;">
+              <label for="modal-class-type">Class Type</label>
+              <select id="modal-class-type">
+                <option value="">All Types</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="modal-stale-window">Stale Window</label>
+              <select id="modal-stale-window" class="select">
+                <option value="45" selected>45 days</option>
+                <option value="30">30 days</option>
+                <option value="60">60 days</option>
+                <option value="90">90 days</option>
+              </select>
+            </div>
+          </div>
+
           <div class="form-group">
-            <label for="modal-class-type">Class Type</label>
-            <select id="modal-class-type">
-              <option value="">All Types</option>
-            </select>
+            <label>Attendees</label>
+            <div class="guest-selector">
+              <div class="guest-selector-header">
+                <div class="search-container" style="max-width:100%; flex:1;">
+                  <input type="text" id="modal-guest-search" placeholder="Search guests...">
+                  <button type="button" class="search-clear" id="modal-guest-search-clear" aria-label="Clear search">✕</button>
+                </div>
+                <div class="guest-selector-actions">
+                  <button type="button" class="btn-xs" id="modalSelectAllBtn">Select All</button>
+                  <button type="button" class="btn-xs" id="modalClearAllBtn">Clear All</button>
+                </div>
+              </div>
+
+              <div class="selected-guests-container">
+                <div class="selected-guests" id="modal-selected-guests">
+                  <div class="no-selection">No guests selected</div>
+                </div>
+              </div>
+
+              <div class="guest-list-container" style="max-height: 200px;">
+                <div class="guest-list" id="modal-guest-list"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="modal-recommendation" class="modal-recommendation" style="display:none;">
+            <div class="modal-rec-header">
+              <span class="modal-rec-title">Recommended Playlist</span>
+            </div>
+            <div id="modal-rec-best" class="modal-rec-best"></div>
+            <div id="modal-rec-alternatives" class="modal-rec-alternatives"></div>
           </div>
 
           <div class="form-group">
@@ -1485,26 +1746,7 @@
               <option value="">Select playlist...</option>
             </select>
           </div>
-          
-          <div class="form-group">
-            <label>Attendees</label>
-            <div class="guest-selector">
-              <div class="search-container" style="max-width:100%;">
-                <input type="text" id="modal-guest-search" placeholder="Search guests...">
-              </div>
-              
-              <div class="selected-guests-container">
-                <div class="selected-guests" id="modal-selected-guests">
-                  <div class="no-selection">No guests selected</div>
-                </div>
-              </div>
-              
-              <div class="guest-list-container" style="max-height: 200px;">
-                <div class="guest-list" id="modal-guest-list"></div>
-              </div>
-            </div>
-          </div>
-          
+
           <div class="form-group">
             <label for="modal-class-notes">Notes (optional)</label>
             <textarea id="modal-class-notes" placeholder="Add any notes about this class..."></textarea>
@@ -1514,7 +1756,10 @@
             <button id="delete-class-modal" class="btn btn-danger" style="margin-right: auto;">🗑️ Delete</button>
             <button id="cancel-modal" class="btn">Cancel</button>
             <button id="save-draft-modal" class="btn btn-warning">💾 Save as Draft</button>
-            <button id="finalize-modal" class="btn btn-success">✔ Finalize</button>
+            <div class="tooltip-wrapper">
+              <button id="finalize-modal" class="btn btn-success">✔ Finalize</button>
+              <span class="tooltip-text">Saves class &amp; records attendance for all attendees</span>
+            </div>
         </div>
       </div>
     </div>
@@ -2302,6 +2547,7 @@
     updateDashboardStatus();
     updateRecordsPill();
     refreshAll();
+    renderWeeklyCalendar();
 
     // Start Firebase auth listener — Firestore listeners start on sign-in
     setupAuthListener();
@@ -2446,7 +2692,7 @@
       showToast('This class has already been finalized.', 'info');
       return;
     }
-    setLoading($("#finalizeBtn"), true);
+    // finalizeClass is deprecated — use handleModalFinalize instead
 
     try {
       if (state.firebaseUser) {
@@ -2481,34 +2727,11 @@
     } catch (error) {
       showToast('Finalize failed: ' + error.message, 'error');
     } finally {
-      setLoading($("#finalizeBtn"), false);
+      // finalizeBtn removed — use modal finalize instead
     }
   }
   function updateDashboardStatus() {
-    const dateTimeKey = createDateTimeKey(state.selectedDate, state.selectedTime);
-    const currentClass = state.weeklyPlan.get(dateTimeKey);
-    const draftStatusPill = $("#draftStatusPill");
-    
-    if (currentClass) {
-      const rosterMatches = setsEqual(currentClass.attendees, state.attendees);
-      let pillClass = 'status-draft';
-      let pillText = 'Draft saved';
-      if (currentClass.status === 'finalized') {
-        pillClass = 'status-finalized';
-        pillText = 'Finalized';
-      } else if (!rosterMatches) {
-        pillClass = 'status-info';
-        pillText = 'Draft out of sync';
-      }
-      draftStatusPill.textContent = pillText;
-      draftStatusPill.className = `pill ${pillClass}`;
-      draftStatusPill.classList.remove('hidden');
-      $("#finalizeBtn").disabled = currentClass.status === 'finalized' || !rosterMatches || !state.firebaseUser;
-    } else {
-      draftStatusPill.classList.add('hidden');
-      // Finalize requires an existing draft at the selected date/time.
-      $("#finalizeBtn").disabled = true;
-    }
+    $("#rosterCountPill").textContent = `${state.attendees.size} attendee${state.attendees.size !== 1 ? 's' : ''}`;
   }
   function updateRecordsPill() {
     $("#recordsCountPill").textContent = `${state.records.length} records`;
@@ -2600,18 +2823,20 @@
   
   window.openNewClassModal = function(dateKey) {
     state.selectedClass = createClass(dateKey, '09:00');
-    state.modalAttendees = new Set(); // Start with empty roster for new class
+    state.modalAttendees = new Set();
 
     $("#class-modal-title").textContent = 'Plan New Class';
     $("#modal-class-date").value = dateKey;
     $("#modal-class-time").value = '09:00';
     populateClassTypeDropdown($("#modal-class-type"), '');
+    $("#modal-stale-window").value = String(state.selectedWindow);
     $("#modal-class-playlist").value = '';
     $("#modal-class-notes").value = '';
 
-    populateModalPlaylistOptions();
+    populateModalPlaylistOptions('');
     populateModalGuestList();
     renderModalSelectedGuests();
+    refreshModalRecommendation();
 
     $("#delete-class-modal").classList.add('hidden');
     $("#class-modal").classList.remove('hidden');
@@ -2621,36 +2846,116 @@
     if (!classData) return;
 
     state.selectedClass = classData;
-    state.modalAttendees = new Set(classData.attendees); // Load roster from class
+    state.modalAttendees = new Set(classData.attendees);
 
     $("#class-modal-title").textContent = 'Edit Class';
     $("#modal-class-date").value = classData.date;
     $("#modal-class-time").value = classData.time;
     populateClassTypeDropdown($("#modal-class-type"), classData.classType || '');
+    $("#modal-stale-window").value = String(state.selectedWindow);
     $("#modal-class-notes").value = classData.notes || '';
 
-    populateModalPlaylistOptions();
+    const classType = classData.classType || '';
+    populateModalPlaylistOptions(classType);
     $("#modal-class-playlist").value = classData.playlist || '';
     populateModalGuestList();
     renderModalSelectedGuests();
+    refreshModalRecommendation();
 
     $("#delete-class-modal").classList.remove('hidden');
     $("#class-modal").classList.remove('hidden');
   };
-  function populateModalPlaylistOptions() {
+  function populateModalPlaylistOptions(classTypeFilter) {
     const select = $("#modal-class-playlist");
+    const currentVal = select.value;
     select.innerHTML = '<option value="">Select playlist...</option>';
+    const filter = classTypeFilter || '';
     state.playlists.forEach(pl => {
+      const tags = state.playlistTags.get(pl) || [];
+      const status = state.playlistStatus.get(pl) || 'Active';
+      if (filter && !tags.includes(filter)) return;
+      if (status === 'Retired') return;
       const option = document.createElement('option');
       option.value = pl;
-      const tags = state.playlistTags.get(pl) || [];
-      const status = state.playlistStatus.get(pl);
-      const statusSuffix = status ? ` [${status}]` : '';
       option.textContent = tags.length > 0
-        ? `Playlist #${pl}${statusSuffix} (${tags.join(', ')})`
-        : `Playlist #${pl}${statusSuffix}`;
+        ? `Playlist #${pl} (${tags.join(', ')})`
+        : `Playlist #${pl}`;
       select.appendChild(option);
     });
+    // Restore previous selection if it's still in the filtered list
+    if (currentVal && select.querySelector(`option[value="${currentVal}"]`)) {
+      select.value = currentVal;
+    }
+  }
+  function refreshModalRecommendation() {
+    const panel = $('#modal-recommendation');
+    const bestDiv = $('#modal-rec-best');
+    const altDiv = $('#modal-rec-alternatives');
+    if (state.modalAttendees.size === 0) {
+      panel.style.display = 'none';
+      return;
+    }
+    const classType = $('#modal-class-type').value || '';
+    const windowDays = parseInt($('#modal-stale-window').value, 10) || 45;
+    const dateVal = $('#modal-class-date').value || state.selectedDate || formatDateKey(new Date());
+    const metrics = computeMetrics({
+      attendees: state.modalAttendees,
+      classType: classType,
+      window: windowDays,
+      date: dateVal
+    });
+    if (metrics.length === 0) {
+      panel.style.display = 'block';
+      bestDiv.innerHTML = classType
+        ? `<div style="color:rgba(255,255,255,.6); font-size:13px;">No playlists tagged for <strong>${esc(classType)}</strong>. Tag playlists in the Playlists tab or select "All Types".</div>`
+        : '<div style="color:rgba(255,255,255,.6); font-size:13px;">No playlist data available.</div>';
+      altDiv.innerHTML = '';
+      return;
+    }
+    panel.style.display = 'block';
+    const best = metrics[0];
+    bestDiv.innerHTML = `
+      <div class="modal-rec-best-row">
+        <span class="modal-rec-best-name">Playlist <span class="accent">#${esc(best.playlist)}</span></span>
+        <button type="button" class="modal-rec-use-btn" data-playlist="${esc(best.playlist)}">Use This</button>
+      </div>
+      <div class="modal-rec-metrics">
+        <div class="modal-rec-metric"><div class="val">${best.never}</div><div class="lbl">Never-heard</div></div>
+        <div class="modal-rec-metric"><div class="val">${best.median}</div><div class="lbl">Median days</div></div>
+        <div class="modal-rec-metric"><div class="val">${best.stalePct}%</div><div class="lbl">Stale</div></div>
+      </div>
+    `;
+    bestDiv.querySelector('.modal-rec-use-btn').addEventListener('click', () => {
+      setModalPlaylist(best.playlist);
+    });
+    const runners = metrics.slice(1, 4);
+    if (runners.length > 0) {
+      altDiv.innerHTML = '<span class="alt-label">Also consider:</span>';
+      runners.forEach(r => {
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = 'modal-rec-alt-pill';
+        pill.innerHTML = `#${esc(r.playlist)}`;
+        pill.addEventListener('click', () => setModalPlaylist(r.playlist));
+        altDiv.appendChild(pill);
+      });
+    } else {
+      altDiv.innerHTML = '';
+    }
+  }
+  function setModalPlaylist(playlistId) {
+    const select = $('#modal-class-playlist');
+    // Ensure the option exists in the filtered dropdown
+    if (!select.querySelector(`option[value="${playlistId}"]`)) {
+      const option = document.createElement('option');
+      option.value = playlistId;
+      const tags = state.playlistTags.get(playlistId) || [];
+      option.textContent = tags.length > 0
+        ? `Playlist #${playlistId} (${tags.join(', ')})`
+        : `Playlist #${playlistId}`;
+      select.appendChild(option);
+    }
+    select.value = playlistId;
   }
   // --- Guest Selection System ---
   function populateGuestList() {
@@ -2691,6 +2996,7 @@
         }
         renderModalSelectedGuests();
         updateModalGuestListSelection();
+        refreshModalRecommendation();
       });
       modalGuestList.appendChild(guestElement);
     });
@@ -2751,6 +3057,7 @@
           state.modalAttendees.delete(name);
           renderModalSelectedGuests();
           updateModalGuestListSelection();
+          refreshModalRecommendation();
         });
         container.appendChild(guestChip);
       });
@@ -2783,12 +3090,12 @@
     });
     return map;
   }
-  function computeMetrics() {
-    const refDateISO = state.selectedDate || formatDateKey(new Date());
+  function computeMetrics(opts = {}) {
+    const refDateISO = opts.date || state.selectedDate || formatDateKey(new Date());
     const lm = lastHeardMap(refDateISO);
-    const roster = [...state.attendees];
-    const windowDays = state.selectedWindow;
-    const classTypeFilter = state.selectedClassType || '';
+    const roster = [...(opts.attendees || state.attendees)];
+    const windowDays = opts.window || state.selectedWindow;
+    const classTypeFilter = opts.classType !== undefined ? opts.classType : (state.selectedClassType || '');
     const filteredPlaylists = classTypeFilter
       ? state.playlists.filter(pl => {
           const tags = state.playlistTags.get(pl) || [];
@@ -3130,19 +3437,42 @@
     `;
 
     tbody.innerHTML = "";
+    if (rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px 20px; color:rgba(255,255,255,.6);">No class history yet. Finalize classes from the Weekly Planner to build your history.</td></tr>`;
+      return;
+    }
     rows.forEach(row => {
       const guestArray = [...row.guests].sort();
       const classTypeLabel = row.classType ? `<span class="pill" style="font-size:11px; margin-left:4px;">${esc(row.classType)}</span>` : '';
+      const moreCount = guestArray.length - 3;
+      const moreText = moreCount > 0
+        ? ` <span class="history-expand-guests" style="color:var(--accent); cursor:pointer;" data-guests="${guestArray.map(g => esc(g)).join('|||')}">+${moreCount} more</span>`
+        : '';
       const tr = `
         <tr>
           <td>${formatDate(row.date)} ${formatTime(row.time)}</td>
           <td><strong>Playlist #${row.playlist}</strong>${classTypeLabel}${renderPlaylistTags(row.playlist, { compact: true })}</td>
           <td><span class="pill">${guestArray.length}</span></td>
-          <td>${guestArray.slice(0, 3).map(g => esc(g)).join(", ")}${guestArray.length > 3 ? ` +${guestArray.length - 3} more` : ""}</td>
+          <td><span class="guest-names-short">${guestArray.slice(0, 3).map(g => esc(g)).join(", ")}${moreText}</span><span class="guest-names-full" style="display:none;">${guestArray.map(g => esc(g)).join(", ")} <span class="history-collapse-guests" style="color:var(--accent); cursor:pointer;">show less</span></span></td>
           <td><span class="pill status-finalized">Completed</span></td>
         </tr>
       `;
       tbody.innerHTML += tr;
+    });
+    // Expandable guest names
+    tbody.querySelectorAll('.history-expand-guests').forEach(el => {
+      el.addEventListener('click', (e) => {
+        const td = e.target.closest('td');
+        td.querySelector('.guest-names-short').style.display = 'none';
+        td.querySelector('.guest-names-full').style.display = '';
+      });
+    });
+    tbody.querySelectorAll('.history-collapse-guests').forEach(el => {
+      el.addEventListener('click', (e) => {
+        const td = e.target.closest('td');
+        td.querySelector('.guest-names-short').style.display = '';
+        td.querySelector('.guest-names-full').style.display = 'none';
+      });
     });
   }
   function refreshGuests() {
@@ -3231,6 +3561,7 @@
 
               // Refresh content on tab switch
               if(tab === 'weekly') renderWeeklyCalendar();
+              if(tab === 'dashboard') refreshAll();
               if(tab === 'history') refreshHistory();
               if(tab === 'guests') refreshGuests();
               if(tab === 'explorer') refreshAll();
@@ -3262,8 +3593,37 @@
           state.selectedWindow = parseInt(e.target.value, 10);
           refreshAll();
       });
-      $('#saveDraftBtn').addEventListener('click', saveDraftClass);
-      $('#finalizeBtn').addEventListener('click', finalizeClass);
+      // "Plan This Class" on Recommender tab opens the modal pre-populated
+      $('#planThisClassBtn').addEventListener('click', () => {
+        const dateKey = state.selectedDate || formatDateKey(new Date());
+        const time = state.selectedTime || '09:00';
+        const dateTimeKey = createDateTimeKey(dateKey, time);
+        const existing = state.weeklyPlan.get(dateTimeKey);
+        if (existing) {
+          openClassModal(dateTimeKey);
+        } else {
+          state.selectedClass = createClass(dateKey, time);
+          state.modalAttendees = new Set(state.attendees);
+          $("#class-modal-title").textContent = 'Plan New Class';
+          $("#modal-class-date").value = dateKey;
+          $("#modal-class-time").value = time;
+          const classType = state.selectedClassType || '';
+          populateClassTypeDropdown($("#modal-class-type"), classType);
+          $("#modal-stale-window").value = String(state.selectedWindow);
+          populateModalPlaylistOptions(classType);
+          // Auto-select the best playlist from recommender
+          const metrics = computeMetrics();
+          if (metrics.length > 0) {
+            setModalPlaylist(metrics[0].playlist);
+          }
+          $("#modal-class-notes").value = '';
+          populateModalGuestList();
+          renderModalSelectedGuests();
+          refreshModalRecommendation();
+          $("#delete-class-modal").classList.add('hidden');
+          $("#class-modal").classList.remove('hidden');
+        }
+      });
 
       // Select All / Clear All guest buttons
       $('#selectAllGuestsBtn').addEventListener('click', () => {
@@ -3330,20 +3690,48 @@
       });
       
       // Guest search
+      // Search with clear buttons
+      function setupSearchClear(inputId, clearId, onClear) {
+        const input = $(inputId);
+        const btn = $(clearId);
+        if (!input || !btn) return;
+        function syncBtn() { btn.classList.toggle('visible', input.value.length > 0); }
+        input.addEventListener('input', syncBtn);
+        btn.addEventListener('click', () => { input.value = ''; syncBtn(); if (onClear) onClear(); });
+      }
+      // Dashboard guest search
       $('#guest-search').addEventListener("input", (e) => {
           const term = e.target.value.toLowerCase();
-          $$("#guest-list .guest-list-item").forEach(item => {
-              item.style.display = item.dataset.guest.toLowerCase().includes(term) ? '' : 'none';
+          const items = $$("#guest-list .guest-list-item");
+          let showing = 0;
+          items.forEach(item => {
+              const vis = item.dataset.guest.toLowerCase().includes(term);
+              item.style.display = vis ? '' : 'none';
+              if (vis) showing++;
           });
+          const countEl = $('#guest-search-count');
+          countEl.textContent = term ? `Showing ${showing} of ${items.length}` : '';
       });
+      setupSearchClear('#guest-search', '#guest-search-clear', () => {
+        $$("#guest-list .guest-list-item").forEach(i => i.style.display = '');
+        $('#guest-search-count').textContent = '';
+      });
+      // Guests tab search
       $('#guest-search-filter').addEventListener('input', refreshGuests);
+      setupSearchClear('#guest-search-filter', '#guest-filter-clear', refreshGuests);
+      // Modal guest search
       $('#modal-guest-search').addEventListener('input', (e) => {
           const term = e.target.value.toLowerCase();
           $$("#modal-guest-list .guest-list-item").forEach(item => {
               item.style.display = item.dataset.guest.toLowerCase().includes(term) ? '' : 'none';
           });
       });
+      setupSearchClear('#modal-guest-search', '#modal-guest-search-clear', () => {
+        $$("#modal-guest-list .guest-list-item").forEach(i => i.style.display = '');
+      });
+      // History search
       $('#history-search').addEventListener('input', refreshHistory);
+      setupSearchClear('#history-search', '#history-search-clear', refreshHistory);
 
       // Add Playlist form handlers
       $('#addPlaylistBtn').addEventListener('click', () => {
@@ -3500,6 +3888,31 @@
       $('#save-draft-modal').addEventListener('click', handleModalSave);
       $('#finalize-modal').addEventListener('click', handleModalFinalize);
       $('#delete-class-modal').addEventListener('click', handleModalDelete);
+      // Modal class type changes filter playlist dropdown and recommendations
+      $('#modal-class-type').addEventListener('change', () => {
+        const classType = $('#modal-class-type').value;
+        populateModalPlaylistOptions(classType);
+        refreshModalRecommendation();
+      });
+      $('#modal-stale-window').addEventListener('change', () => refreshModalRecommendation());
+      // Modal Select All / Clear All
+      $('#modalSelectAllBtn').addEventListener('click', () => {
+        const term = $('#modal-guest-search').value.toLowerCase();
+        $$("#modal-guest-list .guest-list-item").forEach(item => {
+          if (item.style.display !== 'none' && (!term || item.dataset.guest.toLowerCase().includes(term))) {
+            state.modalAttendees.add(item.dataset.guest);
+          }
+        });
+        renderModalSelectedGuests();
+        updateModalGuestListSelection();
+        refreshModalRecommendation();
+      });
+      $('#modalClearAllBtn').addEventListener('click', () => {
+        state.modalAttendees.clear();
+        renderModalSelectedGuests();
+        updateModalGuestListSelection();
+        refreshModalRecommendation();
+      });
   }
 
   // --- Modal Handlers ---
