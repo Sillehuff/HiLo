@@ -1523,15 +1523,11 @@
     @media (max-width: 768px) {
       body { padding-bottom: calc(88px + var(--safe-bottom)); }
       .nav {
-        position: relative;
         flex-wrap: nowrap;
         gap: 8px;
         padding-top: calc(10px + var(--safe-top));
         padding-bottom: 10px;
         min-height: calc(52px + var(--safe-top));
-        /* Remove sticky + backdrop-filter: both create containing blocks
-           for position:fixed children in WebKit, breaking the bottom tab bar */
-        backdrop-filter: none;
       }
       .brand span { font-size: 15px; }
       #auth-container {
@@ -1545,7 +1541,9 @@
         padding: 8px 12px;
         font-size: 13px;
       }
-      .nav .tabs {
+      /* Mobile bottom tab bar — .tabs is moved to <body> via JS
+         to escape .nav's containing block (sticky/backdrop-filter break position:fixed in WebKit) */
+      body > .tabs {
         position: fixed;
         bottom: 0;
         left: 0;
@@ -1559,7 +1557,7 @@
         grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 4px;
       }
-      .nav .tabs .tab-btn {
+      body > .tabs .tab-btn {
         flex-direction: column;
         justify-content: center;
         gap: 4px;
@@ -1571,8 +1569,8 @@
         border: 1px solid transparent;
         background: transparent;
       }
-      .nav .tabs .tab-btn .tab-icon { font-size: 18px; }
-      .nav .tabs .tab-btn .tab-label {
+      body > .tabs .tab-btn .tab-icon { font-size: 18px; }
+      body > .tabs .tab-btn .tab-label {
         display: block;
         max-width: none;
         font-size: 11px;
@@ -1581,7 +1579,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .nav .tabs .tab-btn[aria-selected="true"] {
+      body > .tabs .tab-btn[aria-selected="true"] {
         background: rgba(201,161,93,.25);
         border-color: rgba(201,161,93,.5);
         box-shadow: inset 0 0 0 1px rgba(201,161,93,.32);
@@ -2840,6 +2838,22 @@
   // --- Initialize App ---
   async function initializeApp() {
     debugLog('Initializing app...');
+
+    // Move tabs out of .nav on mobile so position:fixed works correctly.
+    // WebKit treats sticky/backdrop-filter parents as containing blocks for fixed children.
+    (function() {
+      const tabs = document.querySelector('.tabs');
+      const nav = document.querySelector('.nav');
+      const auth = document.getElementById('auth-container');
+      const mq = window.matchMedia('(max-width: 768px)');
+      function place(e) {
+        if (e.matches) document.body.appendChild(tabs);
+        else nav.insertBefore(tabs, auth);
+      }
+      mq.addEventListener('change', place);
+      place(mq);
+    })();
+
     loadStateFromLocalStorage();
 
     const today = new Date();
