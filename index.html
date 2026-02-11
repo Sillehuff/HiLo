@@ -1325,6 +1325,14 @@
     .form-row--always-inline {
       grid-template-columns: 1fr 1fr !important;
     }
+    .form-row--always-inline .form-group {
+      min-width: 0;
+    }
+    .form-row--always-inline .form-group input,
+    .form-row--always-inline .form-group select {
+      min-width: 0;
+      width: 100%;
+    }
     /* Connection status */
     .connection-status {
       display: flex;
