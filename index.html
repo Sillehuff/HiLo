@@ -1786,8 +1786,8 @@
       .modal__footer .tooltip-wrapper .btn {
         width: 100%;
       }
-      .modal__footer .tooltip-wrapper { order: 1; }
-      #save-draft-modal { order: 2; }
+      #save-draft-modal { order: 1; }
+      .modal__footer .tooltip-wrapper { order: 2; }
       #cancel-modal { order: 3; display: none; }
       #delete-class-modal {
         order: 4;
@@ -2156,7 +2156,7 @@
                 <button type="button" class="btn-xs" id="modalClearAllBtn">Clear All</button>
               </div>
 
-              <div class="guest-list-container" style="max-height: 200px;">
+              <div class="guest-list-container" style="max-height: 300px;">
                 <div class="guest-list" id="modal-guest-list"></div>
               </div>
 
@@ -3476,13 +3476,12 @@
         }
         renderModalSelectedGuests();
         updateModalGuestListSelection();
-        // Clear search, apply default filter, refocus for next search
+        // Clear search and apply default filter (don't refocus to avoid keyboard popup on tap)
         const searchInput = $('#modal-guest-search');
         const clearBtn = $('#modal-guest-search-clear');
         searchInput.value = '';
         if (clearBtn) clearBtn.classList.remove('visible');
         filterModalGuestVisibility();
-        searchInput.focus();
       });
       modalGuestList.appendChild(guestElement);
     });
