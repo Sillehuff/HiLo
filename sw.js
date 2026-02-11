@@ -1,5 +1,5 @@
 // Service Worker for Hilo Playlist PWA
-const CACHE_NAME = 'hilo-playlist-v9';
+const CACHE_NAME = 'hilo-playlist-v10';
 
 // Files to cache on install
 const FILES_TO_CACHE = [
