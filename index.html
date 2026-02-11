@@ -1363,11 +1363,18 @@
     }
     .form-row--always-inline .form-group {
       min-width: 0;
+      overflow: hidden;
     }
     .form-row--always-inline .form-group input,
     .form-row--always-inline .form-group select {
       min-width: 0;
+      max-width: 100%;
       width: 100%;
+    }
+    .form-group input[type="date"] {
+      text-align: left;
+      -webkit-appearance: none;
+      appearance: none;
     }
     /* Connection status */
     .connection-status {
