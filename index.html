@@ -26,11 +26,11 @@
       --shadow: 0 10px 30px rgba(0,0,0,.22), 0 4px 12px rgba(0,0,0,.18);
       --inner-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.15);
       --blur: blur(16px);
-      --gap: 18px;
+      --gap: 24px;
       --success: #2ecc71;
       --warning: #f39c12;
       --danger: #e74c3c;
-      --info: #3498db;
+      --info: #5bb5a2;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -96,7 +96,7 @@
       background: rgba(255,255,255, .1);
       transform: translateY(-1px);
     }
-    .tab-btn:active { transform: scale(.98); }
+    .tab-btn:active { transform: scale(.95); }
     .container {
       max-width: 1200px;
       margin: 24px auto;
@@ -104,11 +104,14 @@
       display: grid;
       gap: var(--gap);
     }
+    .container > section + section {
+      margin-top: 24px;
+    }
     /* Hero */
     .hero {
       position: relative;
       border-radius: var(--radius-lg);
-      padding: clamp(18px, 3vw, 28px);
+      padding: clamp(24px, 4vw, 40px);
       background: radial-gradient(1200px 600px at 0% -10%, rgba(201,161,93,.12), transparent 60%),
                   radial-gradient(800px 500px at 100% 110%, rgba(201,161,93,.08), transparent 60%),
                   rgba(28, 45, 38, .6);
@@ -117,12 +120,12 @@
       box-shadow: var(--shadow);
     }
     .hero h1 {
-      margin: 0 0 6px 0;
-      font-size: clamp(22px, 3vw, 32px);
+      margin: 0 0 8px 0;
+      font-size: clamp(26px, 4vw, 36px);
       font-weight: 800;
       letter-spacing: .2px;
     }
-    .subtle { color: rgba(255,255,255,.8); font-weight: 500; font-size: 15px; }
+    .subtle { color: rgba(255,255,255,.55); font-weight: 500; font-size: 14px; }
     .hero .row {
       display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 10px;
     }
@@ -140,13 +143,14 @@
     /* Class-type tags */
     .class-type-tag {
       display: inline-flex; align-items: center; gap: 4px;
-      background: rgba(52, 152, 219, .18);
-      border: 1px solid rgba(52, 152, 219, .35);
+      background: rgba(91, 181, 162, .18);
+      border: 1px solid rgba(91, 181, 162, .35);
       color: rgba(255,255,255,.9);
       border-radius: 999px;
-      padding: 4px 10px;
+      padding: 6px 12px;
       font-size: 12px;
       font-weight: 500;
+      min-height: 36px;
     }
     .class-type-tag.compact {
       padding: 2px 7px;
@@ -178,8 +182,8 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(52, 152, 219, .22);
-      border: 1px solid rgba(52, 152, 219, .4);
+      background: rgba(91, 181, 162, .22);
+      border: 1px solid rgba(91, 181, 162, .4);
       border-radius: 999px;
       padding: 5px 10px;
       font-size: 13px;
@@ -190,8 +194,14 @@
       opacity: 0.7;
       transition: opacity 0.2s;
       font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      min-height: 28px;
+      border-radius: 50%;
     }
-    .remove-tag:hover { opacity: 1; }
+    .remove-tag:hover { opacity: 1; background: rgba(255,255,255,.1); }
     .tag-input-wrapper {
       position: relative;
     }
@@ -207,7 +217,7 @@
     .tag-input-wrapper input:focus {
       outline: none;
       border-color: var(--info);
-      box-shadow: 0 0 0 3px rgba(52,152,219,.2);
+      box-shadow: 0 0 0 3px rgba(91,181,162,.2);
     }
     .tag-autocomplete {
       position: absolute;
@@ -232,7 +242,7 @@
     }
     .tag-autocomplete-item:hover,
     .tag-autocomplete-item.active {
-      background: rgba(52, 152, 219, .2);
+      background: rgba(91, 181, 162, .2);
       color: #fff;
     }
     .explorer-row { cursor: pointer; transition: background .15s; }
@@ -335,20 +345,20 @@
       transition: all .15s ease;
     }
     .manager-tags-cell .add-tag-btn:hover {
-      background: rgba(52, 152, 219, .2);
-      border-color: rgba(52, 152, 219, .4);
+      background: rgba(91, 181, 162, .2);
+      border-color: rgba(91, 181, 162, .4);
       color: #fff;
     }
-    /* Status indicators */
-    .status-connected { background: rgba(46, 204, 113, .18); border-color: rgba(46, 204, 113, .45); }
-    .status-disconnected { background: rgba(231, 76, 60, .18); border-color: rgba(231, 76, 60, .45); }
-    .status-draft { background: rgba(241, 196, 15, .18); border-color: rgba(241, 196, 15, .45); }
-    .status-finalized { background: rgba(46, 204, 113, .18); border-color: rgba(46, 204, 113, .45); }
-    .status-info { background: rgba(52, 152, 219, .18); border-color: rgba(52, 152, 219, .45); }
+    /* Status indicators — 12% bg, 35% border, 100% text */
+    .status-connected { background: rgba(46, 204, 113, .12); border-color: rgba(46, 204, 113, .35); color: #2ecc71; }
+    .status-disconnected { background: rgba(231, 76, 60, .12); border-color: rgba(231, 76, 60, .35); color: #e74c3c; }
+    .status-draft { background: rgba(241, 196, 15, .12); border-color: rgba(241, 196, 15, .35); color: #f1c40f; }
+    .status-finalized { background: rgba(46, 204, 113, .12); border-color: rgba(46, 204, 113, .35); color: #2ecc71; }
+    .status-info { background: rgba(91, 181, 162, .12); border-color: rgba(91, 181, 162, .35); color: #5bb5a2; }
     /* Glass cards */
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: var(--gap);
     }
     .card {
@@ -364,8 +374,8 @@
       transform: translateY(-2px);
       box-shadow: 0 14px 36px rgba(0,0,0,.26), 0 6px 16px rgba(0,0,0,.22);
     }
-    .card .body { padding: 16px; }
-    .card .title { font-weight: 700; letter-spacing:.2px; margin-bottom: 4px; }
+    .card .body { padding: 20px; }
+    .card .title { font-weight: 700; font-size: 16px; letter-spacing:.2px; margin-bottom: 6px; }
     .card .muted { color: rgba(255,255,255,.8); font-size: 14px; }
     .primary-card {
       background: linear-gradient(180deg, rgba(36,59,51,.82), rgba(36,59,51,.68));
@@ -374,17 +384,17 @@
     }
     .primary-card .title { color: #fff; font-size: 18px; font-weight: 800; }
     .metric-row {
-      display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px;
+      display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px;
     }
     .metric {
       background: rgba(0,0,0,.15);
       border: 1px solid rgba(255,255,255,.08);
       border-radius: 12px;
-      padding: 12px;
+      padding: 14px 10px;
       text-align:center;
     }
-    .metric .value { font-weight: 800; font-size: 26px; color: var(--accent); }
-    .metric .label { color: rgba(255,255,255,.8); font-size: 12px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .metric .value { font-weight: 800; font-size: 22px; color: #fff; }
+    .metric .label { color: var(--accent); font-size: 11px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 4px; font-weight: 600; }
     /* Tooltips */
     .info-tip {
       position: relative;
@@ -491,7 +501,7 @@
     .manager-tags-cell .add-tag-btn {
       touch-action: manipulation;
     }
-    .btn:active { transform: translateY(1px) scale(.99); }
+    .btn:active { transform: scale(.95); box-shadow: 0 2px 8px rgba(0,0,0,.2); }
     .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -517,7 +527,7 @@
       border-color: var(--danger);
     }
     .btn-info {
-      background: linear-gradient(180deg, var(--info), rgba(52, 152, 219, .8));
+      background: linear-gradient(180deg, var(--info), rgba(91, 181, 162, .8));
       border-color: var(--info);
     }
     .suggestions { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--gap); }
@@ -554,8 +564,8 @@
       color: #f8da7a;
     }
     .rec-strength-pill.close {
-      background: rgba(52, 152, 219, .2);
-      border: 1px solid rgba(52, 152, 219, .45);
+      background: rgba(91, 181, 162, .2);
+      border: 1px solid rgba(91, 181, 162, .45);
       color: #9fd0f5;
     }
     .best-summary-title {
@@ -746,10 +756,18 @@
     .remove-guest {
       cursor: pointer;
       opacity: 0.7;
-      transition: opacity 0.2s;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      min-height: 28px;
+      border-radius: 50%;
+      font-size: 12px;
     }
     .remove-guest:hover {
       opacity: 1;
+      background: rgba(255,255,255,.1);
     }
     .guest-list-container {
       max-height: 300px;
@@ -899,8 +917,9 @@
       cursor: pointer;
       user-select: none;
       position: relative;
+      padding: 16px 20px;
     }
-    
+
     .sortable:hover {
       color: var(--accent);
     }
@@ -932,6 +951,7 @@
     
     .section-header h2 {
       margin: 0;
+      padding-top: 8px;
       font-size: 24px;
       font-weight: 700;
       color: #fff;
@@ -948,7 +968,7 @@
       border: 1px solid rgba(255,255,255,.09);
       border-radius: var(--radius);
       padding: 16px;
-      min-height: 200px;
+      min-height: 120px;
       transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
@@ -958,8 +978,8 @@
       transform: translateY(-2px);
     }
     .day-card.today {
-      border-color: rgba(52, 152, 219, .5);
-      box-shadow: 0 0 0 1px rgba(52, 152, 219, .2), var(--shadow);
+      border-color: rgba(91, 181, 162, .5);
+      box-shadow: 0 0 0 1px rgba(91, 181, 162, .2), var(--shadow);
     }
     .day-card.has-classes {
       border-color: rgba(201,161,93,.4);
@@ -990,11 +1010,18 @@
     .class-item {
       background: rgba(0,0,0,.2);
       border-radius: 8px;
-      padding: 8px;
+      padding: 8px 8px 8px 12px;
       margin-bottom: 8px;
       font-size: 13px;
       cursor: pointer;
       transition: all .2s ease;
+      border-left: 3px solid rgba(255,255,255,.15);
+    }
+    .class-item.status-draft-bar {
+      border-left-color: var(--warning);
+    }
+    .class-item.status-finalized-bar {
+      border-left-color: var(--success);
     }
     .class-item:hover {
       background: rgba(0,0,0,.3);
@@ -1120,6 +1147,10 @@
       animation: slideUp .3s ease;
     }
     
+    /* Modal drag handle for sheet-style modals */
+    .modal__drag-handle {
+      display: none;
+    }
     .modal__header {
       display: flex;
       justify-content: space-between;
@@ -1290,7 +1321,12 @@
     }
     /* Form styling */
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .form-section-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,.06);
+      margin: 4px 0 20px;
     }
     .form-group label {
       display: block;
@@ -1362,13 +1398,25 @@
     .empty-state {
       text-align: center;
       padding: 60px 20px;
-      color: rgba(255,255,255,.6);
+      color: rgba(255,255,255,.5);
     }
-
+    .empty-state-icon {
+      font-size: 64px;
+      line-height: 1;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
     .empty-state h3 {
       margin: 0 0 8px 0;
       font-size: 18px;
-      color: rgba(255,255,255,.8);
+      color: rgba(255,255,255,.75);
+    }
+    .empty-state p {
+      margin: 0 0 20px;
+      font-size: 14px;
+    }
+    .empty-state .btn {
+      margin-top: 4px;
     }
     /* Step labels for dashboard workflow */
     .step-label {
@@ -1486,8 +1534,8 @@
     }
     
     .toast.info {
-      background: rgba(52, 152, 219, .95);
-      border-color: rgba(52, 152, 219, .5);
+      background: rgba(91, 181, 162, .95);
+      border-color: rgba(91, 181, 162, .5);
     }
     /* Loading indicator */
     .loading-spinner {
@@ -1544,6 +1592,14 @@
     }
     .hidden { display: none !important; }
     .fade-in { animation: fadeIn .3s ease both; }
+    /* Tab content entrance animation */
+    @keyframes sectionEnter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .section-enter {
+      animation: sectionEnter .25s ease both;
+    }
     /* Debug Panel */
     .debug-panel {
       position: fixed;
@@ -1603,40 +1659,38 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 4px;
-        padding: 7px 2px 5px;
+        gap: 2px;
+        padding: 8px 2px 6px;
         border-radius: 10px;
         font-size: 10px;
         min-width: 0;
         min-height: 50px;
         border: 1px solid transparent;
         background: transparent;
+        position: relative;
       }
-      body > .tabs .tab-btn .tab-icon { font-size: 20px; line-height: 1; }
-      /* Show short labels on mobile via data-short attribute */
+      body > .tabs .tab-btn .tab-icon { font-size: 22px; line-height: 1; }
+      /* Hide labels on mobile — icon-only tab bar */
       body > .tabs .tab-btn .tab-label {
-        display: block;
-        max-width: 100%;
-        font-size: 10px;
-        font-weight: 600;
-        line-height: 1.15;
-        text-align: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        display: none;
       }
-      body > .tabs .tab-btn .tab-label[data-short] {
-        font-size: 0;
-      }
-      body > .tabs .tab-btn .tab-label[data-short]::after {
-        content: attr(data-short);
-        font-size: 10px;
-        font-weight: 600;
-      }
+      /* Active dot indicator below icon */
       body > .tabs .tab-btn[aria-selected="true"] {
-        background: rgba(201,161,93,.25);
-        border-color: rgba(201,161,93,.5);
-        box-shadow: inset 0 0 0 1px rgba(201,161,93,.32);
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+      }
+      body > .tabs .tab-btn[aria-selected="true"] .tab-icon {
+        color: var(--accent);
+      }
+      body > .tabs .tab-btn[aria-selected="true"]::after {
+        content: '';
+        display: block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--accent);
+        margin-top: 3px;
       }
       .search-container { max-width: 100%; width: 100%; }
       .btn-sm, .search-clear, .modal__close, .status-toggle, .manager-tags-cell .add-tag-btn, .btn-remove-playlist { min-height: 44px; }
@@ -1685,14 +1739,33 @@
         max-height: calc(100dvh - var(--safe-top));
         border-radius: 20px 20px 0 0;
       }
+      .modal__drag-handle {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0 2px;
+        flex-shrink: 0;
+      }
+      .modal__drag-handle::after {
+        content: '';
+        width: 40px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255,255,255,.25);
+      }
       .modal__header {
-        padding: 16px 16px 12px;
+        padding: 12px 16px 12px;
       }
       .modal__header h3 {
         font-size: 18px;
       }
       .modal__body {
         padding: 16px;
+      }
+      /* Section dividers in modal form */
+      .modal__body .form-section-divider {
+        border: none;
+        border-top: 1px solid rgba(255,255,255,.08);
+        margin: 8px 0 20px;
       }
       .modal__footer {
         background: rgba(28, 45, 38, .98);
@@ -1708,10 +1781,13 @@
       }
       .modal__footer .tooltip-wrapper { order: 1; }
       #save-draft-modal { order: 2; }
-      #cancel-modal { order: 3; }
+      #cancel-modal { order: 3; display: none; }
       #delete-class-modal {
         order: 4;
         margin-right: 0 !important;
+        background: transparent;
+        border-color: rgba(231, 76, 60, .3);
+        font-size: 13px;
       }
       .modal__footer .tooltip-text {
         display: none;
@@ -1790,7 +1866,11 @@
         right: 12px;
         left: 12px;
       }
-      .toast { min-width: unset; max-width: unset; }
+      .toast { min-width: unset; max-width: unset; animation: slideUpToast .3s ease; }
+      @keyframes slideUpToast {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
     }
   </style>
 </head>
@@ -1986,8 +2066,10 @@
       <div id="guests-stats" class="stats-bar"></div>
       <div id="guests-grid" class="guests-grid">
         <div class="empty-state">
-          <h3>No guest data available</h3>
+          <div class="empty-state-icon">&#128101;</div>
+          <h3>Your guest list is waiting</h3>
           <p>Sign in and import attendance data to see guest profiles</p>
+          <button class="btn btn-primary" onclick="$$('.tab-btn').find(b=>b.dataset.tab==='settings')?.click()">Import Data</button>
         </div>
       </div>
     </section>
@@ -2030,6 +2112,7 @@
     </section>
     <div id="class-modal" class="modal hidden">
       <div class="modal__content">
+        <div class="modal__drag-handle"></div>
         <div class="modal__header">
           <h3 id="class-modal-title">Plan Class</h3>
           <button id="close-class-modal" class="modal__close">&times;</button>
@@ -2053,6 +2136,8 @@
             </select>
           </div>
 
+          <hr class="form-section-divider">
+
           <div class="form-group">
             <label>Attendees</label>
             <div class="guest-selector">
@@ -2075,6 +2160,8 @@
               </div>
             </div>
           </div>
+
+          <hr class="form-section-divider">
 
           <div class="form-group">
             <label>Playlist</label>
@@ -2101,6 +2188,7 @@
     </div>
     <div id="guest-modal" class="modal hidden">
       <div class="modal__content">
+        <div class="modal__drag-handle"></div>
         <div class="modal__header">
           <h3 id="guest-modal-title">Guest Profile</h3>
           <button id="close-guest-modal" class="modal__close">&times;</button>
@@ -3073,7 +3161,7 @@
     const entries = getRecommenderClassEntries();
     container.innerHTML = '';
     if (entries.length === 0) {
-      container.innerHTML = '<div style="padding:12px; color:rgba(255,255,255,.5); font-size:13px;">No planned classes. Add classes in Weekly Planner.</div>';
+      container.innerHTML = '<div style="padding:16px; color:rgba(255,255,255,.5); font-size:13px; text-align:center;"><div style="font-size:28px; opacity:.4; margin-bottom:6px;">&#128197;</div>No planned classes yet. <a href="#" onclick="event.preventDefault();$$(\'.tab-btn\').find(b=>b.dataset.tab===\'weekly\')?.click()" style="color:var(--accent); text-decoration:underline;">Add classes in Weekly Planner</a></div>';
       return;
     }
     entries.forEach(entry => {
@@ -3239,7 +3327,7 @@
       let classesHTML = '';
       if (dayClasses.length > 0) {
         classesHTML = dayClasses.map(cls => `
-          <div class="class-item" onclick="openClassModal('${cls.dateTimeKey}')">
+          <div class="class-item ${cls.status === 'draft' ? 'status-draft-bar' : 'status-finalized-bar'}" onclick="openClassModal('${cls.dateTimeKey}')">
             <div class="class-time">${formatTime(cls.time)}</div>
             <div class="class-info">
               ${cls.classType ? esc(cls.classType) + ' • ' : ''}${cls.playlist ? `Playlist #${esc(cls.playlist)}` : 'No playlist assigned'} • ${cls.attendees.size} guests
@@ -3251,7 +3339,7 @@
           </div>
         `).join('');
       } else {
-        classesHTML = '<div class="empty-state" style="padding: 20px 0;"><p style="margin:0;">No classes scheduled</p></div>';
+        classesHTML = '<div class="empty-state" style="padding: 16px 0;"><div style="font-size:28px; opacity:.4; margin-bottom:4px;">&#128197;</div><p style="margin:0; font-size:13px;">No classes scheduled</p></div>';
       }
       
       dayCard.innerHTML = `
@@ -3899,7 +3987,7 @@
 
     tbody.innerHTML = "";
     if (rows.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:40px 20px; color:rgba(255,255,255,.6);">No class history yet. Finalize classes from the Weekly Planner to build your history.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:48px 20px; color:rgba(255,255,255,.5);"><div style="font-size:48px; opacity:.4; margin-bottom:12px;">&#128214;</div><div style="font-size:16px; color:rgba(255,255,255,.7); margin-bottom:6px;">No class history yet</div><div style="font-size:13px;">Finalize classes from the Weekly Planner to build your history.</div></td></tr>`;
       return;
     }
     rows.forEach(row => {
@@ -3944,7 +4032,7 @@
     const guestsStatsBar = $("#guests-stats");
     if (state.allGuests.size === 0) {
       guestsStatsBar.innerHTML = '';
-      container.innerHTML = `<div class="empty-state"><h3>No guest data available</h3><p>Sign in and import data to see guest profiles</p></div>`;
+      container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">&#128101;</div><h3>Your guest list is waiting</h3><p>Sign in and import attendance data to see guest profiles</p><button class="btn btn-primary" onclick="$$('.tab-btn').find(b=>b.dataset.tab==='settings')?.click()">Import Data</button></div>`;
       return;
     }
     const guestStats = Array.from(state.allGuests)
@@ -4018,8 +4106,10 @@
               const tab = btn.dataset.tab;
               $$('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
               btn.setAttribute('aria-selected', 'true');
-              $$('main > section').forEach(s => s.classList.add('hidden'));
-              $(`#${tab}`).classList.remove('hidden');
+              $$('main > section').forEach(s => { s.classList.add('hidden'); s.classList.remove('section-enter'); });
+              const section = $(`#${tab}`);
+              section.classList.remove('hidden');
+              section.classList.add('section-enter');
 
               // Refresh content on tab switch
               if(tab === 'weekly') renderWeeklyCalendar();
