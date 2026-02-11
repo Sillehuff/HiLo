@@ -39,7 +39,7 @@
     /* Apple-like base */
     html, body {
       margin: 0;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       background-color: #0d1512;
       background: linear-gradient(180deg, #0d1512 0%, #16231d 40%, #1b2d25 100%);
       color: var(--cream);
@@ -54,19 +54,14 @@
     a { color: inherit; text-decoration: none; }
     .nav {
       position: sticky; top: 0; z-index: 20;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px clamp(14px, 3vw, 28px) 14px;
+      display: flex; align-items: center; justify-content: center;
+      padding: calc(14px + var(--safe-top)) clamp(14px, 3vw, 28px) 14px;
       min-height: 58px;
       background: rgba(20, 34, 28, .92);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,.06);
     }
-    .brand {
-      display:flex; align-items:center; gap:10px;
-      font-weight: 700; letter-spacing:.2px;
-    }
-    .brand svg { width: 28px; height: 28px; }
     .tabs {
       display: flex; gap: 8px; flex-wrap: nowrap;
       overflow-x: auto;
@@ -1569,22 +1564,9 @@
         top: 0;
         flex-wrap: nowrap;
         gap: 8px;
-        padding: 8px 12px;
+        padding: calc(8px + var(--safe-top)) 12px 8px;
         min-height: 44px;
         background: rgba(13, 21, 18, .98);
-      }
-      .brand span { font-size: 14px; }
-      .brand svg { width: 24px; height: 24px; }
-      #auth-container {
-        margin-left: auto;
-      }
-      #auth-container #userDisplay {
-        display: none !important;
-      }
-      #auth-container .btn {
-        min-height: 40px;
-        padding: 8px 12px;
-        font-size: 13px;
       }
       /* Mobile bottom tab bar — .tabs is moved to <body> via JS
          to escape .nav's containing block (sticky/backdrop-filter break position:fixed in WebKit) */
@@ -1802,14 +1784,6 @@
 </head>
 <body>
   <nav class="nav">
-    <div class="brand">
-      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="24" cy="24" r="22" stroke="#c9a15d" stroke-width="2"/>
-        <path d="M14 30C16 20 20 16 24 16C28 16 32 20 34 30" stroke="#c9a15d" stroke-width="3" stroke-linecap="round"/>
-        <path d="M12 36H36" stroke="#c9a15d" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span>Hilo Playlist</span>
-    </div>
     <div class="tabs" role="tablist">
       <button class="tab-btn" role="tab" aria-selected="true" data-tab="weekly"><span class="tab-icon" aria-hidden="true">&#128197;</span><span class="tab-label" data-short="Planner">Weekly Planner</span></button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="dashboard"><span class="tab-icon" aria-hidden="true">&#9776;</span><span class="tab-label" data-short="Recs">Recommender</span></button>
@@ -1817,11 +1791,6 @@
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="history"><span class="tab-icon" aria-hidden="true">&#128214;</span><span class="tab-label" data-short="History">History</span></button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="guests"><span class="tab-icon" aria-hidden="true">&#128101;</span><span class="tab-label" data-short="Guests">Guests</span></button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="settings"><span class="tab-icon" aria-hidden="true">&#9881;</span><span class="tab-label" data-short="Settings">Settings</span></button>
-    </div>
-    <div id="auth-container" style="display:flex; align-items:center; gap:8px;">
-      <button id="signInBtn" class="btn btn-primary btn-sm">Sign In</button>
-      <span id="userDisplay" class="hidden" style="font-size:13px; color:rgba(255,255,255,.7);"></span>
-      <button id="signOutBtn" class="btn btn-sm hidden">Sign Out</button>
     </div>
   </nav>
   <main class="container">
@@ -2536,10 +2505,6 @@
     auth.onAuthStateChanged(user => {
       state.firebaseUser = user;
       if (user) {
-        $('#signInBtn').classList.add('hidden');
-        $('#userDisplay').textContent = user.displayName || user.email;
-        $('#userDisplay').classList.remove('hidden');
-        $('#signOutBtn').classList.remove('hidden');
         $('#settingsSignInBtn').classList.add('hidden');
         $('#settingsSignOutBtn').classList.remove('hidden');
         const infoEl = $('#settings-auth-info');
@@ -2552,9 +2517,6 @@
         if (state.unsubPlaylists) { state.unsubPlaylists(); state.unsubPlaylists = null; }
         state.playlistTags = new Map();
         state.playlistStatus = new Map();
-        $('#signInBtn').classList.remove('hidden');
-        $('#userDisplay').classList.add('hidden');
-        $('#signOutBtn').classList.add('hidden');
         $('#settingsSignInBtn').classList.remove('hidden');
         $('#settingsSignOutBtn').classList.add('hidden');
         const infoEl = $('#settings-auth-info');
@@ -2937,11 +2899,10 @@
     (function() {
       const tabs = document.querySelector('.tabs');
       const nav = document.querySelector('.nav');
-      const auth = document.getElementById('auth-container');
       const mq = window.matchMedia('(max-width: 768px)');
       function place(e) {
         if (e.matches) document.body.appendChild(tabs);
-        else nav.insertBefore(tabs, auth);
+        else nav.appendChild(tabs);
       }
       mq.addEventListener('change', place);
       place(mq);
@@ -4297,9 +4258,7 @@
           }
         }
       };
-      $('#signInBtn').addEventListener('click', signInHandler);
       $('#settingsSignInBtn').addEventListener('click', signInHandler);
-      $('#signOutBtn').addEventListener('click', () => auth.signOut());
       $('#settingsSignOutBtn').addEventListener('click', () => auth.signOut());
 
       // Settings Buttons
