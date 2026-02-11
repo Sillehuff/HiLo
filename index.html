@@ -646,6 +646,37 @@
     .dashboard-rankings-wrap {
       overflow-x: auto;
     }
+    .class-picker-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .15s ease;
+      font-size: 13px;
+    }
+    .class-picker-item:hover {
+      background: rgba(255,255,255,.08);
+    }
+    .class-picker-item input[type="checkbox"] {
+      accent-color: var(--accent);
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .class-picker-item.checked {
+      background: rgba(201,161,93,.12);
+    }
+    .class-picker-item .class-picker-label {
+      flex: 1;
+      line-height: 1.4;
+    }
+    .class-picker-item .class-picker-status {
+      font-size: 11px;
+      opacity: 0.6;
+    }
     /* Date/Time Selection */
     .datetime-selector {
       display: flex;
@@ -688,6 +719,8 @@
     }
     .selected-guests-container {
       min-height: 50px;
+      max-height: 150px;
+      overflow-y: auto;
       padding: 10px;
       background: rgba(0,0,0,.15);
       border-radius: 12px;
@@ -780,6 +813,12 @@
       transform: translateY(-50%);
       opacity: 0.6;
       pointer-events: none;
+    }
+    .search-container.no-icon::before {
+      content: none;
+    }
+    .search-container.no-icon input {
+      padding-left: 14px;
     }
     .search-clear {
       position: absolute;
@@ -1795,12 +1834,9 @@
           <span>Not signed in</span>
         </div>
         
-        <div class="step-label"><span class="step-num">1</span> Select Planned Class</div>
+        <div class="step-label"><span class="step-num">1</span> Select Planned Classes</div>
         <div class="row" style="margin-top:0;">
           <div class="search-wrap" style="flex:1;">
-            <select id="plannedClassSelector" class="select" title="Planned class">
-              <option value="">Select a planned class...</option>
-            </select>
             <select id="playlistWindow" class="select" title="Replay-ready window">
               <option value="45" selected>Replay-ready ≥ 45 days</option>
               <option value="30">Replay-ready ≥ 30 days</option>
@@ -1809,8 +1845,15 @@
             </select>
           </div>
         </div>
+        <div class="class-picker-container" style="margin-top:8px;">
+          <div class="class-picker-actions" style="display:flex; gap:8px; margin-bottom:6px;">
+            <button type="button" class="btn-xs" id="selectAllDraftsBtn">Select All Drafts</button>
+            <button type="button" class="btn-xs" id="clearAllClassesBtn">Clear All</button>
+          </div>
+          <div class="class-picker-list" id="plannedClassList" style="max-height:180px; overflow-y:auto; background:rgba(0,0,0,.15); border-radius:12px; border:1px solid rgba(255,255,255,.08); padding:8px;"></div>
+        </div>
         <div class="row" style="margin-top:10px;">
-          <span class="pill" id="selectedClassPill">No planned class selected</span>
+          <span class="pill" id="selectedClassPill">No classes selected</span>
           <span class="pill" id="selectedClassTypePill">Class type: --</span>
           <span class="pill" id="selectedPlaylistPill">Assigned playlist: --</span>
           <span class="pill" id="recordsCountPill">0 records</span>
@@ -2017,7 +2060,7 @@
             </div>
             <div class="form-group">
               <label for="modal-class-time">Time</label>
-              <input type="time" id="modal-class-time" value="09:00">
+              <select id="modal-class-time" class="select"></select>
             </div>
           </div>
 
@@ -2032,7 +2075,7 @@
             <label>Attendees</label>
             <div class="guest-selector">
               <div class="guest-selector-header">
-                <div class="search-container" style="max-width:100%; flex:1;">
+                <div class="search-container no-icon" style="max-width:100%; flex:1;">
                   <input type="text" id="modal-guest-search" placeholder="Search guests...">
                   <button type="button" class="search-clear" id="modal-guest-search-clear" aria-label="Clear search">✕</button>
                 </div>
@@ -2042,14 +2085,14 @@
                 </div>
               </div>
 
+              <div class="guest-list-container" style="max-height: 200px;">
+                <div class="guest-list" id="modal-guest-list"></div>
+              </div>
+
               <div class="selected-guests-container">
                 <div class="selected-guests" id="modal-selected-guests">
                   <div class="no-selection">No guests selected</div>
                 </div>
-              </div>
-
-              <div class="guest-list-container" style="max-height: 200px;">
-                <div class="guest-list" id="modal-guest-list"></div>
               </div>
             </div>
           </div>
@@ -2136,6 +2179,7 @@
   }
   // --- App State ---
   const DEFAULT_PLAYLISTS = Array.from({ length: 12 }, (_, i) => String(i + 1));
+  const PREDEFINED_CLASS_TYPES = ['Yoga', 'Pilates', 'Spin', 'HIIT', 'Strength', 'Stretch', 'Dance', 'Barre'];
   const state = {
     modalAttendees: new Set(),
     playlists: [...DEFAULT_PLAYLISTS],
@@ -2162,7 +2206,8 @@
     selectedClass: null, // Holds the class being edited in the modal
 
     // Current selection for recommender
-    selectedRecommendationClassKey: ''
+    selectedRecommendationClassKey: '',
+    selectedRecommendationClassKeys: new Set()
   };
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -2254,7 +2299,7 @@
     return '<span class="playlist-tags-inline">' + tags.map(t => `<span class="${cls}">${esc(t)}</span>`).join('') + '</span>';
   }
   function getAllClassTypes() {
-    const types = new Set();
+    const types = new Set(PREDEFINED_CLASS_TYPES);
     state.playlistTags.forEach(tags => tags.forEach(t => types.add(t)));
     state.records.forEach(r => { if (r.classType) types.add(r.classType); });
     state.weeklyPlan.forEach(cls => { if (cls.classType) types.add(cls.classType); });
@@ -2284,6 +2329,35 @@
     if (meridiem === 'PM' && hours < 12) hours += 12;
     if (meridiem === 'AM' && hours === 12) hours = 0;
     return `${String(Math.max(0, Math.min(23, hours))).padStart(2, '0')}:${String(Math.max(0, Math.min(59, minutes))).padStart(2, '0')}`;
+  }
+  function populateTimeSelect(selectEl, selectedTime) {
+    selectEl.innerHTML = '';
+    for (let h = 5; h <= 22; h++) {
+      for (let m = 0; m < 60; m += 15) {
+        const val = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+        const ampm = h < 12 ? 'AM' : 'PM';
+        const label = `${hour12}:${String(m).padStart(2, '0')} ${ampm}`;
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = label;
+        selectEl.appendChild(opt);
+      }
+    }
+    const nearest = snapToNearest15(selectedTime || '09:00');
+    if (selectEl.querySelector(`option[value="${nearest}"]`)) {
+      selectEl.value = nearest;
+    } else {
+      selectEl.value = '09:00';
+    }
+  }
+  function snapToNearest15(timeStr) {
+    const normalized = normalizeTime(timeStr);
+    const [h, m] = normalized.split(':').map(Number);
+    const snapped = Math.round(m / 15) * 15;
+    const finalM = snapped === 60 ? 0 : snapped;
+    const finalH = snapped === 60 ? Math.min(h + 1, 22) : h;
+    return `${String(finalH).padStart(2, '0')}:${String(finalM).padStart(2, '0')}`;
   }
   function normalizeClassNumber(value) {
     return (value || '').toString().trim().replace(/\s+/g, ' ');
@@ -2984,63 +3058,112 @@
       .map(([key, cls]) => ({ key, cls }))
       .sort((a, b) => a.key.localeCompare(b.key));
   }
-  function getSelectedRecommenderClassEntry() {
+  function getSelectedRecommenderClassEntries() {
     const entries = getRecommenderClassEntries();
     if (entries.length === 0) {
-      state.selectedRecommendationClassKey = '';
-      return null;
+      state.selectedRecommendationClassKeys.clear();
+      return [];
     }
-    const selected = entries.find(entry => entry.key === state.selectedRecommendationClassKey);
-    if (selected) return selected;
-    const now = new Date();
-    const nowKey = createDateTimeKey(
-      formatDateKey(now),
-      normalizeTime(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`)
-    );
-    const nextDraft = entries.find(entry => entry.cls.status !== 'finalized' && entry.key >= nowKey)
-      || entries.find(entry => entry.cls.status !== 'finalized')
-      || entries[0];
-    state.selectedRecommendationClassKey = nextDraft.key;
-    return nextDraft;
+    // If no explicit selection, auto-select the next upcoming draft
+    if (state.selectedRecommendationClassKeys.size === 0) {
+      const now = new Date();
+      const nowKey = createDateTimeKey(
+        formatDateKey(now),
+        normalizeTime(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`)
+      );
+      const nextDraft = entries.find(entry => entry.cls.status !== 'finalized' && entry.key >= nowKey)
+        || entries.find(entry => entry.cls.status !== 'finalized');
+      if (nextDraft) {
+        state.selectedRecommendationClassKeys.add(nextDraft.key);
+      }
+    }
+    // Remove keys that no longer exist in the plan
+    const validKeys = new Set(entries.map(e => e.key));
+    for (const key of state.selectedRecommendationClassKeys) {
+      if (!validKeys.has(key)) state.selectedRecommendationClassKeys.delete(key);
+    }
+    return entries.filter(e => state.selectedRecommendationClassKeys.has(e.key));
+  }
+  // Backward-compat shim: returns first selected entry (used by previewRosterBtn etc.)
+  function getSelectedRecommenderClassEntry() {
+    const selected = getSelectedRecommenderClassEntries();
+    return selected.length > 0 ? selected[0] : null;
   }
   function formatRecommenderClassOption(entry) {
     const cls = entry.cls || {};
     const attendeeCount = cls.attendees instanceof Set ? cls.attendees.size : (cls.attendees || []).length;
     const classType = (cls.classType || '').trim() || 'All Types';
     const status = cls.status === 'finalized' ? 'finalized' : 'draft';
-    return `${formatDate(cls.date)} ${formatTime(cls.time)} • ${classType} • ${attendeeCount} guest${attendeeCount !== 1 ? 's' : ''} • ${status}`;
+    return `${formatDate(cls.date)} ${formatTime(cls.time)} \u2022 ${classType} \u2022 ${attendeeCount} guest${attendeeCount !== 1 ? 's' : ''} \u2022 ${status}`;
   }
-  function populatePlannedClassSelector(selectedEntry = getSelectedRecommenderClassEntry()) {
-    const select = $('#plannedClassSelector');
-    if (!select) return;
+  function populatePlannedClassList() {
+    const container = $('#plannedClassList');
+    if (!container) return;
     const entries = getRecommenderClassEntries();
-    select.innerHTML = '<option value="">Select a planned class...</option>';
-    entries.forEach(entry => {
-      const opt = document.createElement('option');
-      opt.value = entry.key;
-      opt.textContent = formatRecommenderClassOption(entry);
-      select.appendChild(opt);
-    });
-    if (selectedEntry && select.querySelector(`option[value="${selectedEntry.key}"]`)) {
-      select.value = selectedEntry.key;
+    container.innerHTML = '';
+    if (entries.length === 0) {
+      container.innerHTML = '<div style="padding:12px; color:rgba(255,255,255,.5); font-size:13px;">No planned classes. Add classes in Weekly Planner.</div>';
+      return;
     }
-  }
-  function getMetricsForSelectedClass(selectedEntry = getSelectedRecommenderClassEntry()) {
-    if (!selectedEntry) return [];
-    const cls = selectedEntry.cls || {};
-    const attendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
-    if (attendees.size === 0) return [];
-    return computeMetrics({
-      attendees,
-      classType: (cls.classType || '').trim(),
-      window: state.selectedWindow,
-      date: cls.date || formatDateKey(new Date())
+    entries.forEach(entry => {
+      const isChecked = state.selectedRecommendationClassKeys.has(entry.key);
+      const item = document.createElement('label');
+      item.className = `class-picker-item${isChecked ? ' checked' : ''}`;
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = isChecked;
+      checkbox.value = entry.key;
+      const label = document.createElement('span');
+      label.className = 'class-picker-label';
+      label.textContent = formatRecommenderClassOption(entry);
+      item.appendChild(checkbox);
+      item.appendChild(label);
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          state.selectedRecommendationClassKeys.add(entry.key);
+        } else {
+          state.selectedRecommendationClassKeys.delete(entry.key);
+        }
+        item.classList.toggle('checked', checkbox.checked);
+        refreshRecommenderFromSelection();
+      });
+      container.appendChild(item);
     });
   }
-  async function assignPlaylistToSelectedClass(playlistId) {
-    const selectedEntry = getSelectedRecommenderClassEntry();
-    if (!selectedEntry) {
-      showToast('Select a planned class first.', 'error');
+  function refreshRecommenderFromSelection() {
+    const selectedEntries = getSelectedRecommenderClassEntries();
+    const metrics = getMetricsForSelectedClasses(selectedEntries);
+    refreshDashboard(metrics, selectedEntries);
+    updateDashboardStatus(selectedEntries);
+  }
+  function getMetricsForSelectedClasses(selectedEntries) {
+    if (!selectedEntries || selectedEntries.length === 0) return [];
+    // Merge attendees from all selected classes
+    const mergedAttendees = new Set();
+    selectedEntries.forEach(entry => {
+      const cls = entry.cls || {};
+      const att = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+      att.forEach(g => mergedAttendees.add(g));
+    });
+    if (mergedAttendees.size === 0) return [];
+    // Determine class type filter: use shared type if all match, else no filter
+    const classTypes = selectedEntries.map(e => (e.cls.classType || '').trim()).filter(Boolean);
+    const uniqueTypes = new Set(classTypes.map(t => t.toLowerCase()));
+    const classType = uniqueTypes.size === 1 ? classTypes[0] : '';
+    // Use earliest date as reference
+    const dates = selectedEntries.map(e => e.cls.date).filter(Boolean).sort();
+    const refDate = dates[0] || formatDateKey(new Date());
+    return computeMetrics({
+      attendees: mergedAttendees,
+      classType,
+      window: state.selectedWindow,
+      date: refDate
+    });
+  }
+  async function assignPlaylistToSelectedClasses(playlistId) {
+    const selectedEntries = getSelectedRecommenderClassEntries();
+    if (selectedEntries.length === 0) {
+      showToast('Select at least one planned class first.', 'error');
       return;
     }
     const normalizedPlaylist = normalizePlaylistId(playlistId);
@@ -3048,50 +3171,76 @@
       showToast('Playlist format is invalid.', 'error');
       return;
     }
-    const { key, cls } = selectedEntry;
-    if (cls.status === 'finalized') {
-      showToast('Class is finalized. Re-open and finalize again to change playlist.', 'info');
+    const draftEntries = selectedEntries.filter(e => e.cls.status !== 'finalized');
+    if (draftEntries.length === 0) {
+      showToast('All selected classes are finalized.', 'info');
       return;
     }
-    const updatedClass = {
-      ...cls,
-      playlist: normalizedPlaylist,
-      attendees: cls.attendees instanceof Set ? new Set(cls.attendees) : new Set(cls.attendees || [])
-    };
-    if (state.firebaseUser) {
-      const saved = await saveClassToFirestore(key, updatedClass);
-      if (!saved) return;
-      state.weeklyPlan.set(key, updatedClass);
-    } else {
-      state.weeklyPlan.set(key, updatedClass);
-      saveStateToLocalStorage();
+    let savedCount = 0;
+    for (const { key, cls } of draftEntries) {
+      const updatedClass = {
+        ...cls,
+        playlist: normalizedPlaylist,
+        attendees: cls.attendees instanceof Set ? new Set(cls.attendees) : new Set(cls.attendees || [])
+      };
+      if (state.firebaseUser) {
+        const saved = await saveClassToFirestore(key, updatedClass);
+        if (saved) {
+          state.weeklyPlan.set(key, updatedClass);
+          savedCount++;
+        }
+      } else {
+        state.weeklyPlan.set(key, updatedClass);
+        savedCount++;
+      }
+      // Sync modal if open on this class
+      if (state.selectedClass && createDateTimeKey(state.selectedClass.date, state.selectedClass.time) === key) {
+        state.selectedClass = updatedClass;
+        const modalPlaylistInput = $('#modal-class-playlist');
+        if (modalPlaylistInput) modalPlaylistInput.value = normalizedPlaylist;
+        updateModalPlaylistDisplay(normalizedPlaylist);
+      }
     }
+    if (!state.firebaseUser) saveStateToLocalStorage();
     renderWeeklyCalendar();
-    if (state.selectedClass && createDateTimeKey(state.selectedClass.date, state.selectedClass.time) === key) {
-      state.selectedClass = updatedClass;
-      const modalPlaylistInput = $('#modal-class-playlist');
-      if (modalPlaylistInput) modalPlaylistInput.value = normalizedPlaylist;
-      updateModalPlaylistDisplay(normalizedPlaylist);
-    }
-    showToast(`Playlist #${normalizedPlaylist} assigned`, 'success');
+    const label = savedCount === 1 ? '1 class' : `${savedCount} classes`;
+    showToast(`Playlist #${normalizedPlaylist} assigned to ${label}`, 'success');
     refreshAll();
   }
-  function updateDashboardStatus(selectedEntry = getSelectedRecommenderClassEntry()) {
+  function updateDashboardStatus(selectedEntries = getSelectedRecommenderClassEntries()) {
     const selectedClassPill = $("#selectedClassPill");
     const selectedClassTypePill = $("#selectedClassTypePill");
     const selectedPlaylistPill = $("#selectedPlaylistPill");
     if (!selectedClassPill || !selectedClassTypePill || !selectedPlaylistPill) return;
-    if (!selectedEntry) {
-      selectedClassPill.textContent = 'No planned class selected';
+    if (!selectedEntries || selectedEntries.length === 0) {
+      selectedClassPill.textContent = 'No classes selected';
       selectedClassTypePill.textContent = 'Class type: --';
       selectedPlaylistPill.textContent = 'Assigned playlist: --';
       return;
     }
-    const cls = selectedEntry.cls || {};
-    const attendeeCount = cls.attendees instanceof Set ? cls.attendees.size : (cls.attendees || []).length;
-    selectedClassPill.textContent = `${formatDate(cls.date)} ${formatTime(cls.time)} • ${attendeeCount} guest${attendeeCount !== 1 ? 's' : ''} • ${cls.status || 'draft'}`;
-    selectedClassTypePill.textContent = `Class type: ${(cls.classType || '').trim() || 'All Types'}`;
-    selectedPlaylistPill.textContent = cls.playlist ? `Assigned playlist: #${cls.playlist}` : 'Assigned playlist: --';
+    // Aggregate info
+    const mergedAttendees = new Set();
+    const playlists = new Set();
+    const classTypes = new Set();
+    let allFinalized = true;
+    selectedEntries.forEach(entry => {
+      const cls = entry.cls || {};
+      const att = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+      att.forEach(g => mergedAttendees.add(g));
+      if (cls.playlist) playlists.add(cls.playlist);
+      if ((cls.classType || '').trim()) classTypes.add((cls.classType || '').trim());
+      if (cls.status !== 'finalized') allFinalized = false;
+    });
+    const count = selectedEntries.length;
+    const guestCount = mergedAttendees.size;
+    if (count === 1) {
+      const cls = selectedEntries[0].cls || {};
+      selectedClassPill.textContent = `${formatDate(cls.date)} ${formatTime(cls.time)} \u2022 ${guestCount} guest${guestCount !== 1 ? 's' : ''} \u2022 ${cls.status || 'draft'}`;
+    } else {
+      selectedClassPill.textContent = `${count} classes selected \u2022 ${guestCount} unique guest${guestCount !== 1 ? 's' : ''}`;
+    }
+    selectedClassTypePill.textContent = classTypes.size === 1 ? `Class type: ${[...classTypes][0]}` : classTypes.size > 1 ? `Class types: ${[...classTypes].join(', ')}` : 'Class type: All Types';
+    selectedPlaylistPill.textContent = playlists.size === 1 ? `Assigned playlist: #${[...playlists][0]}` : playlists.size > 1 ? `Assigned playlists: ${[...playlists].map(p => '#' + p).join(', ')}` : 'Assigned playlist: --';
   }
   function updateRecordsPill() {
     $("#recordsCountPill").textContent = `${state.records.length} records`;
@@ -3187,7 +3336,7 @@
 
     $("#class-modal-title").textContent = 'Plan New Class';
     $("#modal-class-date").value = dateKey;
-    $("#modal-class-time").value = '09:00';
+    populateTimeSelect($("#modal-class-time"), '09:00');
     populateClassTypeDropdown($("#modal-class-type"), '');
     $("#modal-class-playlist").value = '';
     updateModalPlaylistDisplay('');
@@ -3208,7 +3357,7 @@
 
     $("#class-modal-title").textContent = 'Edit Class';
     $("#modal-class-date").value = classData.date;
-    $("#modal-class-time").value = classData.time;
+    populateTimeSelect($("#modal-class-time"), classData.time || '09:00');
     populateClassTypeDropdown($("#modal-class-type"), classData.classType || '');
     $("#modal-class-notes").value = classData.notes || '';
     $("#modal-class-playlist").value = classData.playlist || '';
@@ -3244,6 +3393,13 @@
         }
         renderModalSelectedGuests();
         updateModalGuestListSelection();
+        // Clear search, show all guests, refocus for next search
+        const searchInput = $('#modal-guest-search');
+        const clearBtn = $('#modal-guest-search-clear');
+        searchInput.value = '';
+        if (clearBtn) clearBtn.classList.remove('visible');
+        $$("#modal-guest-list .guest-list-item").forEach(i => i.style.display = '');
+        searchInput.focus();
       });
       modalGuestList.appendChild(guestElement);
     });
@@ -3299,12 +3455,13 @@
     if (roster.length === 0) return [];
     const windowDays = Number.isFinite(opts.window) ? opts.window : state.selectedWindow;
     const classTypeFilter = opts.classType !== undefined ? opts.classType : '';
+    const classTypeFilterLower = classTypeFilter.toLowerCase();
     const filteredPlaylists = state.playlists.filter(pl => {
       const status = normalizePlaylistStatus(state.playlistStatus.get(pl) || 'Active');
       if (status === 'Retired' || status === 'Removed') return false;
-      if (classTypeFilter) {
+      if (classTypeFilterLower) {
         const tags = state.playlistTags.get(pl) || [];
-        return tags.includes(classTypeFilter);
+        return tags.some(t => t.toLowerCase() === classTypeFilterLower);
       }
       return true;
     });
@@ -3403,14 +3560,14 @@
   }
   // --- UI Refresh Functions ---
   function refreshAll() {
-      const selectedEntry = getSelectedRecommenderClassEntry();
-      populatePlannedClassSelector(selectedEntry);
-      const metrics = getMetricsForSelectedClass(selectedEntry);
-      refreshDashboard(metrics, selectedEntry);
+      const selectedEntries = getSelectedRecommenderClassEntries();
+      populatePlannedClassList();
+      const metrics = getMetricsForSelectedClasses(selectedEntries);
+      refreshDashboard(metrics, selectedEntries);
       refreshExplorer();
-      updateDashboardStatus(selectedEntry);
+      updateDashboardStatus(selectedEntries);
   }
-  function refreshDashboard(metrics, selectedEntry = getSelectedRecommenderClassEntry()) {
+  function refreshDashboard(metrics, selectedEntries = getSelectedRecommenderClassEntries()) {
     const best = metrics[0];
     const bestSummary = $("#bestSummary");
     const bestStrength = $("#bestStrength");
@@ -3423,7 +3580,7 @@
       assignBestBtn.textContent = 'Assign Best Playlist';
     }
 
-    if (!selectedEntry) {
+    if (!selectedEntries || selectedEntries.length === 0) {
       bestSummary.innerHTML = '<div class="muted">Add a class in Weekly Planner, then select it here for recommendations.</div>';
       bestStrength.innerHTML = '';
       $("#bestNever").textContent = "--";
@@ -3433,16 +3590,26 @@
       return;
     }
 
-    const cls = selectedEntry.cls || {};
-    const attendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
-    const rosterSize = attendees.size;
-    const classType = (cls.classType || '').trim();
-    const assignedPlaylist = normalizePlaylistId(cls.playlist);
-    const isFinalized = cls.status === 'finalized';
+    // Compute aggregate roster size
+    const mergedAttendees = new Set();
+    selectedEntries.forEach(entry => {
+      const cls = entry.cls || {};
+      const att = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+      att.forEach(g => mergedAttendees.add(g));
+    });
+    const rosterSize = mergedAttendees.size;
+    const classTypes = [...new Set(selectedEntries.map(e => (e.cls.classType || '').trim()).filter(Boolean))];
+    const classType = classTypes.length === 1 ? classTypes[0] : '';
+    const classCount = selectedEntries.length;
+    const draftEntries = selectedEntries.filter(e => e.cls.status !== 'finalized');
+    const allFinalized = draftEntries.length === 0;
+
+    // Check if best playlist is already assigned to ALL selected draft classes
+    const assignedPlaylists = new Set(selectedEntries.map(e => normalizePlaylistId(e.cls.playlist)).filter(Boolean));
 
     if (!best || rosterSize === 0) {
       bestSummary.innerHTML = rosterSize === 0
-        ? '<div class="muted">Selected class has no attendees yet. Add attendees in Weekly Planner.</div>'
+        ? '<div class="muted">Selected classes have no attendees yet. Add attendees in Weekly Planner.</div>'
         : (classType
           ? `<div class="muted">No playlists tagged for <strong>${esc(classType)}</strong>. Tag playlists in the Playlist Manager or update class type.</div>`
           : '<div class="muted">No active playlists are available for ranking.</div>');
@@ -3451,19 +3618,22 @@
       $("#bestMedian").textContent = "--";
       $("#bestReady").textContent = "--";
       rankingsBody.innerHTML = rosterSize === 0
-        ? '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,.6);">No ranking yet because this class has no attendees.</td></tr>'
+        ? '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,.6);">No ranking yet — selected classes have no attendees.</td></tr>'
         : '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,.6);">No playlists match the selected class type.</td></tr>';
       return;
     }
-    
+
     const strength = getRecommendationStrength(metrics);
-    const assignedText = assignedPlaylist ? `#${esc(assignedPlaylist)}` : 'None';
+    const selectionLabel = classCount === 1
+      ? `Selected class: ${esc(formatDateTime(selectedEntries[0].cls.date, selectedEntries[0].cls.time))} \u2022 ${rosterSize} attendees`
+      : `${classCount} classes selected \u2022 ${rosterSize} unique attendees`;
+    const assignedText = assignedPlaylists.size === 1 ? `#${esc([...assignedPlaylists][0])}` : assignedPlaylists.size > 1 ? 'Mixed' : 'None';
     bestSummary.innerHTML = `
       <div class="best-summary-title">
         Playlist <span style="color: var(--accent);">#${best.playlist}</span>${renderPlaylistTags(best.playlist)}
       </div>
-      <div class="best-summary-meta">Selected class: ${esc(formatDateTime(cls.date, cls.time))} • ${rosterSize} attendees</div>
-      <div class="best-summary-meta">Replay-ready threshold: ${state.selectedWindow} days${classType ? ' • ' + esc(classType) : ''} • Current assignment: ${assignedText}</div>
+      <div class="best-summary-meta">${selectionLabel}</div>
+      <div class="best-summary-meta">Replay-ready threshold: ${state.selectedWindow} days${classType ? ' \u2022 ' + esc(classType) : ''} \u2022 Current assignment: ${assignedText}</div>
       <div class="best-insight-list">
         <div class="best-insight"><b>${best.never}</b><span>attendees have never heard this playlist</span></div>
         <div class="best-insight"><b>${best.dueCount}</b><span>attendees are replay-ready (&ge; ${state.selectedWindow} days)</span></div>
@@ -3473,32 +3643,33 @@
     bestStrength.innerHTML = strength
       ? `<span class="rec-strength-pill ${strength.tone}">${esc(strength.label)}</span><span class="subtle" style="font-size:13px;">${esc(strength.detail)}</span>`
       : '';
-    
+
     $("#bestNever").textContent = `${best.never} (${best.neverPct}%)`;
     $("#bestMedian").textContent = `${best.median}d`;
     $("#bestReady").textContent = `${best.readyPct}%`;
 
     if (assignBestBtn) {
       assignBestBtn.dataset.playlist = best.playlist;
-      const alreadyAssigned = assignedPlaylist === best.playlist;
-      assignBestBtn.disabled = isFinalized || alreadyAssigned;
-      if (isFinalized) {
-        assignBestBtn.textContent = 'Class Finalized';
-      } else if (alreadyAssigned) {
+      const allAlreadyAssigned = draftEntries.length > 0 && draftEntries.every(e => normalizePlaylistId(e.cls.playlist) === best.playlist);
+      assignBestBtn.disabled = allFinalized || allAlreadyAssigned;
+      if (allFinalized) {
+        assignBestBtn.textContent = classCount === 1 ? 'Class Finalized' : 'All Classes Finalized';
+      } else if (allAlreadyAssigned) {
         assignBestBtn.textContent = `Best Already Assigned (#${best.playlist})`;
       } else {
-        assignBestBtn.textContent = `Assign Best (#${best.playlist})`;
+        const assignLabel = classCount === 1 ? `Assign Best (#${best.playlist})` : `Assign Best (#${best.playlist}) to ${draftEntries.length} class${draftEntries.length !== 1 ? 'es' : ''}`;
+        assignBestBtn.textContent = assignLabel;
       }
     }
 
     rankingsBody.innerHTML = metrics.map((row, index) => {
-      const isAssigned = assignedPlaylist === row.playlist;
+      const allRowAssigned = draftEntries.length > 0 && draftEntries.every(e => normalizePlaylistId(e.cls.playlist) === row.playlist);
       const scoreLabel = (Math.round(row.score * 10) / 10).toFixed(1);
-      const actionHTML = isFinalized
+      const actionHTML = allFinalized
         ? '<span class="pill status-finalized" style="font-size:11px; padding:4px 8px;">Finalized</span>'
-        : `<button type="button" class="btn btn-sm"${isAssigned ? ' disabled' : ''} data-assign-playlist="${esc(row.playlist)}">${isAssigned ? 'Assigned' : 'Assign'}</button>`;
+        : `<button type="button" class="btn btn-sm"${allRowAssigned ? ' disabled' : ''} data-assign-playlist="${esc(row.playlist)}">${allRowAssigned ? 'Assigned' : 'Assign'}</button>`;
       return `
-        <tr${isAssigned ? ' class="rank-row-assigned"' : ''}>
+        <tr${allRowAssigned ? ' class="rank-row-assigned"' : ''}>
           <td>${index + 1}</td>
           <td><strong>#${esc(row.playlist)}</strong>${renderPlaylistTags(row.playlist, { compact: true })}</td>
           <td>${row.never}/${row.rosterSize} (${row.neverPct}%)</td>
@@ -3625,20 +3796,19 @@
     const chips = tags.map(t =>
       `<span class="tag-chip-removable" data-tag="${esc(t)}"><span>${esc(t)}</span><span class="remove-tag">✕</span></span>`
     ).join('');
+    const currentTags = new Set(tags.map(t => t.toLowerCase()));
+    const available = getAllClassTypes().filter(t => !currentTags.has(t.toLowerCase()));
+    const options = available.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
     return `<div class="tag-editor">
       <div style="font-weight:600; font-size:13px; color:rgba(255,255,255,.7);">Class Types for Playlist #${playlistNum}</div>
       <div class="tag-editor-chips">${chips || '<span style="color:rgba(255,255,255,.4); font-size:13px;">No tags yet</span>'}</div>
-      <div class="tag-input-wrapper">
-        <input type="text" class="tag-input" placeholder="Add class type..." autocomplete="off" />
-        <div class="tag-autocomplete" style="display:none;"></div>
-      </div>
+      <select class="tag-select select" style="margin-top:6px;">
+        <option value="" disabled selected>Add class type...</option>
+        ${options}
+      </select>
     </div>`;
   }
   function wireTagEditor(playlistNum, editorTr) {
-    const input = editorTr.querySelector('.tag-input');
-    const dropdown = editorTr.querySelector('.tag-autocomplete');
-    let activeIndex = -1;
-
     // Remove buttons
     editorTr.querySelectorAll('.remove-tag').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -3648,64 +3818,16 @@
       });
     });
 
-    function getSuggestions(query) {
-      const currentTags = state.playlistTags.get(playlistNum) || [];
-      const all = getAllClassTypes();
-      return all.filter(t =>
-        !currentTags.includes(t) &&
-        t.toLowerCase().includes(query.toLowerCase())
-      );
-    }
-
-    function showDropdown() {
-      const query = input.value.trim();
-      const suggestions = getSuggestions(query);
-      if (suggestions.length === 0) {
-        dropdown.style.display = 'none';
-        return;
-      }
-      activeIndex = -1;
-      dropdown.innerHTML = suggestions.map(s =>
-        `<div class="tag-autocomplete-item" data-value="${esc(s)}">${esc(s)}</div>`
-      ).join('');
-      dropdown.style.display = 'block';
-      dropdown.querySelectorAll('.tag-autocomplete-item').forEach(item => {
-        item.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          addPlaylistTag(playlistNum, item.dataset.value);
-        });
+    // Dropdown select
+    const select = editorTr.querySelector('.tag-select');
+    if (select) {
+      select.addEventListener('change', () => {
+        const value = select.value;
+        if (value) {
+          addPlaylistTag(playlistNum, value);
+        }
       });
     }
-
-    input.addEventListener('focus', showDropdown);
-    input.addEventListener('input', showDropdown);
-
-    input.addEventListener('keydown', (e) => {
-      const items = dropdown.querySelectorAll('.tag-autocomplete-item');
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        activeIndex = Math.min(activeIndex + 1, items.length - 1);
-        items.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        activeIndex = Math.max(activeIndex - 1, 0);
-        items.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        if (activeIndex >= 0 && items[activeIndex]) {
-          addPlaylistTag(playlistNum, items[activeIndex].dataset.value);
-        } else if (input.value.trim()) {
-          addPlaylistTag(playlistNum, input.value.trim());
-        }
-      } else if (e.key === 'Escape') {
-        dropdown.style.display = 'none';
-        input.blur();
-      }
-    });
-
-    input.addEventListener('blur', () => {
-      setTimeout(() => { dropdown.style.display = 'none'; }, 150);
-    });
   }
   function refreshHistory() {
     const tbody = $("#historyTbody");
@@ -3902,11 +4024,21 @@
               if(tab === 'explorer') refreshAll();
           });
       });
-      // Dashboard controls
-      const plannedClassSelector = $('#plannedClassSelector');
-      if (plannedClassSelector) {
-        plannedClassSelector.addEventListener('change', (e) => {
-          state.selectedRecommendationClassKey = e.target.value || '';
+      // Dashboard controls — class picker
+      const selectAllDraftsBtn = $('#selectAllDraftsBtn');
+      if (selectAllDraftsBtn) {
+        selectAllDraftsBtn.addEventListener('click', () => {
+          const entries = getRecommenderClassEntries();
+          entries.forEach(e => {
+            if (e.cls.status !== 'finalized') state.selectedRecommendationClassKeys.add(e.key);
+          });
+          refreshAll();
+        });
+      }
+      const clearAllClassesBtn = $('#clearAllClassesBtn');
+      if (clearAllClassesBtn) {
+        clearAllClassesBtn.addEventListener('click', () => {
+          state.selectedRecommendationClassKeys.clear();
           refreshAll();
         });
       }
@@ -3925,7 +4057,7 @@
             showToast('No recommendation available to assign.', 'error');
             return;
           }
-          await assignPlaylistToSelectedClass(playlistId);
+          await assignPlaylistToSelectedClasses(playlistId);
         });
       }
       const rankingsBody = $('#runnerUps');
@@ -3933,27 +4065,33 @@
         rankingsBody.addEventListener('click', async (e) => {
           const btn = e.target.closest('[data-assign-playlist]');
           if (!btn || btn.disabled) return;
-          await assignPlaylistToSelectedClass(btn.dataset.assignPlaylist || '');
+          await assignPlaylistToSelectedClasses(btn.dataset.assignPlaylist || '');
         });
       }
       const previewRosterBtn = $('#previewRosterBtn');
       if (previewRosterBtn) {
         previewRosterBtn.addEventListener('click', () => {
-        const selectedEntry = getSelectedRecommenderClassEntry();
-        const metrics = getMetricsForSelectedClass(selectedEntry);
+        const selectedEntries = getSelectedRecommenderClassEntries();
+        const metrics = getMetricsForSelectedClasses(selectedEntries);
         const best = metrics[0];
-        if (!selectedEntry || !best) {
-          showToast('Select a planned class with attendees to view details.', 'error');
+        if (selectedEntries.length === 0 || !best) {
+          showToast('Select planned classes with attendees to view details.', 'error');
           return;
         }
-        const cls = selectedEntry.cls || {};
-        const attendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
-        const roster = [...attendees].sort();
+        // Merge attendees from all selected classes
+        const mergedAttendees = new Set();
+        selectedEntries.forEach(entry => {
+          const cls = entry.cls || {};
+          const att = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+          att.forEach(g => mergedAttendees.add(g));
+        });
+        const roster = [...mergedAttendees].sort();
         if (roster.length === 0) {
-          showToast('Add attendees to this planned class first.', 'error');
+          showToast('Add attendees to selected classes first.', 'error');
           return;
         }
-        const refDate = cls.date || formatDateKey(new Date());
+        const dates = selectedEntries.map(e => e.cls.date).filter(Boolean).sort();
+        const refDate = dates[0] || formatDateKey(new Date());
         const lm = lastHeardMap(refDate);
         const windowDays = state.selectedWindow;
         const neverList = [];
@@ -3976,16 +4114,20 @@
         });
         readyList.sort((a, b) => b.days - a.days);
         recentList.sort((a, b) => a.days - b.days);
+        const classCount = selectedEntries.length;
+        const classLabel = classCount === 1
+          ? esc(formatDateTime(selectedEntries[0].cls.date, selectedEntries[0].cls.time))
+          : `${classCount} classes selected`;
         let html = `<h4 style="margin-bottom:12px;">Playlist #${best.playlist} — Roster Breakdown</h4>`;
-        html += `<p class="muted" style="margin-bottom:12px;">${esc(formatDateTime(cls.date, cls.time))} • ${roster.length} attendees • Replay-ready threshold: ${windowDays} days</p>`;
+        html += `<p class="muted" style="margin-bottom:12px;">${classLabel} \u2022 ${roster.length} attendees \u2022 Replay-ready threshold: ${windowDays} days</p>`;
         if (neverList.length > 0) {
           html += `<div style="margin-bottom:12px;"><strong>Never Heard (${neverList.length})</strong><div style="margin-top:4px;">${neverList.map(g => `<span class="pill">${esc(g)}</span>`).join(' ')}</div></div>`;
         }
         if (readyList.length > 0) {
-          html += `<div style="margin-bottom:12px;"><strong>Replay-ready (${readyList.length})</strong><div style="margin-top:4px;">${readyList.map(g => `<span class="pill status-draft">${esc(g.name)} — ${g.days}d ago</span>`).join(' ')}</div></div>`;
+          html += `<div style="margin-bottom:12px;"><strong>Replay-ready (${readyList.length})</strong><div style="margin-top:4px;">${readyList.map(g => `<span class="pill status-draft">${esc(g.name)} \u2014 ${g.days}d ago</span>`).join(' ')}</div></div>`;
         }
         if (recentList.length > 0) {
-          html += `<div style="margin-bottom:12px;"><strong>Recently heard (${recentList.length})</strong><div style="margin-top:4px;">${recentList.map(g => `<span class="pill status-finalized">${esc(g.name)} — ${g.days}d ago</span>`).join(' ')}</div></div>`;
+          html += `<div style="margin-bottom:12px;"><strong>Recently heard (${recentList.length})</strong><div style="margin-top:4px;">${recentList.map(g => `<span class="pill status-finalized">${esc(g.name)} \u2014 ${g.days}d ago</span>`).join(' ')}</div></div>`;
         }
         $('#guest-modal-title').textContent = 'Playlist Detail';
         $('#guest-modal-content').innerHTML = html;
@@ -4246,8 +4388,9 @@
         notes: $('#modal-class-notes').value || '',
         classType: $('#modal-class-type').value || ''
       };
-      if (state.selectedRecommendationClassKey === oldKey) {
-        state.selectedRecommendationClassKey = newKey;
+      if (state.selectedRecommendationClassKeys.has(oldKey)) {
+        state.selectedRecommendationClassKeys.delete(oldKey);
+        state.selectedRecommendationClassKeys.add(newKey);
       }
 
       if (state.firebaseUser) {
@@ -4322,8 +4465,9 @@
         const notes = $('#modal-class-notes').value || '';
         const classType = $('#modal-class-type').value || '';
         const wasFinalized = cls.status === 'finalized';
-        if (state.selectedRecommendationClassKey === oldKey) {
-          state.selectedRecommendationClassKey = newKey;
+        if (state.selectedRecommendationClassKeys.has(oldKey)) {
+          state.selectedRecommendationClassKeys.delete(oldKey);
+          state.selectedRecommendationClassKeys.add(newKey);
         }
 
         // Delete old class doc if date/time changed
@@ -4382,9 +4526,7 @@
     if (!cls) return;
     if (confirm('Are you sure you want to delete this class?')) {
         const key = createDateTimeKey(cls.date, cls.time);
-        if (state.selectedRecommendationClassKey === key) {
-          state.selectedRecommendationClassKey = '';
-        }
+        state.selectedRecommendationClassKeys.delete(key);
         if (state.firebaseUser) {
           await deleteClassFromFirestore(key);
           // onSnapshot listener will update local state
