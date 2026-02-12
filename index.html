@@ -884,6 +884,12 @@
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.08);
     }
+    .table-container.dashboard-rankings-wrap {
+      overflow-x: auto;
+    }
+    .dashboard-rankings-wrap .data-table {
+      min-width: 700px;
+    }
     
     .data-table { 
       width:100%; 
@@ -3770,7 +3776,7 @@
       return `
         <tr${allRowAssigned ? ' class="rank-row-assigned"' : ''}>
           <td>${index + 1}</td>
-          <td><strong>#${esc(row.playlist)}</strong>${renderPlaylistTags(row.playlist, { compact: true })}</td>
+          <td><strong>#${esc(row.playlist)}</strong></td>
           <td>${row.never}/${row.rosterSize} (${row.neverPct}%)</td>
           <td>${row.dueCount}/${row.rosterSize} (${row.readyPct}%)</td>
           <td>${row.median}d</td>
