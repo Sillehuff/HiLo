@@ -4449,10 +4449,6 @@
           showToast('This class is finalized. Use Finalize to apply changes.', 'info');
           return;
       }
-      if (state.modalAttendees.size === 0) {
-          showToast('Please select at least one guest.', 'error');
-          return;
-      }
       const preservedPlaylist = normalizePlaylistId($('#modal-class-playlist').value || cls.playlist);
 
       const oldKey = createDateTimeKey(cls.date, cls.time);
@@ -4488,27 +4484,32 @@
         state.selectedRecommendationClassKeys.add(newKey);
       }
 
-      if (state.firebaseUser) {
-        const uid = state.firebaseUser.uid;
-        if (oldKey !== newKey) {
-          const batch = db.batch();
-          batch.delete(db.collection('users').doc(uid).collection('classes').doc(safeDocId(oldKey)));
-          batch.set(db.collection('users').doc(uid).collection('classes').doc(safeDocId(newKey)), {
-            ...classData, attendees: Array.from(classData.attendees), dateTimeKey: newKey
-          });
-          await batch.commit();
+      try {
+        if (state.firebaseUser) {
+          const uid = state.firebaseUser.uid;
+          if (oldKey !== newKey) {
+            const batch = db.batch();
+            batch.delete(db.collection('users').doc(uid).collection('classes').doc(safeDocId(oldKey)));
+            batch.set(db.collection('users').doc(uid).collection('classes').doc(safeDocId(newKey)), {
+              ...classData, attendees: Array.from(classData.attendees), dateTimeKey: newKey
+            });
+            await batch.commit();
+          } else {
+            const saved = await saveClassToFirestore(newKey, classData);
+            if (!saved) return;
+          }
         } else {
-          await saveClassToFirestore(newKey, classData);
+          if (oldKey !== newKey) state.weeklyPlan.delete(oldKey);
+          state.weeklyPlan.set(newKey, classData);
+          saveStateToLocalStorage();
+          renderWeeklyCalendar();
         }
-      } else {
-        if (oldKey !== newKey) state.weeklyPlan.delete(oldKey);
-        state.weeklyPlan.set(newKey, classData);
-        saveStateToLocalStorage();
-        renderWeeklyCalendar();
+        refreshAll();
+        showToast('Draft saved!', 'success');
+        $('#class-modal').classList.add('hidden');
+      } catch (error) {
+        showToast('Save failed: ' + error.message, 'error');
       }
-      refreshAll();
-      showToast('Draft saved!', 'success');
-      $('#class-modal').classList.add('hidden');
   }
 
   async function handleModalFinalize() {
