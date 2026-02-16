@@ -355,6 +355,23 @@
     .status-draft { background: rgba(241, 196, 15, .12); border-color: rgba(241, 196, 15, .35); color: #f1c40f; }
     .status-finalized { background: rgba(46, 204, 113, .12); border-color: rgba(46, 204, 113, .35); color: #2ecc71; }
     .status-info { background: rgba(91, 181, 162, .12); border-color: rgba(91, 181, 162, .35); color: #5bb5a2; }
+    /* History action buttons */
+    .history-actions { display: flex; gap: 6px; align-items: center; }
+    .history-edit-btn,
+    .history-delete-btn {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all .2s ease;
+      color: rgba(255,255,255,.7);
+      touch-action: manipulation;
+      min-height: 36px;
+    }
+    .history-edit-btn:hover { background: rgba(255,255,255,.15); color: #fff; }
+    .history-delete-btn:hover { background: rgba(231, 76, 60, .25); border-color: rgba(231, 76, 60, .5); color: #e74c3c; }
     /* Glass cards */
     .cards {
       display: grid;
@@ -1874,6 +1891,8 @@
       #history-table .guest-names-full {
         text-align: right;
       }
+      .history-edit-btn, .history-delete-btn { min-height: 44px; min-width: 44px; }
+      .history-actions { justify-content: flex-end; }
       #toast-container {
         bottom: calc(96px + var(--safe-bottom));
         right: 12px;
@@ -2061,6 +2080,7 @@
                 <th class="sortable" data-sort="count">Attendees</th>
                 <th>Guest Names</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="historyTbody"></tbody>
@@ -3440,6 +3460,45 @@
     $("#delete-class-modal").classList.remove('hidden');
     $("#class-modal").classList.remove('hidden');
   };
+  function openHistoryClassModal(date, time, playlist) {
+    const normalizedTime = normalizeTime(time, '00:00');
+    const dateTimeKey = createDateTimeKey(date, normalizedTime);
+
+    // If the class exists in weeklyPlan, open directly
+    const existingClass = state.weeklyPlan.get(dateTimeKey);
+    if (existingClass) {
+      openClassModal(dateTimeKey);
+      return;
+    }
+
+    // Records-only entry — build a synthetic class from matching records
+    const normalizedPlaylist = normalizePlaylistId(playlist);
+    const matchingRecords = state.records.filter(r =>
+      r.date === date &&
+      normalizeTime(r.time) === normalizedTime &&
+      normalizePlaylistId(r.playlist) === normalizedPlaylist
+    );
+
+    if (matchingRecords.length === 0) {
+      showToast('Could not find class data.', 'error');
+      return;
+    }
+
+    const attendees = new Set(matchingRecords.map(r => r.guest).filter(Boolean));
+    const classType = (matchingRecords.find(r => r.classType) || {}).classType || '';
+
+    const syntheticClass = createClass(date, normalizedTime, normalizedPlaylist, attendees, '', 'finalized', classType);
+    state.weeklyPlan.set(dateTimeKey, syntheticClass);
+
+    // Persist the synthetic class so the modal can save/finalize against it
+    if (state.firebaseUser) {
+      saveClassToFirestore(dateTimeKey, syntheticClass).catch(err =>
+        console.error('Failed to persist synthetic class:', err)
+      );
+    }
+
+    openClassModal(dateTimeKey);
+  }
   function updateModalPlaylistDisplay(playlistId) {
     const display = $('#modal-class-playlist-display');
     if (!display) return;
@@ -3999,7 +4058,7 @@
 
     tbody.innerHTML = "";
     if (rows.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:48px 20px; color:rgba(255,255,255,.5);"><div style="font-size:48px; opacity:.4; margin-bottom:12px;">&#128214;</div><div style="font-size:16px; color:rgba(255,255,255,.7); margin-bottom:6px;">No class history yet</div><div style="font-size:13px;">Finalize classes from the Weekly Planner to build your history.</div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:48px 20px; color:rgba(255,255,255,.5);"><div style="font-size:48px; opacity:.4; margin-bottom:12px;">&#128214;</div><div style="font-size:16px; color:rgba(255,255,255,.7); margin-bottom:6px;">No class history yet</div><div style="font-size:13px;">Finalize classes from the Weekly Planner to build your history.</div></td></tr>`;
       return;
     }
     rows.forEach(row => {
@@ -4010,13 +4069,14 @@
         ? ` <span class="history-expand-guests" style="color:var(--accent); cursor:pointer;" data-guests="${guestArray.map(g => esc(g)).join('|||')}">+${moreCount} more</span>`
         : '';
       const tr = `
-        <tr>
+        <tr data-date="${esc(row.date)}" data-time="${esc(row.time)}" data-playlist="${esc(row.playlist)}">
           <td data-label="Date & Time">${formatDate(row.date)} ${formatTime(row.time)}</td>
           <td data-label="Class Type">${classTypeText}</td>
           <td data-label="Playlist"><strong>Playlist #${row.playlist}</strong></td>
           <td data-label="Attendees"><span class="pill">${guestArray.length}</span></td>
           <td data-label="Guest Names"><span class="guest-names-short">${guestArray.slice(0, 3).map(g => esc(g)).join(", ")}${moreText}</span><span class="guest-names-full" style="display:none;">${guestArray.map(g => esc(g)).join(", ")} <span class="history-collapse-guests" style="color:var(--accent); cursor:pointer;">show less</span></span></td>
           <td data-label="Status"><span class="pill status-finalized">Completed</span></td>
+          <td data-label="Actions"><div class="history-actions"><button class="history-edit-btn" title="Edit class">&#9998;</button><button class="history-delete-btn" title="Delete class">&#128465;</button></div></td>
         </tr>
       `;
       tbody.innerHTML += tr;
@@ -4034,6 +4094,21 @@
         const td = e.target.closest('td');
         td.querySelector('.guest-names-short').style.display = '';
         td.querySelector('.guest-names-full').style.display = 'none';
+      });
+    });
+    // Edit/Delete buttons
+    tbody.querySelectorAll('.history-edit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const tr = e.target.closest('tr');
+        openHistoryClassModal(tr.dataset.date, tr.dataset.time, tr.dataset.playlist);
+      });
+    });
+    tbody.querySelectorAll('.history-delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const tr = e.target.closest('tr');
+        deleteHistoryEntry(tr.dataset.date, tr.dataset.time, tr.dataset.playlist);
       });
     });
   }
@@ -4630,8 +4705,26 @@
         const key = createDateTimeKey(cls.date, cls.time);
         state.selectedRecommendationClassKeys.delete(key);
         if (state.firebaseUser) {
-          await deleteClassFromFirestore(key);
-          // onSnapshot listener will update local state
+          const uid = state.firebaseUser.uid;
+          const batch = db.batch();
+          const classesRef = db.collection('users').doc(uid).collection('classes');
+          batch.delete(classesRef.doc(safeDocId(key)));
+
+          // Also delete attendance records if this was a finalized class
+          if (cls.status === 'finalized') {
+            const recordsRef = db.collection('users').doc(uid).collection('records');
+            const oldPlaylist = normalizePlaylistId(cls.playlist);
+            if (oldPlaylist) {
+              const oldAttendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+              const oldTime = normalizeTime(cls.time);
+              oldAttendees.forEach(guest => {
+                const recordKey = buildRecordKey({ date: cls.date, time: oldTime, guest, playlist: oldPlaylist });
+                batch.delete(recordsRef.doc(safeDocId(recordKey)));
+              });
+            }
+          }
+
+          await batch.commit();
         } else {
           state.weeklyPlan.delete(key);
           saveStateToLocalStorage();
@@ -4640,6 +4733,51 @@
         refreshAll();
         showToast('Class deleted.', 'info');
         $('#class-modal').classList.add('hidden');
+    }
+  }
+  async function deleteHistoryEntry(date, time, playlist) {
+    const normalizedTime = normalizeTime(time, '00:00');
+    const normalizedPlaylist = normalizePlaylistId(playlist);
+    if (!confirm('Delete this class and all its attendance records? This cannot be undone.')) return;
+
+    const dateTimeKey = createDateTimeKey(date, normalizedTime);
+    const matchingRecords = state.records.filter(r =>
+      r.date === date &&
+      normalizeTime(r.time) === normalizedTime &&
+      normalizePlaylistId(r.playlist) === normalizedPlaylist
+    );
+
+    if (state.firebaseUser) {
+      try {
+        const uid = state.firebaseUser.uid;
+        const batch = db.batch();
+        const classesRef = db.collection('users').doc(uid).collection('classes');
+        const recordsRef = db.collection('users').doc(uid).collection('records');
+
+        batch.delete(classesRef.doc(safeDocId(dateTimeKey)));
+
+        matchingRecords.forEach(record => {
+          const recordKey = buildRecordKey(record);
+          batch.delete(recordsRef.doc(safeDocId(recordKey)));
+        });
+
+        await batch.commit();
+        showToast('Class and records deleted.', 'info');
+      } catch (error) {
+        showToast('Delete failed: ' + error.message, 'error');
+      }
+    } else {
+      state.weeklyPlan.delete(dateTimeKey);
+      state.records = state.records.filter(r =>
+        !(r.date === date &&
+          normalizeTime(r.time) === normalizedTime &&
+          normalizePlaylistId(r.playlist) === normalizedPlaylist)
+      );
+      saveStateToLocalStorage();
+      refreshAll();
+      refreshHistory();
+      refreshGuests();
+      showToast('Class and records deleted.', 'info');
     }
   }
   // --- CSV Import/Export ---
