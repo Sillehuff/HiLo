@@ -2120,9 +2120,12 @@
     <section id="guests" class="hidden fade-in">
       <div class="section-header">
         <h2>Guest Profiles</h2>
-        <div class="search-container">
-          <input type="text" id="guest-search-filter" placeholder="Search guests...">
-          <button type="button" class="search-clear" id="guest-filter-clear" aria-label="Clear search">✕</button>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="search-container">
+            <input type="text" id="guest-search-filter" placeholder="Search guests...">
+            <button type="button" class="search-clear" id="guest-filter-clear" aria-label="Clear search">✕</button>
+          </div>
+          <button type="button" class="btn btn-primary" id="add-guest-btn" style="white-space:nowrap;">+ Add Guest</button>
         </div>
       </div>
       <div id="guests-stats" class="stats-bar"></div>
@@ -4294,10 +4297,14 @@
       const guestRecords = state.records
           .filter(r => r.guest === guestName)
           .sort((a, b) => new Date(`${b.date}T${b.time}`) - new Date(`${a.date}T${a.time}`));
-      
+
       $('#guest-modal-title').textContent = `${guestName}'s Profile`;
-      
-      let contentHTML = `<div class="table-container"><table class="data-table"><thead><tr><th>Date</th><th>Playlist</th></tr></thead><tbody>`;
+
+      let contentHTML = `<div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button type="button" class="btn btn-xs" id="guest-modal-edit" style="flex:1;">&#9998; Rename</button>
+        <button type="button" class="btn btn-xs btn-danger" id="guest-modal-delete" style="flex:1;">&#128465; Delete</button>
+      </div>`;
+      contentHTML += `<div class="table-container"><table class="data-table"><thead><tr><th>Date</th><th>Playlist</th></tr></thead><tbody>`;
       if (guestRecords.length > 0) {
           guestRecords.forEach(record => {
               contentHTML += `<tr><td>${formatDateTime(record.date, record.time)}</td><td>Playlist #${record.playlist}</td></tr>`;
@@ -4306,9 +4313,186 @@
           contentHTML += `<tr><td colspan="2" style="text-align:center;">No class history found.</td></tr>`;
       }
       contentHTML += `</tbody></table></div>`;
-      
+
       $('#guest-modal-content').innerHTML = contentHTML;
       $('#guest-modal').classList.remove('hidden');
+
+      // Wire up edit button
+      $('#guest-modal-edit').addEventListener('click', () => {
+        const newName = prompt('Rename guest:', guestName);
+        if (newName !== null && newName.trim() !== '' && newName.trim() !== guestName) {
+          renameGuest(guestName, newName.trim());
+        }
+      });
+      // Wire up delete button
+      $('#guest-modal-delete').addEventListener('click', () => {
+        const recordCount = guestRecords.length;
+        const msg = recordCount > 0
+          ? `Delete "${guestName}" and their ${recordCount} attendance record(s)? This cannot be undone.`
+          : `Delete "${guestName}"? This cannot be undone.`;
+        if (confirm(msg)) {
+          deleteGuest(guestName);
+        }
+      });
+  }
+
+  function showAddGuestPrompt() {
+    const name = prompt('Enter new guest name:');
+    if (name === null) return;
+    const trimmed = name.trim();
+    if (!trimmed) {
+      showToast('Guest name cannot be empty.', 'error');
+      return;
+    }
+    if (state.allGuests.has(trimmed)) {
+      showToast(`"${trimmed}" already exists.`, 'error');
+      return;
+    }
+    state.allGuests.add(trimmed);
+    saveStateToLocalStorage();
+    refreshGuests();
+    showToast(`"${trimmed}" added.`, 'success');
+  }
+
+  async function renameGuest(oldName, newName) {
+    if (state.allGuests.has(newName)) {
+      showToast(`"${newName}" already exists. Choose a different name.`, 'error');
+      return;
+    }
+
+    // Update state.allGuests
+    state.allGuests.delete(oldName);
+    state.allGuests.add(newName);
+
+    // Update local records
+    state.records.forEach(r => {
+      if (r.guest === oldName) r.guest = newName;
+    });
+
+    // Update weeklyPlan attendees
+    state.weeklyPlan.forEach(cls => {
+      if (cls.attendees instanceof Set) {
+        if (cls.attendees.has(oldName)) {
+          cls.attendees.delete(oldName);
+          cls.attendees.add(newName);
+        }
+      }
+    });
+
+    // Persist to Firestore
+    if (state.firebaseUser) {
+      try {
+        const uid = state.firebaseUser.uid;
+        const recordsRef = db.collection('users').doc(uid).collection('records');
+        const classesRef = db.collection('users').doc(uid).collection('classes');
+
+        // Update records in batches
+        const recordSnap = await recordsRef.get();
+        const recordDocs = recordSnap.docs.filter(doc => doc.data().guest === oldName);
+        for (let i = 0; i < recordDocs.length; i += 500) {
+          const batch = db.batch();
+          recordDocs.slice(i, i + 500).forEach(doc => {
+            const data = doc.data();
+            // Delete old doc, create new one with updated guest + recordKey
+            batch.delete(doc.ref);
+            const updatedRecord = { ...data, guest: newName };
+            updatedRecord.recordKey = buildRecordKey(updatedRecord);
+            batch.set(recordsRef.doc(safeDocId(updatedRecord.recordKey)), updatedRecord);
+          });
+          await batch.commit();
+        }
+
+        // Update class attendees
+        const classSnap = await classesRef.get();
+        const classDocs = classSnap.docs.filter(doc => {
+          const attendees = doc.data().attendees || [];
+          return attendees.includes(oldName);
+        });
+        if (classDocs.length > 0) {
+          for (let i = 0; i < classDocs.length; i += 500) {
+            const batch = db.batch();
+            classDocs.slice(i, i + 500).forEach(doc => {
+              const data = doc.data();
+              const updated = (data.attendees || []).map(g => g === oldName ? newName : g);
+              batch.update(doc.ref, { attendees: updated });
+            });
+            await batch.commit();
+          }
+        }
+      } catch (err) {
+        showToast('Rename sync error: ' + err.message, 'error');
+        console.error('Rename Firestore error:', err);
+      }
+    }
+
+    saveStateToLocalStorage();
+    refreshGuests();
+    refreshAll();
+    $('#guest-modal').classList.add('hidden');
+    showToast(`Renamed to "${newName}".`, 'success');
+  }
+
+  async function deleteGuest(guestName) {
+    // Remove from state
+    state.allGuests.delete(guestName);
+    const removedRecords = state.records.filter(r => r.guest === guestName);
+    state.records = state.records.filter(r => r.guest !== guestName);
+
+    // Remove from weeklyPlan attendees
+    state.weeklyPlan.forEach(cls => {
+      if (cls.attendees instanceof Set) {
+        cls.attendees.delete(guestName);
+      }
+    });
+
+    // Persist to Firestore
+    if (state.firebaseUser) {
+      try {
+        const uid = state.firebaseUser.uid;
+        const recordsRef = db.collection('users').doc(uid).collection('records');
+        const classesRef = db.collection('users').doc(uid).collection('classes');
+
+        // Delete records in batches
+        if (removedRecords.length > 0) {
+          for (let i = 0; i < removedRecords.length; i += 500) {
+            const batch = db.batch();
+            removedRecords.slice(i, i + 500).forEach(r => {
+              const recordKey = buildRecordKey(r);
+              batch.delete(recordsRef.doc(safeDocId(recordKey)));
+            });
+            await batch.commit();
+          }
+        }
+
+        // Update class attendees (remove guest from arrays)
+        const classSnap = await classesRef.get();
+        const classDocs = classSnap.docs.filter(doc => {
+          const attendees = doc.data().attendees || [];
+          return attendees.includes(guestName);
+        });
+        if (classDocs.length > 0) {
+          for (let i = 0; i < classDocs.length; i += 500) {
+            const batch = db.batch();
+            classDocs.slice(i, i + 500).forEach(doc => {
+              const data = doc.data();
+              const updated = (data.attendees || []).filter(g => g !== guestName);
+              batch.update(doc.ref, { attendees: updated });
+            });
+            await batch.commit();
+          }
+        }
+      } catch (err) {
+        showToast('Delete sync error: ' + err.message, 'error');
+        console.error('Delete Firestore error:', err);
+      }
+    }
+
+    saveStateToLocalStorage();
+    refreshGuests();
+    refreshAll();
+    refreshHistory();
+    $('#guest-modal').classList.add('hidden');
+    showToast(`"${guestName}" deleted.`, 'success');
   }
 
   // --- EVENT LISTENERS ---
@@ -4453,9 +4637,10 @@
         input.addEventListener('input', syncBtn);
         btn.addEventListener('click', () => { input.value = ''; syncBtn(); if (onClear) onClear(); });
       }
-      // Guests tab search
+      // Guests tab search & add
       $('#guest-search-filter').addEventListener('input', refreshGuests);
       setupSearchClear('#guest-search-filter', '#guest-filter-clear', refreshGuests);
+      $('#add-guest-btn').addEventListener('click', showAddGuestPrompt);
       // Modal guest search
       $('#modal-guest-search').addEventListener('input', () => {
           filterModalGuestVisibility();
