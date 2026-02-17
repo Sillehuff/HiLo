@@ -3177,6 +3177,7 @@
   function getRecommenderClassEntries() {
     return Array.from(state.weeklyPlan.entries())
       .map(([key, cls]) => ({ key, cls }))
+      .filter(({ cls }) => cls.status !== 'finalized')
       .sort((a, b) => a.key.localeCompare(b.key));
   }
   function getSelectedRecommenderClassEntries() {
@@ -3214,8 +3215,7 @@
     const cls = entry.cls || {};
     const attendeeCount = cls.attendees instanceof Set ? cls.attendees.size : (cls.attendees || []).length;
     const classType = (cls.classType || '').trim() || 'All Types';
-    const status = cls.status === 'finalized' ? 'finalized' : 'draft';
-    return `${formatDate(cls.date)} ${formatTime(cls.time)} \u2022 ${classType} \u2022 ${attendeeCount} guest${attendeeCount !== 1 ? 's' : ''} \u2022 ${status}`;
+    return `${formatDate(cls.date)} ${formatTime(cls.time)} \u2022 ${classType} \u2022 ${attendeeCount} guest${attendeeCount !== 1 ? 's' : ''}`;
   }
   function populatePlannedClassList() {
     const container = $('#plannedClassList');
