@@ -742,7 +742,7 @@
     }
     .selected-guests-container {
       min-height: 50px;
-      max-height: 150px;
+      max-height: 300px;
       overflow-y: auto;
       padding: 10px;
       background: rgba(0,0,0,.15);
@@ -816,7 +816,7 @@
       background: rgba(255,255,255,.1);
     }
     .guest-list-container {
-      max-height: 300px;
+      max-height: 225px;
       overflow-y: auto;
       background: rgba(0,0,0,.15);
       border-radius: 12px;
@@ -1024,6 +1024,24 @@
       transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
+    }
+    .day-card.empty {
+      min-height: unset;
+      padding: 10px 16px;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+    .day-card.empty .day-header {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+      flex-shrink: 0;
+    }
+    .day-card.empty .class-list { display: none; }
+    .day-card.empty .class-actions {
+      margin-top: 0;
+      margin-left: auto;
     }
     .day-card:hover {
       background: rgba(255,255,255,.1);
@@ -2037,22 +2055,17 @@
       </div>
     </section>
     <section id="weekly" class="fade-in">
-      <div class="hero">
-        <h1>Weekly Class Planner</h1>
-        <div class="subtle">Plan and manage your upcoming week of classes</div>
-        
-        <div class="row" style="margin-top:14px;">
-          <div class="search-wrap" style="flex:1;">
-            <button id="prevWeekBtn" class="btn">← Previous Week</button>
-            <button id="currentWeekBtn" class="btn btn-info">Current Week</button>
-            <button id="nextWeekBtn" class="btn">Next Week →</button>
-            <button id="syncAllBtn" class="btn btn-success" disabled>Finalize All Drafts</button>
-          </div>
+      <div class="hero" style="padding: clamp(14px, 2vw, 20px) clamp(16px, 3vw, 24px);">
+        <div class="row" style="margin-top:0; justify-content:center; flex-wrap:wrap;">
+          <button id="prevWeekBtn" class="btn btn-sm">← Prev</button>
+          <span class="pill" id="weekRangePill" style="font-weight:600;">Week of ...</span>
+          <button id="currentWeekBtn" class="btn btn-sm btn-info">Current</button>
+          <button id="nextWeekBtn" class="btn btn-sm">Next →</button>
         </div>
-        <div class="row" style="margin-top:10px;">
-          <span class="pill" id="weekRangePill">Week of ...</span>
+        <div class="row" style="margin-top:8px; justify-content:center; flex-wrap:wrap;">
           <span class="pill status-draft" id="draftsCountPill">0 drafts</span>
           <span class="pill status-finalized" id="finalizedCountPill">0 finalized</span>
+          <button id="syncAllBtn" class="btn btn-sm btn-success" disabled>Finalize All Drafts</button>
         </div>
       </div>
       <div class="calendar-grid" id="calendarGrid">
@@ -2214,7 +2227,7 @@
                 <button type="button" class="btn-xs" id="modalClearAllBtn">Clear All</button>
               </div>
 
-              <div class="guest-list-container" style="max-height: 300px;">
+              <div class="guest-list-container" style="max-height: 225px;">
                 <div class="guest-list" id="modal-guest-list"></div>
               </div>
 
@@ -2244,10 +2257,6 @@
             <button id="delete-class-modal" class="btn btn-danger" style="margin-right: auto;">🗑️ Delete</button>
             <button id="cancel-modal" class="btn">Cancel</button>
             <button id="save-draft-modal" class="btn btn-warning">💾 Save as Draft</button>
-            <div class="tooltip-wrapper">
-              <button id="finalize-modal" class="btn btn-success">✔ Finalize</button>
-              <span class="tooltip-text">Saves class &amp; records attendance for all attendees</span>
-            </div>
         </div>
       </div>
     </div>
@@ -3387,7 +3396,7 @@
         .sort((a, b) => a.time.localeCompare(b.time));
       
       const dayCard = document.createElement('div');
-      dayCard.className = `day-card${isToday ? ' today' : ''}${dayClasses.length > 0 ? ' has-classes' : ''}`;
+      dayCard.className = `day-card${isToday ? ' today' : ''}${dayClasses.length > 0 ? ' has-classes' : ' empty'}`;
       
       let classesHTML = '';
       if (dayClasses.length > 0) {
@@ -3404,9 +3413,14 @@
           </div>
         `).join('');
       } else {
-        classesHTML = '<div class="empty-state" style="padding: 16px 0;"><div style="font-size:28px; opacity:.4; margin-bottom:4px;">&#128197;</div><p style="margin:0; font-size:13px;">No classes scheduled</p></div>';
+        classesHTML = '';
       }
       
+      const draftCount = dayClasses.filter(c => c.status === 'draft').length;
+      const finalizeBtn = draftCount > 0
+        ? `<button class="btn btn-sm btn-success" onclick="finalizeDayDrafts('${dayKey}')">✔ Finalize ${draftCount} Draft${draftCount !== 1 ? 's' : ''}</button>`
+        : '';
+
       dayCard.innerHTML = `
         <div class="day-header">
           <div class="day-name">${dayNames[index]}${isToday ? ' <span style="color:var(--info); font-size:12px; font-weight:600; margin-left:4px;">TODAY</span>' : ''}</div>
@@ -3415,6 +3429,7 @@
         <div class="class-list">${classesHTML}</div>
         <div class="class-actions">
           <button class="btn btn-sm btn-primary" onclick="openNewClassModal('${dayKey}')">+ Add Class</button>
+          ${finalizeBtn}
         </div>
       `;
       
@@ -4823,7 +4838,6 @@
       $$('#close-class-modal, #cancel-modal').forEach(btn => btn.addEventListener('click', () => $('#class-modal').classList.add('hidden')));
       $('#close-guest-modal').addEventListener('click', () => $('#guest-modal').classList.add('hidden'));
       $('#save-draft-modal').addEventListener('click', handleModalSave);
-      $('#finalize-modal').addEventListener('click', handleModalFinalize);
       $('#delete-class-modal').addEventListener('click', handleModalDelete);
       // Modal Clear All
       $('#modalClearAllBtn').addEventListener('click', () => {
@@ -5009,6 +5023,58 @@
         setLoading($('#finalize-modal'), false);
       }
   }
+  async function finalizeDayDrafts(dayKey) {
+    if (!state.firebaseUser) {
+      showToast('Please sign in to finalize.', 'error');
+      return;
+    }
+    const drafts = Array.from(state.weeklyPlan.entries())
+      .filter(([key, cls]) => key.startsWith(dayKey) && cls.status === 'draft');
+    if (drafts.length === 0) return;
+
+    const missing = drafts.filter(([, cls]) => !normalizePlaylistId(cls.playlist) || cls.attendees.size === 0);
+    if (missing.length > 0) {
+      const reasons = missing.map(([, cls]) => {
+        const problems = [];
+        if (!normalizePlaylistId(cls.playlist)) problems.push('no playlist');
+        if (cls.attendees.size === 0) problems.push('no attendees');
+        return `${formatTime(cls.time)}: ${problems.join(', ')}`;
+      });
+      showToast('Cannot finalize — ' + reasons.join('; '), 'error');
+      return;
+    }
+    if (!confirm(`Finalize ${drafts.length} draft${drafts.length !== 1 ? 's' : ''} for this day?`)) return;
+
+    try {
+      const uid = state.firebaseUser.uid;
+      const batch = db.batch();
+      const classesRef = db.collection('users').doc(uid).collection('classes');
+      const recordsRef = db.collection('users').doc(uid).collection('records');
+
+      for (const [key, cls] of drafts) {
+        const playlist = normalizePlaylistId(cls.playlist);
+        const attendees = cls.attendees instanceof Set ? [...cls.attendees] : [...(cls.attendees || [])];
+        batch.set(classesRef.doc(safeDocId(key)), {
+          date: cls.date, time: cls.time, playlist,
+          attendees, status: 'finalized',
+          notes: cls.notes || '', classType: cls.classType || '', dateTimeKey: key
+        });
+        for (const guest of attendees) {
+          const recordKey = buildRecordKey({ date: cls.date, time: normalizeTime(cls.time), guest, playlist });
+          batch.set(recordsRef.doc(safeDocId(recordKey)), {
+            date: cls.date, time: normalizeTime(cls.time), guest, playlist, classType: cls.classType || '', recordKey
+          });
+        }
+      }
+      await batch.commit();
+      showToast(`${drafts.length} class${drafts.length !== 1 ? 'es' : ''} finalized!`, 'success');
+      refreshAll();
+      renderWeeklyCalendar();
+    } catch (error) {
+      showToast('Finalize failed: ' + error.message, 'error');
+    }
+  }
+  window.finalizeDayDrafts = finalizeDayDrafts;
   async function handleModalDelete() {
     const cls = state.selectedClass;
     if (!cls) return;
