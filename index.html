@@ -1791,6 +1791,41 @@
       }
       .calendar-grid {
         grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      /* Compact planner banner on mobile */
+      #weekly .hero {
+        padding: 12px 14px;
+      }
+      #weekly .hero .row {
+        gap: 6px;
+        justify-content: center;
+      }
+      #weekly .hero .pill {
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+      #weekly .hero .btn-sm {
+        padding: 6px 10px;
+        font-size: 12px;
+        min-height: 36px;
+      }
+      #weekRangePill {
+        width: 100%;
+        justify-content: center;
+        order: -1;
+      }
+      /* Compact empty day cards on mobile */
+      .day-card.empty {
+        padding: 8px 12px;
+        gap: 8px;
+      }
+      .day-card.empty .day-header .day-name {
+        font-size: 14px;
+      }
+      .day-card.empty .day-header .day-date {
+        font-size: 11px;
       }
       .metric-row {
         grid-template-columns: repeat(3, 1fr);
@@ -3444,7 +3479,13 @@
     weekEnd.setDate(weekStart.getDate() + 6);
     weekEnd.setHours(23, 59, 59, 999);
     
-    $("#weekRangePill").textContent = `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      $("#weekRangePill").textContent = `${fmt(weekStart)} – ${fmt(weekEnd)}`;
+    } else {
+      $("#weekRangePill").textContent = `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+    }
     
     let drafts = 0, finalized = 0;
     state.weeklyPlan.forEach(cls => {
