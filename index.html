@@ -211,23 +211,23 @@
       min-height: 28px;
       border-radius: 50%;
     }
-    .remove-tag:hover { opacity: 1; background: rgba(255,255,255,.1); }
+    .remove-tag:hover { opacity: 1; background: var(--surface-secondary); }
     .tag-input-wrapper {
       position: relative;
     }
     .tag-input-wrapper input {
       width: 200px;
       padding: 7px 10px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
       border-radius: 8px;
-      color: #fff;
+      color: var(--ink);
       font-size: 13px;
     }
     .tag-input-wrapper input:focus {
       outline: none;
       border-color: var(--info);
-      box-shadow: 0 0 0 3px rgba(91,181,162,.2);
+      box-shadow: 0 0 0 3px rgba(122,157,184,0.15);
     }
     .tag-autocomplete {
       position: absolute;
@@ -236,27 +236,27 @@
       width: 200px;
       max-height: 160px;
       overflow-y: auto;
-      background: rgba(20, 34, 28, .97);
-      border: 1px solid rgba(255,255,255,.15);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
       border-radius: 8px;
       margin-top: 4px;
       z-index: 50;
-      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      box-shadow: var(--shadow-floating);
     }
     .tag-autocomplete-item {
       padding: 8px 12px;
       cursor: pointer;
       font-size: 13px;
-      color: rgba(255,255,255,.85);
+      color: var(--cream);
       transition: background .15s;
     }
     .tag-autocomplete-item:hover,
     .tag-autocomplete-item.active {
-      background: rgba(91, 181, 162, .2);
-      color: #fff;
+      background: var(--surface-secondary);
+      color: var(--ink);
     }
     .explorer-row { cursor: pointer; transition: background .15s; }
-    .explorer-row:hover { background: rgba(255,255,255,.08) !important; }
+    .explorer-row:hover { background: var(--surface-hover) !important; }
     .explorer-row.retired-row { opacity: .55; }
     /* Add Playlist form */
     .add-playlist-form {
@@ -264,16 +264,16 @@
     }
     .add-playlist-form .input-field {
       padding: 8px 12px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
       border-radius: 8px;
-      color: #fff;
+      color: var(--ink);
       font-size: 14px;
     }
     .add-playlist-form .input-field:focus {
       outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(201,161,93,.2);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107,91,138,0.10);
     }
     /* Status pill toggle */
     .status-toggle {
@@ -346,17 +346,17 @@
       width: 24px;
       height: 24px;
       border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border: 1px dashed rgba(255,255,255,.2);
-      color: rgba(255,255,255,.5);
+      background: var(--surface-hover);
+      border: 1px dashed var(--border-strong);
+      color: var(--secondary-text);
       cursor: pointer;
       font-size: 14px;
       transition: all .15s ease;
     }
     .manager-tags-cell .add-tag-btn:hover {
-      background: rgba(91, 181, 162, .2);
-      border-color: rgba(91, 181, 162, .4);
-      color: #fff;
+      background: rgba(107,91,138,0.08);
+      border-color: rgba(107,91,138,0.25);
+      color: var(--primary);
     }
     /* Status indicators — 12% bg, 35% border, 100% text */
     .status-connected { background: rgba(107,160,122,0.10); border-color: rgba(107,160,122,0.25); color: #5A8A66; }
@@ -368,19 +368,19 @@
     .history-actions { display: flex; gap: 6px; align-items: center; }
     .history-edit-btn,
     .history-delete-btn {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
       border-radius: 8px;
       padding: 5px 10px;
       font-size: 14px;
       cursor: pointer;
       transition: all .2s ease;
-      color: rgba(255,255,255,.7);
+      color: var(--ink-light);
       touch-action: manipulation;
       min-height: 36px;
     }
-    .history-edit-btn:hover { background: rgba(255,255,255,.15); color: #fff; }
-    .history-delete-btn:hover { background: rgba(231, 76, 60, .25); border-color: rgba(231, 76, 60, .5); color: #e74c3c; }
+    .history-edit-btn:hover { background: var(--surface-secondary); color: var(--ink); }
+    .history-delete-btn:hover { background: rgba(184,112,112,0.10); border-color: rgba(184,112,112,0.25); color: var(--danger); }
     /* Glass cards */
     .cards {
       display: grid;
@@ -406,7 +406,7 @@
       background: var(--surface);
       border-left: 3px solid var(--primary);
     }
-    .primary-card .title { color: var(--ink); font-size: 18px; font-weight: 800; }
+    .primary-card .title { color: var(--ink); font-size: 18px; font-weight: 700; }
     .metric-row {
       display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px;
     }
@@ -569,7 +569,7 @@
     .recommender-explain {
       margin-top: 10px;
       font-size: 13px;
-      color: rgba(255,255,255,.72);
+      color: var(--secondary-text);
     }
     .best-strength-row {
       display: flex;
@@ -605,13 +605,13 @@
     }
     .best-summary-title {
       font-size: 22px;
-      font-weight: 800;
+      font-weight: 700;
       line-height: 1.2;
       margin-top: 8px;
     }
     .best-summary-meta {
       margin-top: 6px;
-      color: rgba(255,255,255,.72);
+      color: var(--secondary-text);
       font-size: 13px;
     }
     .best-insight-list {
@@ -639,13 +639,13 @@
     .suggestion-card {
       padding: 14px;
       transition: all .2s ease;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      background: var(--surface);
     }
     .suggestion-card:hover {
-      background: rgba(255,255,255,.08);
+      background: var(--surface-hover);
       transform: translateY(-2px);
-      border-color: rgba(201,161,93,.35);
+      border-color: rgba(107,91,138,0.18);
     }
     .runner-header {
       display: flex;
@@ -656,17 +656,17 @@
     }
     .runner-score-delta {
       font-size: 12px;
-      color: rgba(255,255,255,.72);
+      color: var(--secondary-text);
       padding: 4px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
+      border: 1px solid var(--border);
+      background: var(--surface-secondary);
       white-space: nowrap;
     }
     .runner-meta {
       margin-top: 8px;
       font-size: 12px;
-      color: rgba(255,255,255,.7);
+      color: var(--ink-light);
     }
     .runner-actions {
       margin-top: 10px;
@@ -698,17 +698,17 @@
       font-size: 13px;
     }
     .class-picker-item:hover {
-      background: rgba(255,255,255,.08);
+      background: var(--surface-hover);
     }
     .class-picker-item input[type="checkbox"] {
-      accent-color: var(--accent);
+      accent-color: var(--primary);
       width: 18px;
       height: 18px;
       cursor: pointer;
       flex-shrink: 0;
     }
     .class-picker-item.checked {
-      background: rgba(201,161,93,.12);
+      background: rgba(107,91,138,0.06);
     }
     .class-picker-item .class-picker-label {
       flex: 1;
@@ -724,48 +724,48 @@
       gap: 12px;
       flex-wrap: wrap;
       align-items: center;
-      background: rgba(0,0,0,.1);
+      background: var(--surface-secondary);
       border-radius: var(--radius);
       padding: 16px;
-      border: 1px solid rgba(255,255,255,.08);
+      border: 1px solid var(--border);
       margin: 16px 0;
     }
     .datetime-selector label {
       font-weight: 500;
-      color: rgba(255,255,255,.9);
+      color: var(--ink);
       font-size: 14px;
     }
     .datetime-selector input {
       padding: 8px 12px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
       border-radius: 8px;
-      color: #fff;
+      color: var(--ink);
       font-size: 14px;
     }
     .datetime-selector input:focus {
       outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(201,161,93,.2);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107,91,138,0.10);
     }
     /* Guest Selection UI */
     .guest-selector {
       display: flex;
       flex-direction: column;
       gap: 16px;
-      background: rgba(0,0,0,.1);
+      background: var(--surface-secondary);
       border-radius: var(--radius);
       padding: 16px;
-      border: 1px solid rgba(255,255,255,.08);
+      border: 1px solid var(--border);
     }
     .selected-guests-container {
       min-height: 50px;
       max-height: 300px;
       overflow-y: auto;
       padding: 10px;
-      background: rgba(0,0,0,.15);
+      background: var(--surface);
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.08);
+      border: 1px solid var(--border);
     }
     .selected-guests {
       display: flex;
@@ -773,7 +773,7 @@
       gap: 8px;
     }
     .no-selection {
-      color: rgba(255,255,255,.5);
+      color: var(--secondary-text);
       font-style: italic;
       padding: 8px 4px;
     }
@@ -781,8 +781,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: linear-gradient(180deg, rgba(201,161,93,.28), rgba(201,161,93,.14));
-      border: 1px solid rgba(201,161,93,.35);
+      background: linear-gradient(180deg, rgba(107,91,138,0.10), rgba(107,91,138,0.05));
+      border: 1px solid rgba(107,91,138,0.18);
       border-radius: 999px;
       padding: 6px 12px;
       font-size: 14px;
@@ -794,11 +794,11 @@
     }
     .selected-guest-item.dragging {
       opacity: 0.4;
-      border-color: rgba(201,161,93,.7);
+      border-color: rgba(107,91,138,0.35);
     }
     .selected-guest-item.drag-over {
-      box-shadow: inset 0 0 0 2px var(--accent);
-      border-color: var(--accent);
+      box-shadow: inset 0 0 0 2px var(--primary);
+      border-color: var(--primary);
     }
     .selected-guest-item.touch-clone {
       opacity: 0.85;
@@ -831,14 +831,14 @@
     }
     .remove-guest:hover {
       opacity: 1;
-      background: rgba(255,255,255,.1);
+      background: var(--surface-secondary);
     }
     .guest-list-container {
       max-height: 225px;
       overflow-y: auto;
-      background: rgba(0,0,0,.15);
+      background: var(--surface);
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.08);
+      border: 1px solid var(--border);
     }
     .guest-list {
       display: grid;
@@ -847,8 +847,8 @@
       padding: 12px;
     }
     .guest-list-item {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 10px 14px;
       min-height: 44px;
@@ -859,13 +859,13 @@
       align-items: center;
     }
     .guest-list-item:hover {
-      background: rgba(255,255,255,.1);
-      border-color: rgba(201,161,93,.4);
+      background: var(--surface-secondary);
+      border-color: rgba(107,91,138,0.18);
       transform: translateY(-1px);
     }
     .guest-list-item.selected {
-      background: linear-gradient(180deg, rgba(201,161,93,.28), rgba(201,161,93,.14));
-      border-color: rgba(201,161,93,.55);
+      background: linear-gradient(180deg, rgba(107,91,138,0.10), rgba(107,91,138,0.05));
+      border-color: rgba(107,91,138,0.25);
       font-weight: 500;
     }
     /* Search Container */
@@ -922,23 +922,23 @@
     .search-clear.visible { display: flex; }
     .search-result-count {
       font-size: 12px;
-      color: rgba(255,255,255,.5);
+      color: var(--secondary-text);
       margin-top: 4px;
       min-height: 16px;
     }
     .search-wrap { display:flex; gap:8px; flex-wrap:wrap; }
-    .search { 
+    .search {
       flex:1;
       min-width: 240px;
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.12);
-      padding: 10px 12px; border-radius: 12px; color:#fff;
+      background: var(--surface);
+      border:1px solid var(--border-strong);
+      padding: 10px 12px; border-radius: 12px; color: var(--ink);
     }
-    .select { 
+    .select {
       min-width: 160px;
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.12);
-      padding: 10px 12px; border-radius: 12px; color:#fff;
+      background: var(--surface);
+      border:1px solid var(--border-strong);
+      padding: 10px 12px; border-radius: 12px; color: var(--ink);
       cursor: pointer;
     }
     /* Enhanced Tables */
@@ -1022,9 +1022,9 @@
     .section-header h2 {
       margin: 0;
       padding-top: 8px;
-      font-size: 24px;
-      font-weight: 700;
-      color: #fff;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink);
     }
     /* Weekly Calendar */
     .calendar-grid {
@@ -1309,7 +1309,7 @@
     .modal-rec-title {
       font-weight: 600;
       font-size: 13px;
-      color: var(--accent);
+      color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -1326,9 +1326,9 @@
     .modal-rec-best-name {
       font-size: 18px;
       font-weight: 700;
-      color: var(--cream);
+      color: var(--ink);
     }
-    .modal-rec-best-name .accent { color: var(--accent); }
+    .modal-rec-best-name .accent { color: var(--primary); }
     .modal-rec-metrics {
       display: flex;
       gap: 16px;
@@ -1344,16 +1344,16 @@
     }
     .modal-rec-metric .lbl {
       font-size: 11px;
-      color: rgba(255,255,255,.6);
+      color: var(--secondary-text);
       margin-top: 2px;
     }
     .modal-rec-strength {
       margin-top: 10px;
       font-size: 12px;
-      color: rgba(255,255,255,.8);
+      color: var(--ink-light);
     }
     .modal-rec-strength strong {
-      color: var(--accent);
+      color: var(--primary);
       margin-right: 4px;
     }
     .modal-rec-alternatives {
@@ -1364,16 +1364,16 @@
     }
     .modal-rec-alternatives .alt-label {
       font-size: 12px;
-      color: rgba(255,255,255,.6);
+      color: var(--secondary-text);
       margin-right: 4px;
     }
     .modal-rec-alt-pill {
       padding: 6px 14px;
       min-height: 36px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.15);
+      background: var(--surface-hover);
+      border: 1px solid var(--border-strong);
       border-radius: 999px;
-      color: var(--cream);
+      color: var(--ink);
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
@@ -1388,24 +1388,24 @@
       font-weight: 500;
     }
     .modal-rec-alt-pill:hover {
-      background: rgba(201,161,93,.2);
-      border-color: rgba(201,161,93,.5);
+      background: rgba(107,91,138,0.08);
+      border-color: rgba(107,91,138,0.25);
       transform: translateY(-1px);
     }
     .modal-rec-use-btn {
       padding: 6px 16px;
       min-height: 36px;
-      background: linear-gradient(180deg, rgba(201,161,93,.35), rgba(201,161,93,.2));
-      border: 1px solid rgba(201,161,93,.5);
+      background: linear-gradient(180deg, rgba(107,91,138,0.15), rgba(107,91,138,0.08));
+      border: 1px solid rgba(107,91,138,0.25);
       border-radius: 8px;
-      color: var(--cream);
+      color: var(--primary);
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       transition: all .15s ease;
     }
     .modal-rec-use-btn:hover {
-      background: linear-gradient(180deg, rgba(201,161,93,.5), rgba(201,161,93,.3));
+      background: linear-gradient(180deg, rgba(107,91,138,0.22), rgba(107,91,138,0.12));
       transform: translateY(-1px);
     }
     /* Form styling */
@@ -1421,7 +1421,7 @@
       display: block;
       margin-bottom: 6px;
       font-weight: 500;
-      color: rgba(255,255,255,.9);
+      color: var(--ink);
       font-size: 14px;
     }
     .form-group input, .form-group select, .form-group textarea {
@@ -1639,9 +1639,9 @@
       display: inline-block;
       width: 20px;
       height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
+      border: 3px solid var(--border-strong);
       border-radius: 50%;
-      border-top-color: var(--accent);
+      border-top-color: var(--primary);
       animation: spin 1s ease-in-out infinite;
     }
     @keyframes spin {
@@ -1733,7 +1733,7 @@
         gap: 8px;
         padding: calc(8px + var(--safe-top)) 12px 8px;
         min-height: 44px;
-        background: rgba(13, 21, 18, .98);
+        background: rgba(250, 250, 247, .98);
       }
       /* Mobile bottom tab bar — .tabs is moved to <body> via JS
          to escape .nav's containing block (sticky/backdrop-filter break position:fixed in WebKit) */
@@ -1743,10 +1743,10 @@
         left: 0;
         right: 0;
         z-index: 200;
-        background: rgba(13, 21, 18, .98);
+        background: rgba(250, 250, 247, .98);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border-top: 1px solid rgba(255,255,255,.12);
+        border-top: 1px solid var(--border);
         padding: 6px calc(8px + var(--safe-right)) calc(6px + var(--safe-bottom)) calc(8px + var(--safe-left));
         display: grid;
         grid-template-columns: repeat(6, 1fr);
@@ -1778,7 +1778,7 @@
         box-shadow: none;
       }
       body > .tabs .tab-btn[aria-selected="true"] .tab-icon {
-        color: var(--accent);
+        color: var(--primary);
       }
       body > .tabs .tab-btn[aria-selected="true"]::after {
         content: '';
@@ -1786,7 +1786,7 @@
         width: 5px;
         height: 5px;
         border-radius: 50%;
-        background: var(--accent);
+        background: var(--primary);
         margin-top: 3px;
       }
       .search-container { max-width: 100%; width: 100%; }
@@ -1945,8 +1945,8 @@
       #history-table tr,
       #playlist-manager-table tr {
         display: block;
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.1);
+        background: var(--surface);
+        border: 1px solid var(--border);
         border-radius: 14px;
         overflow: hidden;
       }
@@ -1957,13 +1957,13 @@
         align-items: flex-start;
         gap: 12px;
         padding: 10px 12px;
-        border-bottom: 1px solid rgba(255,255,255,.08);
+        border-bottom: 1px solid var(--border);
       }
       #history-table td::before,
       #playlist-manager-table td::before {
         content: attr(data-label);
         flex: 0 0 38%;
-        color: rgba(255,255,255,.62);
+        color: var(--secondary-text);
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -2044,7 +2044,7 @@
             <button type="button" class="btn-xs" id="selectAllDraftsBtn">Select All Drafts</button>
             <button type="button" class="btn-xs" id="clearAllClassesBtn">Clear All</button>
           </div>
-          <div class="class-picker-list" id="plannedClassList" style="max-height:180px; overflow-y:auto; background:rgba(0,0,0,.15); border-radius:12px; border:1px solid rgba(255,255,255,.08); padding:8px;"></div>
+          <div class="class-picker-list" id="plannedClassList" style="max-height:180px; overflow-y:auto; background:var(--surface); border-radius:12px; border:1px solid var(--border); padding:8px;"></div>
         </div>
         <div class="row" style="margin-top:10px;">
           <span class="pill" id="selectedClassPill">No classes selected</span>
@@ -2214,7 +2214,7 @@
           <div class="body">
             <div class="title">Account</div>
             <div class="muted">Sign in with Google to sync your data across devices</div>
-            <div id="settings-auth-info" style="margin-top:16px; padding: 12px; background: rgba(0,0,0,.1); border-radius: 8px; color: rgba(255,255,255,.9);">
+            <div id="settings-auth-info" style="margin-top:16px; padding: 12px; background: var(--surface-secondary); border-radius: 8px; color: var(--ink);">
               Not signed in
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;">
@@ -2232,9 +2232,9 @@
               <button id="importCsvBtn" class="btn">&#128229; Import CSV</button>
               <button id="exportCsvBtn" class="btn">&#128228; Export CSV</button>
             </div>
-            <div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,.08);">
+            <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);">
               <button id="clearDataBtn" class="btn btn-danger">&#128465; Clear All Data</button>
-              <p style="margin:8px 0 0; font-size:12px; color:rgba(255,255,255,.5);">This permanently deletes all local and cloud data.</p>
+              <p style="margin:8px 0 0; font-size:12px; color:var(--secondary-text);">This permanently deletes all local and cloud data.</p>
             </div>
             <input id="fileInput" type="file" accept=".csv" class="hidden" />
           </div>
@@ -3288,7 +3288,7 @@
     const entries = getRecommenderClassEntries();
     container.innerHTML = '';
     if (entries.length === 0) {
-      container.innerHTML = '<div style="padding:16px; color:rgba(255,255,255,.5); font-size:13px; text-align:center;"><div style="font-size:28px; opacity:.4; margin-bottom:6px;">&#128197;</div>No planned classes yet. <a href="#" onclick="event.preventDefault();$$(\'.tab-btn\').find(b=>b.dataset.tab===\'weekly\')?.click()" style="color:var(--accent); text-decoration:underline;">Add classes in Weekly Planner</a></div>';
+      container.innerHTML = '<div style="padding:16px; color:var(--secondary-text); font-size:13px; text-align:center;"><div style="font-size:28px; opacity:.4; margin-bottom:6px;">&#128197;</div>No planned classes yet. <a href="#" onclick="event.preventDefault();$$(\'.tab-btn\').find(b=>b.dataset.tab===\'weekly\')?.click()" style="color:var(--primary); text-decoration:underline;">Add classes in Weekly Planner</a></div>';
       return;
     }
     entries.forEach(entry => {
@@ -3953,7 +3953,7 @@
       $("#bestNever").textContent = "--";
       $("#bestMedian").textContent = "--";
       $("#bestReady").textContent = "--";
-      rankingsBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,.6);">No planned classes available.</td></tr>';
+      rankingsBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--secondary-text);">No planned classes available.</td></tr>';
       return;
     }
 
@@ -3985,8 +3985,8 @@
       $("#bestMedian").textContent = "--";
       $("#bestReady").textContent = "--";
       rankingsBody.innerHTML = rosterSize === 0
-        ? '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,.6);">No ranking yet — selected classes have no attendees.</td></tr>'
-        : '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,.6);">No playlists match the selected class type.</td></tr>';
+        ? '<tr><td colspan="8" style="text-align:center; color:var(--secondary-text);">No ranking yet — selected classes have no attendees.</td></tr>'
+        : '<tr><td colspan="8" style="text-align:center; color:var(--secondary-text);">No playlists match the selected class type.</td></tr>';
       return;
     }
 
@@ -3997,7 +3997,7 @@
     const assignedText = assignedPlaylists.size === 1 ? `#${esc([...assignedPlaylists][0])}` : assignedPlaylists.size > 1 ? 'Mixed' : 'None';
     bestSummary.innerHTML = `
       <div class="best-summary-title">
-        Playlist <span style="color: var(--accent);">#${best.playlist}</span>${renderPlaylistTags(best.playlist)}
+        Playlist <span style="color: var(--primary);">#${best.playlist}</span>${renderPlaylistTags(best.playlist)}
       </div>
       <div class="best-summary-meta">${selectionLabel}</div>
       <div class="best-summary-meta">Replay-ready threshold: ${state.selectedWindow} days${classType ? ' \u2022 ' + esc(classType) : ''} \u2022 Current assignment: ${assignedText}</div>
@@ -4167,8 +4167,8 @@
     const available = getAllClassTypes().filter(t => !currentTags.has(t.toLowerCase()));
     const options = available.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
     return `<div class="tag-editor">
-      <div style="font-weight:600; font-size:13px; color:rgba(255,255,255,.7);">Class Types for Playlist #${playlistNum}</div>
-      <div class="tag-editor-chips">${chips || '<span style="color:rgba(255,255,255,.4); font-size:13px;">No tags yet</span>'}</div>
+      <div style="font-weight:600; font-size:13px; color:var(--ink-light);">Class Types for Playlist #${playlistNum}</div>
+      <div class="tag-editor-chips">${chips || '<span style="color:var(--secondary-text); font-size:13px;">No tags yet</span>'}</div>
       <select class="tag-select select" style="margin-top:6px;">
         <option value="" disabled selected>Add class type...</option>
         ${options}
@@ -4261,15 +4261,15 @@
 
     tbody.innerHTML = "";
     if (rows.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:48px 20px; color:rgba(255,255,255,.5);"><div style="font-size:48px; opacity:.4; margin-bottom:12px;">&#128214;</div><div style="font-size:16px; color:rgba(255,255,255,.7); margin-bottom:6px;">No class history yet</div><div style="font-size:13px;">Finalize classes from the Weekly Planner to build your history.</div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:48px 20px; color:var(--secondary-text);"><div style="font-size:48px; opacity:.4; margin-bottom:12px;">&#128214;</div><div style="font-size:16px; color:var(--ink-light); margin-bottom:6px;">No class history yet</div><div style="font-size:13px;">Finalize classes from the Weekly Planner to build your history.</div></td></tr>`;
       return;
     }
     rows.forEach(row => {
       const guestArray = [...row.guests].sort();
-      const classTypeText = row.classType ? esc(row.classType) : '<span style="color:rgba(255,255,255,.45);">-</span>';
+      const classTypeText = row.classType ? esc(row.classType) : '<span style="color:var(--secondary-text);">-</span>';
       const moreCount = guestArray.length - 3;
       const moreText = moreCount > 0
-        ? ` <span class="history-expand-guests" style="color:var(--accent); cursor:pointer;" data-guests="${guestArray.map(g => esc(g)).join('|||')}">+${moreCount} more</span>`
+        ? ` <span class="history-expand-guests" style="color:var(--primary); cursor:pointer;" data-guests="${guestArray.map(g => esc(g)).join('|||')}">+${moreCount} more</span>`
         : '';
       const tr = `
         <tr data-date="${esc(row.date)}" data-time="${esc(row.time)}" data-playlist="${esc(row.playlist)}">
@@ -4277,7 +4277,7 @@
           <td data-label="Class Type">${classTypeText}</td>
           <td data-label="Playlist"><strong>Playlist #${row.playlist}</strong></td>
           <td data-label="Attendees"><span class="pill">${guestArray.length}</span></td>
-          <td data-label="Guest Names"><span class="guest-names-short">${guestArray.slice(0, 3).map(g => esc(g)).join(", ")}${moreText}</span><span class="guest-names-full" style="display:none;">${guestArray.map(g => esc(g)).join(", ")} <span class="history-collapse-guests" style="color:var(--accent); cursor:pointer;">show less</span></span></td>
+          <td data-label="Guest Names"><span class="guest-names-short">${guestArray.slice(0, 3).map(g => esc(g)).join(", ")}${moreText}</span><span class="guest-names-full" style="display:none;">${guestArray.map(g => esc(g)).join(", ")} <span class="history-collapse-guests" style="color:var(--primary); cursor:pointer;">show less</span></span></td>
           <td data-label="Status"><span class="pill status-finalized">Completed</span></td>
           <td data-label="Actions"><div class="history-actions"><button class="history-edit-btn" title="Edit class">&#9998;</button><button class="history-delete-btn" title="Delete class">&#128465;</button></div></td>
         </tr>
