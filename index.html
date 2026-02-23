@@ -1143,17 +1143,16 @@
       gap: 16px;
     }
     .guest-card {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.09);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 20px;
       cursor: pointer;
       transition: all 0.3s ease;
     }
     .guest-card:hover {
-      background: rgba(255,255,255,.1);
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,.3);
+      box-shadow: var(--shadow-raised);
     }
     .guest-card-header {
       display: flex;
@@ -1165,7 +1164,7 @@
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), rgba(201,161,93,.6));
+      background: var(--primary);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1176,12 +1175,12 @@
     .guest-info h4 {
       margin: 0 0 4px 0;
       font-size: 16px;
-      color: #fff;
+      color: var(--ink);
     }
     .guest-info p {
       margin: 0;
       font-size: 13px;
-      color: rgba(255,255,255,.7);
+      color: var(--secondary-text);
     }
     .guest-stats {
       display: grid;
@@ -1191,19 +1190,19 @@
     .guest-stat {
       text-align: center;
       padding: 8px;
-      background: rgba(0,0,0,.15);
+      background: var(--surface-hover);
       border-radius: 8px;
     }
     .guest-stat .value {
       display: block;
       font-size: 20px;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--primary);
     }
     .guest-stat .label {
       display: block;
       font-size: 11px;
-      color: rgba(255,255,255,.6);
+      color: var(--secondary-text);
       margin-top: 2px;
     }
     /* Modal */
