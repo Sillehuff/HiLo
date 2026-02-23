@@ -9,28 +9,38 @@
   <title>Hilo Playlist – Instructor Edition</title>
   <meta name="description" content="Professional class planning with playlist optimization and cloud sync" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='22' stroke='%23c9a15d' stroke-width='2' fill='none'/><path d='M14 30C16 20 20 16 24 16C28 16 32 20 34 30' stroke='%23c9a15d' stroke-width='3' stroke-linecap='round'/><path d='M12 36H36' stroke='%23c9a15d' stroke-width='2' stroke-linecap='round'/></svg>" />
-  <meta name="theme-color" content="#0d1512" />
+  <meta name="theme-color" content="#FAFAF7" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
 
   <style>
     :root {
-      --primary: #243b33;
-      --accent: #c9a15d;
-      --cream: #f6f4f0;
-      --ink: #0f0f0f;
-      --ink-light: #2b2b2b;
-      --glass: rgba(255,255,255,0.08);
+      --primary: #6B5B8A;
+      --accent: #8B78AD;
+      --cream: #2D2A26;
+      --ink: #1A1816;
+      --ink-light: #6B6560;
+      --secondary-text: #8A8580;
+      --glass: rgba(107,91,138,0.04);
+      --surface: #FFFFFF;
+      --surface-hover: #F8F7F5;
+      --surface-secondary: #F2F0ED;
+      --page-bg: #FAFAF7;
+      --border: rgba(0,0,0,0.06);
+      --border-strong: rgba(0,0,0,0.12);
       --radius: 16px;
       --radius-lg: 22px;
-      --shadow: 0 10px 30px rgba(0,0,0,.22), 0 4px 12px rgba(0,0,0,.18);
-      --inner-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.15);
-      --blur: blur(16px);
-      --gap: 24px;
-      --success: #2ecc71;
-      --warning: #f39c12;
-      --danger: #e74c3c;
-      --info: #5bb5a2;
+      --shadow-rest: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-raised: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-floating: 0 8px 32px rgba(0,0,0,0.12);
+      --shadow: var(--shadow-rest);
+      --inner-shadow: none;
+      --blur: blur(12px);
+      --gap: 28px;
+      --success: #6BA07A;
+      --warning: #C4956B;
+      --danger: #B87070;
+      --info: #7A9DB8;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -40,8 +50,8 @@
     html, body {
       margin: 0;
       padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-      background-color: #0d1512;
-      background: linear-gradient(180deg, #0d1512 0%, #16231d 40%, #1b2d25 100%);
+      background-color: var(--page-bg);
+      background: var(--page-bg);
       color: var(--cream);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;

@@ -4,8 +4,8 @@
   "description": "Professional class planning with playlist optimization and cloud sync",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0d1512",
-  "theme_color": "#0d1512",
+  "background_color": "#FAFAF7",
+  "theme_color": "#FAFAF7",
   "orientation": "any",
   "icons": [
     {
