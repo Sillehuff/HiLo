@@ -304,9 +304,9 @@
     }
     /* Remove playlist button */
     .btn-remove-playlist {
-      background: rgba(231, 76, 60, .12);
-      border: 1px solid rgba(231, 76, 60, .3);
-      color: rgba(231, 76, 60, .85);
+      background: rgba(184,112,112,0.08);
+      border: 1px solid rgba(184,112,112,0.20);
+      color: #9B5E5E;
       border-radius: 8px;
       padding: 5px 10px;
       font-size: 12px;
@@ -314,9 +314,9 @@
       transition: all .2s ease;
     }
     .btn-remove-playlist:hover {
-      background: rgba(231, 76, 60, .25);
-      border-color: rgba(231, 76, 60, .5);
-      color: #e74c3c;
+      background: rgba(184,112,112,0.15);
+      border-color: rgba(184,112,112,0.35);
+      color: var(--danger);
     }
     /* Ghost button */
     .btn-ghost {
@@ -678,11 +678,11 @@
       margin-top: 10px;
     }
     .rank-row-assigned td {
-      background: rgba(46, 204, 113, .12);
+      background: rgba(107,160,122,0.06);
     }
     .rank-score {
       font-weight: 700;
-      color: var(--accent);
+      color: var(--primary);
     }
     .dashboard-rankings-wrap {
       overflow-x: auto;
@@ -945,8 +945,8 @@
     .table-container {
       border-radius: var(--radius);
       overflow: hidden;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
+      background: var(--surface);
+      border: 1px solid var(--border);
     }
     .table-container.dashboard-rankings-wrap {
       overflow-x: auto;
@@ -961,22 +961,22 @@
       background: transparent;
     }
     
-    .data-table th, .data-table td { 
-      text-align:left; 
-      padding: 16px 20px; 
-      border-bottom: 1px solid rgba(255,255,255,.08); 
+    .data-table th, .data-table td {
+      text-align:left;
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
     }
     
-    .data-table th { 
-      color: rgba(255,255,255,.9); 
-      font-weight: 600; 
-      background: rgba(255,255,255,.06);
-      font-size: 14px;
+    .data-table th {
+      color: var(--secondary-text);
+      font-weight: 600;
+      background: var(--surface-hover);
+      font-size: 13px;
       letter-spacing: 0.5px;
     }
     
-    .data-table tbody tr:hover { 
-      background: rgba(255,255,255,.06);
+    .data-table tbody tr:hover {
+      background: var(--surface-hover);
       transition: background 0.2s ease;
     }
     
@@ -991,7 +991,7 @@
     }
 
     .sortable:hover {
-      color: var(--accent);
+      color: var(--primary);
     }
     
     .sortable::after {
