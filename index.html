@@ -390,25 +390,23 @@
     .card {
       position: relative;
       border-radius: var(--radius);
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.09);
+      background: var(--surface);
+      border: 1px solid var(--border);
       box-shadow: var(--shadow);
       overflow:hidden;
       transition: all .3s ease;
     }
     .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 36px rgba(0,0,0,.26), 0 6px 16px rgba(0,0,0,.22);
+      box-shadow: var(--shadow-raised);
     }
-    .card .body { padding: 20px; }
-    .card .title { font-weight: 700; font-size: 16px; letter-spacing:.2px; margin-bottom: 6px; }
-    .card .muted { color: rgba(255,255,255,.8); font-size: 14px; }
+    .card .body { padding: 24px; }
+    .card .title { font-weight: 600; font-size: 15px; letter-spacing:.2px; margin-bottom: 6px; color: var(--ink); }
+    .card .muted { color: var(--secondary-text); font-size: 14px; }
     .primary-card {
-      background: linear-gradient(180deg, rgba(36,59,51,.82), rgba(36,59,51,.68));
-      border-color: rgba(201,161,93,.55);
-      border-width: 2px;
+      background: var(--surface);
+      border-left: 3px solid var(--primary);
     }
-    .primary-card .title { color: #fff; font-size: 18px; font-weight: 800; }
+    .primary-card .title { color: var(--ink); font-size: 18px; font-weight: 800; }
     .metric-row {
       display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px;
     }
