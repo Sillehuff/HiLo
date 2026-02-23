@@ -1034,8 +1034,8 @@
       margin-top: 20px;
     }
     .day-card {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.09);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 16px;
       min-height: 120px;
@@ -1049,6 +1049,7 @@
       flex-direction: row;
       align-items: center;
       gap: 12px;
+      background: var(--surface-hover);
     }
     .day-card.empty .day-header {
       margin-bottom: 0;
@@ -1063,19 +1064,19 @@
       margin-left: auto;
     }
     .day-card:hover {
-      background: rgba(255,255,255,.1);
-      transform: translateY(-2px);
+      box-shadow: var(--shadow-raised);
     }
     .day-card.today {
-      border-color: rgba(91, 181, 162, .5);
-      box-shadow: 0 0 0 1px rgba(91, 181, 162, .2), var(--shadow);
+      border-left: 3px solid var(--primary);
+      box-shadow: var(--shadow-rest);
     }
     .day-card.has-classes {
-      border-color: rgba(201,161,93,.4);
-      background: rgba(201,161,93,.08);
+      border-color: rgba(107,91,138,0.12);
+      background: rgba(107,91,138,0.03);
     }
     .day-card.today.has-classes {
-      border-color: rgba(201,161,93,.5);
+      border-color: var(--border);
+      border-left: 3px solid var(--primary);
     }
     .day-header {
       display: flex;
@@ -1083,28 +1084,28 @@
       align-items: center;
       margin-bottom: 12px;
       padding-bottom: 8px;
-      border-bottom: 1px solid rgba(255,255,255,.1);
+      border-bottom: 1px solid var(--border);
     }
     .day-name {
       font-weight: 600;
-      color: #fff;
+      color: var(--ink);
     }
     .day-date {
       font-size: 12px;
-      color: rgba(255,255,255,.7);
+      color: var(--secondary-text);
     }
     .class-list {
       flex-grow: 1;
     }
     .class-item {
-      background: rgba(0,0,0,.2);
+      background: var(--surface-hover);
       border-radius: 8px;
       padding: 8px 8px 8px 12px;
       margin-bottom: 8px;
       font-size: 13px;
       cursor: pointer;
       transition: all .2s ease;
-      border-left: 3px solid rgba(255,255,255,.15);
+      border-left: 3px solid var(--border-strong);
     }
     .class-item.status-draft-bar {
       border-left-color: var(--warning);
@@ -1113,15 +1114,15 @@
       border-left-color: var(--success);
     }
     .class-item:hover {
-      background: rgba(0,0,0,.3);
+      background: #EFEDEA;
       transform: translateX(2px);
     }
     .class-time {
       font-weight: 600;
-      color: var(--accent);
+      color: var(--primary);
     }
     .class-info {
-      color: rgba(255,255,255,.8);
+      color: var(--ink-light);
       font-size: 12px;
       margin-top: 2px;
     }
