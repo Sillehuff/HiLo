@@ -140,21 +140,21 @@
     }
     .pill {
       display:inline-flex; align-items:center; gap:8px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.1);
+      background: var(--surface-secondary);
+      border:1px solid var(--border);
       padding: 8px 12px; border-radius:999px;
       font-size: 13px;
       transition: all .2s ease;
+      color: var(--ink-light);
     }
     .pill:hover {
-      transform: translateY(-1px);
     }
     /* Class-type tags */
     .class-type-tag {
       display: inline-flex; align-items: center; gap: 4px;
-      background: rgba(91, 181, 162, .18);
-      border: 1px solid rgba(91, 181, 162, .35);
-      color: rgba(255,255,255,.9);
+      background: rgba(122,157,184,0.10);
+      border: 1px solid rgba(122,157,184,0.25);
+      color: #5E8399;
       border-radius: 999px;
       padding: 6px 12px;
       font-size: 12px;
@@ -191,8 +191,9 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(91, 181, 162, .22);
-      border: 1px solid rgba(91, 181, 162, .4);
+      background: rgba(122,157,184,0.10);
+      border: 1px solid rgba(122,157,184,0.25);
+      color: #5E8399;
       border-radius: 999px;
       padding: 5px 10px;
       font-size: 13px;
@@ -289,14 +290,14 @@
       user-select: none;
     }
     .status-toggle.active {
-      background: rgba(46, 204, 113, .18);
-      border-color: rgba(46, 204, 113, .45);
-      color: #2ecc71;
+      background: rgba(107,160,122,0.12);
+      border-color: rgba(107,160,122,0.30);
+      color: #5A8A66;
     }
     .status-toggle.retired {
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.15);
-      color: rgba(255,255,255,.5);
+      background: var(--surface-secondary);
+      border-color: var(--border);
+      color: var(--secondary-text);
     }
     .status-toggle:hover {
       transform: scale(1.05);
@@ -358,11 +359,11 @@
       color: #fff;
     }
     /* Status indicators — 12% bg, 35% border, 100% text */
-    .status-connected { background: rgba(46, 204, 113, .12); border-color: rgba(46, 204, 113, .35); color: #2ecc71; }
-    .status-disconnected { background: rgba(231, 76, 60, .12); border-color: rgba(231, 76, 60, .35); color: #e74c3c; }
-    .status-draft { background: rgba(241, 196, 15, .12); border-color: rgba(241, 196, 15, .35); color: #f1c40f; }
-    .status-finalized { background: rgba(46, 204, 113, .12); border-color: rgba(46, 204, 113, .35); color: #2ecc71; }
-    .status-info { background: rgba(91, 181, 162, .12); border-color: rgba(91, 181, 162, .35); color: #5bb5a2; }
+    .status-connected { background: rgba(107,160,122,0.10); border-color: rgba(107,160,122,0.25); color: #5A8A66; }
+    .status-disconnected { background: rgba(184,112,112,0.10); border-color: rgba(184,112,112,0.25); color: #9B5E5E; }
+    .status-draft { background: rgba(196,149,107,0.10); border-color: rgba(196,149,107,0.25); color: #9B7A54; }
+    .status-finalized { background: rgba(107,160,122,0.10); border-color: rgba(107,160,122,0.25); color: #5A8A66; }
+    .status-info { background: rgba(122,157,184,0.10); border-color: rgba(122,157,184,0.25); color: #5E8399; }
     /* History action buttons */
     .history-actions { display: flex; gap: 6px; align-items: center; }
     .history-edit-btn,
@@ -588,19 +589,19 @@
       letter-spacing: .2px;
     }
     .rec-strength-pill.strong {
-      background: rgba(46, 204, 113, .18);
-      border: 1px solid rgba(46, 204, 113, .45);
-      color: #91efbe;
+      background: rgba(107,160,122,0.12);
+      border: 1px solid rgba(107,160,122,0.30);
+      color: #4A7A56;
     }
     .rec-strength-pill.moderate {
-      background: rgba(241, 196, 15, .18);
-      border: 1px solid rgba(241, 196, 15, .45);
-      color: #f8da7a;
+      background: rgba(196,149,107,0.12);
+      border: 1px solid rgba(196,149,107,0.30);
+      color: #8B6A44;
     }
     .rec-strength-pill.close {
-      background: rgba(91, 181, 162, .2);
-      border: 1px solid rgba(91, 181, 162, .45);
-      color: #9fd0f5;
+      background: rgba(122,157,184,0.12);
+      border: 1px solid rgba(122,157,184,0.30);
+      color: #4E7389;
     }
     .best-summary-title {
       font-size: 22px;
