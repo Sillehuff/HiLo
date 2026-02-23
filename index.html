@@ -123,20 +123,18 @@
       position: relative;
       border-radius: var(--radius-lg);
       padding: clamp(24px, 4vw, 40px);
-      background: radial-gradient(1200px 600px at 0% -10%, rgba(201,161,93,.12), transparent 60%),
-                  radial-gradient(800px 500px at 100% 110%, rgba(201,161,93,.08), transparent 60%),
-                  rgba(28, 45, 38, .6);
-      backdrop-filter: var(--blur);
-      border: 1px solid rgba(255,255,255,.07);
+      background: var(--surface);
+      border: 1px solid var(--border);
       box-shadow: var(--shadow);
     }
     .hero h1 {
       margin: 0 0 8px 0;
       font-size: clamp(26px, 4vw, 36px);
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: .2px;
+      color: var(--ink);
     }
-    .subtle { color: rgba(255,255,255,.55); font-weight: 500; font-size: 14px; }
+    .subtle { color: var(--secondary-text); font-weight: 500; font-size: 14px; }
     .hero .row {
       display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 10px;
     }
