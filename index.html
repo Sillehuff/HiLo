@@ -878,9 +878,9 @@
       width: 100%;
       padding: 12px 40px 12px 40px;
       border-radius: 12px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      color: #fff;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      color: var(--cream);
       font-size: 14px;
     }
     .search-container::before {
@@ -903,7 +903,7 @@
       right: 10px;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(255,255,255,.12);
+      background: var(--surface-secondary);
       border: none;
       border-radius: 50%;
       width: 30px;
@@ -912,13 +912,13 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      color: rgba(255,255,255,.7);
+      color: var(--secondary-text);
       font-size: 13px;
       line-height: 1;
       transition: all .15s ease;
       padding: 0;
     }
-    .search-clear:hover { background: rgba(255,255,255,.25); color: #fff; }
+    .search-clear:hover { background: #E8E5E0; color: var(--ink); }
     .search-clear.visible { display: flex; }
     .search-result-count {
       font-size: 12px;
@@ -1414,7 +1414,7 @@
     }
     .form-section-divider {
       border: none;
-      border-top: 1px solid rgba(255,255,255,.06);
+      border-top: 1px solid var(--border);
       margin: 4px 0 20px;
     }
     .form-group label {
@@ -1427,16 +1427,16 @@
     .form-group input, .form-group select, .form-group textarea {
       width: 100%;
       padding: 10px 12px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 8px;
-      color: #fff;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      color: var(--cream);
       font-size: 14px;
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
       outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(201,161,93,.2);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107,91,138,0.12);
     }
     .form-group textarea {
       resize: vertical;
@@ -1575,10 +1575,10 @@
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
-      padding: 12px 16px;
-      background: rgba(0,0,0,.12);
+      padding: 14px 20px;
+      background: var(--surface-hover);
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.06);
+      border: 1px solid var(--border);
       margin-bottom: 16px;
     }
     .stats-bar .stat-item {
@@ -1586,11 +1586,11 @@
       align-items: center;
       gap: 6px;
       font-size: 14px;
-      color: rgba(255,255,255,.8);
+      color: var(--ink-light);
     }
     .stats-bar .stat-value {
       font-weight: 700;
-      color: var(--accent);
+      color: var(--primary);
     }
     /* Toast notifications */
     #toast-container {
