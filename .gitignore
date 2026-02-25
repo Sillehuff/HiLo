@@ -5,3 +5,6 @@ reconciled-output/
 scripts/
 output/
 *.png
+node_modules/
+playwright-report/
+test-results/

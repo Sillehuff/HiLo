@@ -1,0 +1,11 @@
+{
+  "name": "hilo-playlist-app-v2",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "test:smoke": "playwright test tests/smoke.spec.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.53.2"
+  }
+}
