@@ -9,7 +9,7 @@
   <title>Hilo Playlist – Instructor Edition</title>
   <meta name="description" content="Professional class planning with playlist optimization and cloud sync" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='22' stroke='%236B5B8A' stroke-width='2' fill='none'/><path d='M14 30C16 20 20 16 24 16C28 16 32 20 34 30' stroke='%236B5B8A' stroke-width='3' stroke-linecap='round'/><path d='M12 36H36' stroke='%236B5B8A' stroke-width='2' stroke-linecap='round'/></svg>" />
-  <meta name="theme-color" content="#F9F9FB" />
+  <meta name="theme-color" content="#FAFAF8" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
@@ -71,7 +71,7 @@
       --info-surface: #EBF5FF;
 
       /* Layout */
-      --page-bg: #F9F9FB;
+      --page-bg: #FAFAF8;
       --surface: #FFFFFF;
       --surface-raised: #FFFFFF;
       --surface-sunken: #F4F3F6;
@@ -163,7 +163,7 @@
       justify-content: center;
       padding: calc(12px + var(--safe-top)) var(--space-6) 12px;
       min-height: 60px;
-      background: rgba(249, 249, 251, 0.72);
+      background: rgba(250, 250, 248, 0.72);
       backdrop-filter: saturate(180%) blur(20px);
       -webkit-backdrop-filter: saturate(180%) blur(20px);
       border-bottom: 0.5px solid rgba(0,0,0,0.08);
@@ -379,11 +379,30 @@
     .tag-autocomplete-item.active { background: var(--surface-sunken); }
 
     /* ── Explorer / Playlist Manager ── */
+    .explorer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4px;
+      margin-bottom: var(--space-4);
+    }
+    .explorer-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
     .explorer-row { cursor: pointer; transition: background var(--duration-fast); }
     .explorer-row:hover { background: var(--gray-2) !important; }
-    .explorer-row.retired-row { opacity: 0.5; }
+    .explorer-row.retired-row { opacity: 0.6; }
 
-    .add-playlist-form { margin-bottom: 0; }
+    .add-playlist-form {
+      margin-bottom: 12px;
+      padding: 12px 16px;
+      background: var(--surface-sunken);
+      border-radius: var(--radius-md);
+    }
     .add-playlist-form .input-field {
       padding: 10px 14px;
       background: var(--surface);
@@ -454,24 +473,64 @@
     .btn-ghost:hover { background: var(--surface-sunken); }
 
     .manager-tags-cell { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
-    .manager-tags-cell .add-tag-btn {
+    .manager-tags-empty {
+      font-size: 13px;
+      color: var(--text-quaternary);
+      cursor: pointer;
+      transition: color var(--duration-fast);
+    }
+    .explorer-row:hover .manager-tags-empty { color: var(--primary); }
+
+    .explorer-chevron {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 26px;
-      height: 26px;
-      border-radius: var(--radius-full);
-      background: transparent;
-      border: 1.5px dashed var(--gray-6);
+      font-size: 16px;
       color: var(--text-quaternary);
-      cursor: pointer;
+      transition: transform var(--duration-normal) var(--ease-out);
+      transform: rotate(0deg);
+    }
+    .explorer-chevron--open { transform: rotate(90deg); color: var(--primary); }
+
+    select.tag-select.select {
+      background: var(--surface) !important;
+      border: 1.5px solid var(--gray-5) !important;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    select.tag-select.select:focus {
+      border-color: var(--primary) !important;
+      box-shadow: var(--shadow-focus);
+    }
+
+    .tag-custom-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .tag-custom-input {
+      flex: 1;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1.5px solid var(--gray-5);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: var(--font-body);
       font-size: 14px;
       transition: all var(--duration-fast);
+      min-width: 0;
     }
-    .manager-tags-cell .add-tag-btn:hover {
-      background: var(--primary-light);
-      border-color: var(--violet-6);
-      color: var(--primary);
+    .tag-custom-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: var(--shadow-focus);
+    }
+    .tag-custom-input::placeholder { color: var(--text-quaternary); }
+
+    .tag-editor-remove {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
     }
 
     /* ── Status Indicators ── */
@@ -725,6 +784,70 @@
       touch-action: manipulation;
     }
     .btn-xs:hover { background: var(--gray-3); color: var(--text-primary); }
+
+    /* ── Recommender Layout ── */
+    .rec-header {
+      padding: 0 4px;
+      margin-bottom: var(--space-5);
+    }
+    .rec-header .connection-status {
+      margin-bottom: 12px;
+      font-size: 12px;
+      padding: 6px 14px;
+    }
+    .rec-section-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: var(--tracking-tight);
+      margin-bottom: 10px;
+    }
+    .rec-header .class-picker-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-bottom: 6px;
+    }
+    .btn-link {
+      background: none;
+      border: none;
+      padding: 4px 0;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      transition: opacity var(--duration-fast);
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-link:hover { opacity: 0.7; }
+    .btn-link:active { opacity: 0.5; }
+    .rec-selection-summary {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 8px;
+      min-height: 20px;
+    }
+    .rec-best-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .rec-best-header .title { flex: 1 1 auto; }
+    .rec-window-selector {
+      flex-shrink: 0;
+    }
+    .select--compact {
+      padding: 5px 28px 5px 10px;
+      font-size: 12px;
+      min-height: unset;
+      border-radius: var(--radius-full);
+      background-color: var(--surface-sunken);
+      border: 1px solid var(--border-subtle);
+    }
 
     /* ── Recommendation Cards ── */
     .suggestions { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-6); }
@@ -1011,7 +1134,7 @@
     /* ── Week Strip (mobile only, hidden on desktop) ── */
     .week-strip { display: none; }
 
-    /* ── Desktop Calendar Grid ── */
+    /* ── Desktop Calendar Grid (week view fallback) ── */
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -1019,6 +1142,144 @@
       margin-top: 4px;
       padding: 0 4px;
     }
+
+    /* ── Desktop Month Grid ── */
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .month-dow-header {
+      background: var(--surface-sunken);
+      padding: 10px 0;
+      text-align: center;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .month-cell {
+      background: var(--surface);
+      min-height: 110px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      transition: background var(--duration-fast) var(--ease-out);
+      cursor: pointer;
+      position: relative;
+    }
+    .month-cell:hover { background: var(--gray-2); }
+    .month-cell-selected-week {
+      background: var(--violet-2);
+      cursor: default;
+    }
+    .month-cell-selected-week:hover { background: var(--violet-3); }
+    .month-cell-today {
+      box-shadow: inset 0 0 0 2px var(--violet-6);
+    }
+    .month-cell-today.month-cell-selected-week {
+      background: var(--violet-2);
+    }
+    .month-cell-past { opacity: 0.6; }
+    .month-cell-past:hover { opacity: 0.85; }
+    .month-cell-adjacent {
+      opacity: 0.3;
+      background: var(--surface-sunken);
+    }
+    .month-cell-adjacent:hover { opacity: 0.5; }
+    .month-cell-selected-week.month-cell-adjacent {
+      opacity: 0.7;
+      background: var(--violet-2);
+    }
+
+    /* Month cell header & date badge */
+    .month-cell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .month-cell-date {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-secondary);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .month-cell-date-today {
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(110, 86, 207, 0.3);
+    }
+
+    /* Compact class pills (non-selected weeks) */
+    .month-cell-pills {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      overflow: hidden;
+      max-height: 80px;
+    }
+    .month-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      font-size: 10px;
+      cursor: pointer;
+      border-left: 3px solid var(--gray-5);
+      background: var(--surface-sunken);
+      transition: background var(--duration-fast) var(--ease-out);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .month-pill:hover { background: var(--gray-3); }
+    .month-pill-draft { border-left-color: var(--warning); }
+    .month-pill-finalized { border-left-color: var(--success); }
+    .month-pill-time {
+      font-weight: 600;
+      color: var(--primary);
+      font-family: var(--font-display);
+    }
+    .month-pill-type {
+      color: var(--text-tertiary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Selected week cells — full class detail */
+    .month-cell-classes {
+      flex: 1;
+      overflow-y: auto;
+    }
+    .month-cell-actions {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .month-cell-selected-week .class-item {
+      padding: 8px 10px;
+      margin-bottom: 4px;
+    }
+    .month-cell-selected-week .class-time { font-size: 12px; }
+    .month-cell-selected-week .class-info { font-size: 11px; }
 
     /* ── Day Card (desktop base) ── */
     .day-card {
@@ -1687,10 +1948,12 @@
        RESPONSIVE — TABLET
        ═══════════════════════════ */
     @media (max-width: 1024px) {
-      .calendar-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .calendar-grid:not(.month-grid) { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .month-cell { min-height: 90px; }
     }
     @media (max-width: 900px) {
-      .calendar-grid { grid-template-columns: repeat(2, 1fr); }
+      .calendar-grid:not(.month-grid) { grid-template-columns: repeat(2, 1fr); }
+      .month-cell { min-height: 80px; }
     }
 
     /* ═══════════════════════════
@@ -1705,7 +1968,7 @@
         top: 0;
         padding: calc(6px + var(--safe-top)) 12px 6px;
         min-height: 44px;
-        background: rgba(249, 249, 251, 0.96);
+        background: rgba(250, 250, 248, 0.96);
       }
 
       /* Mobile bottom tab bar */
@@ -1713,7 +1976,7 @@
         position: fixed;
         bottom: 0; left: 0; right: 0;
         z-index: 200;
-        background: rgba(249, 249, 251, 0.96);
+        background: rgba(250, 250, 248, 0.96);
         backdrop-filter: saturate(180%) blur(20px);
         -webkit-backdrop-filter: saturate(180%) blur(20px);
         border-top: 0.5px solid rgba(0,0,0,0.08);
@@ -1727,33 +1990,40 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 2px;
-        padding: 6px 2px 4px;
+        gap: 1px;
+        padding: 6px 2px 5px;
         border-radius: var(--radius-sm);
         font-size: 10px;
         min-width: 0;
-        min-height: 50px;
+        min-height: 56px;
         background: transparent;
       }
-      body > .tabs .tab-btn .tab-icon { font-size: 22px; }
-      body > .tabs .tab-btn .tab-label { display: none; }
+      body > .tabs .tab-btn .tab-icon { font-size: 24px; }
+      body > .tabs .tab-btn .tab-label {
+        display: block;
+        font-size: 0;
+        line-height: 1;
+        color: var(--text-tertiary);
+      }
+      body > .tabs .tab-btn .tab-label::after {
+        content: attr(data-short);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+      }
       body > .tabs .tab-btn[aria-selected="true"] {
         background: transparent;
         box-shadow: none;
       }
       body > .tabs .tab-btn[aria-selected="true"] .tab-icon { color: var(--primary); }
-      body > .tabs .tab-btn[aria-selected="true"]::after {
-        content: '';
-        display: block;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: var(--primary);
-        margin-top: 2px;
+      body > .tabs .tab-btn[aria-selected="true"] .tab-label,
+      body > .tabs .tab-btn[aria-selected="true"] .tab-label::after {
+        color: var(--primary);
+        font-weight: 600;
       }
 
       .search-container { max-width: 100%; width: 100%; }
-      .btn-sm, .search-clear, .modal__close, .status-toggle, .manager-tags-cell .add-tag-btn, .btn-remove-playlist { min-height: 44px; }
+      .btn-sm, .search-clear, .modal__close, .status-toggle, .btn-remove-playlist { min-height: 44px; }
       .search-clear, .modal__close { width: 40px; height: 40px; }
       .search-container input { padding-right: 52px; }
       .search-container input,
@@ -1996,8 +2266,97 @@
       .day-card.has-classes { padding-bottom: 18px; }
       .day-card.today + .day-card .day-header { padding-top: 16px; }
 
-      .metric-row { grid-template-columns: repeat(3, 1fr); }
+      /* ── Recommender mobile ── */
+      .rec-header { padding: 0; }
+      .rec-header .connection-status { margin-bottom: 12px; }
+
+      .metric-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .metric { padding: 10px 8px; }
+      .metric .value { font-size: 18px; }
+      .metric .label { font-size: 10px; letter-spacing: 0.04em; }
+
       .best-summary-title { font-size: 20px; }
+      .rec-best-header { flex-wrap: wrap; gap: 8px; }
+      .rec-best-header .title { flex: 1; }
+
+      /* Rankings table → mobile cards */
+      #rankings-table { display: block; width: 100%; min-width: unset !important; }
+      #rankings-table thead { display: none; }
+      #rankings-table tbody { display: grid; gap: 8px; }
+      #rankings-table tr {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: auto auto;
+        gap: 4px 10px;
+        align-items: center;
+        background: var(--surface);
+        border-radius: var(--radius-md);
+        padding: 12px 14px;
+        box-shadow: var(--shadow-xs);
+      }
+      #rankings-table tr.rank-row-assigned {
+        background: var(--success-surface);
+      }
+      /* Rank number */
+      #rankings-table td:nth-child(1) {
+        grid-row: 1 / 3;
+        grid-column: 1;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--text-tertiary);
+        padding: 0;
+        border: none;
+        min-width: 28px;
+        text-align: center;
+      }
+      /* Playlist name */
+      #rankings-table td:nth-child(2) {
+        grid-row: 1;
+        grid-column: 2;
+        font-size: 15px;
+        padding: 0;
+        border: none;
+      }
+      /* Stats row */
+      #rankings-table td:nth-child(3),
+      #rankings-table td:nth-child(4),
+      #rankings-table td:nth-child(5) {
+        grid-row: 2;
+        font-size: 11px;
+        color: var(--text-tertiary);
+        padding: 0;
+        border: none;
+      }
+      #rankings-table td:nth-child(3) { grid-column: 2; }
+      /* Hide recently-heard and score columns on mobile */
+      #rankings-table td:nth-child(6),
+      #rankings-table td:nth-child(7) { display: none; }
+      /* Action button */
+      #rankings-table td:nth-child(8) {
+        grid-row: 1 / 3;
+        grid-column: 3;
+        padding: 0;
+        border: none;
+        text-align: right;
+      }
+      #rankings-table td:nth-child(8) .btn {
+        font-size: 12px;
+        padding: 6px 12px;
+        min-height: 34px;
+      }
+      /* Single-cell messages (empty state) */
+      #rankings-table td[colspan] {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        text-align: center;
+        padding: 16px;
+        border: none;
+      }
+
+      .dashboard-rankings-wrap { margin: 0 0 16px !important; overflow-x: hidden; }
+      .dashboard-rankings-wrap .data-table { min-width: unset; width: 100%; }
+
       .form-row { grid-template-columns: 1fr; }
       .datetime-selector { flex-direction: column; align-items: stretch; }
 
@@ -2026,49 +2385,46 @@
       .modal__footer {
         background: var(--surface);
         padding: 12px 16px calc(12px + var(--safe-bottom));
-        display: grid;
-        grid-template-columns: 1fr;
+        display: flex !important;
+        flex-wrap: nowrap !important;
         gap: 10px;
+        align-items: stretch;
       }
-      .modal__footer .btn,
-      .modal__footer .tooltip-wrapper,
-      .modal__footer .tooltip-wrapper .btn { width: 100%; }
-      #save-draft-modal { order: 1; }
-      .modal__footer .tooltip-wrapper { order: 2; }
-      #cancel-modal { order: 3; display: none; }
+      #save-draft-modal { order: 1; flex: 1 1 0 !important; min-width: 0; width: auto !important; }
       #delete-class-modal {
-        order: 4;
-        margin-right: 0 !important;
+        order: 2;
+        flex: 0 0 auto !important;
+        margin: 0 !important;
+        width: auto !important;
+        padding: 0 14px;
         background: transparent;
-        border-color: var(--danger-light);
-        font-size: 13px;
+        border: none !important;
+        box-shadow: none !important;
+        font-size: 18px;
       }
+      #delete-class-modal .btn-label { display: none; }
+      #cancel-modal { display: none; }
+      .modal__footer .tooltip-wrapper { display: none; }
       .modal__footer .tooltip-text { display: none; }
 
-      /* Card-style tables on mobile */
-      #history .table-container,
-      #explorer .table-container {
+      /* Card-style tables on mobile — History */
+      #history .table-container {
         background: transparent;
         border: none;
         overflow: visible;
         box-shadow: none;
       }
-      #history-table,
-      #playlist-manager-table { display: block; width: 100%; }
-      #history-table thead,
-      #playlist-manager-table thead { display: none; }
-      #history-table tbody,
-      #playlist-manager-table tbody { display: grid; gap: 10px; }
-      #history-table tr,
-      #playlist-manager-table tr {
+      #history-table { display: block; width: 100%; }
+      #history-table thead { display: none; }
+      #history-table tbody { display: grid; gap: 10px; }
+      #history-table tr {
         display: block;
         background: var(--surface);
         border-radius: var(--radius-lg);
         overflow: hidden;
         box-shadow: var(--shadow-xs);
       }
-      #history-table td,
-      #playlist-manager-table td {
+      #history-table td {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
@@ -2076,8 +2432,7 @@
         padding: 10px 14px;
         border-bottom: 0.5px solid var(--border-subtle);
       }
-      #history-table td::before,
-      #playlist-manager-table td::before {
+      #history-table td::before {
         content: attr(data-label);
         flex: 0 0 38%;
         color: var(--text-tertiary);
@@ -2087,18 +2442,97 @@
         font-weight: 600;
         line-height: 1.3;
       }
-      #history-table td:last-child,
-      #playlist-manager-table td:last-child { border-bottom: none; }
-      #history-table td[colspan],
-      #playlist-manager-table td[colspan],
-      #playlist-manager-table .tag-editor-row td { display: block; }
-      #history-table td[colspan]::before,
-      #playlist-manager-table td[colspan]::before,
-      #playlist-manager-table .tag-editor-row td::before { content: none; }
+      #history-table td:last-child { border-bottom: none; }
+      #history-table td[colspan] { display: block; }
+      #history-table td[colspan]::before { content: none; }
       #history-table .guest-names-short,
       #history-table .guest-names-full { text-align: right; }
       .history-edit-btn, .history-delete-btn { min-height: 44px; min-width: 44px; }
       .history-actions { justify-content: flex-end; }
+
+      /* Compact playlist cards on mobile */
+      #explorer .table-container {
+        background: transparent;
+        border: none;
+        overflow: visible;
+        box-shadow: none;
+      }
+      #playlist-manager-table { display: block; width: 100%; }
+      #playlist-manager-table thead { display: none; }
+      #playlist-manager-table tbody { display: grid; gap: 6px; }
+      #playlist-manager-table tr.explorer-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        grid-template-rows: auto auto;
+        align-items: center;
+        gap: 0 10px;
+        padding: 12px 14px;
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-xs);
+      }
+      /* Playlist name — top left */
+      #playlist-manager-table tr.explorer-row td:nth-child(1) {
+        grid-column: 1;
+        grid-row: 1;
+        display: block;
+        padding: 0;
+        border: none;
+        font-size: 15px;
+      }
+      #playlist-manager-table tr.explorer-row td:nth-child(1)::before { content: none; }
+      /* Tags — bottom, full width */
+      #playlist-manager-table tr.explorer-row td:nth-child(2) {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        display: block;
+        padding: 4px 0 0;
+        border: none;
+      }
+      #playlist-manager-table tr.explorer-row td:nth-child(2)::before { content: none; }
+      /* Status pill — top right (before chevron) */
+      #playlist-manager-table tr.explorer-row td:nth-child(3) {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
+        padding: 0;
+        border: none;
+      }
+      #playlist-manager-table tr.explorer-row td:nth-child(3)::before { content: none; }
+      /* Chevron — top far-right */
+      #playlist-manager-table tr.explorer-row td:nth-child(4) {
+        grid-column: 3;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
+        padding: 0;
+        border: none;
+      }
+      #playlist-manager-table tr.explorer-row td:nth-child(4)::before { content: none; }
+      /* Hide tags row if empty (no chips, just hint) — keep it compact */
+      #playlist-manager-table .manager-tags-empty { font-size: 12px; }
+      /* Tag editor row */
+      #playlist-manager-table .tag-editor-row {
+        display: block;
+        background: var(--surface);
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        margin-top: -6px;
+        padding-top: 0;
+        box-shadow: var(--shadow-xs);
+        overflow: hidden;
+      }
+      #playlist-manager-table .tag-editor-row td {
+        display: block;
+        padding: 12px 14px;
+        border: none;
+      }
+      #playlist-manager-table .tag-editor-row td::before { content: none; }
+      /* Round the bottom of the preceding row when expanded */
+      #playlist-manager-table tr.explorer-row--expanded {
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        box-shadow: none;
+      }
 
       #toast-container {
         bottom: calc(96px + var(--safe-bottom));
@@ -2139,8 +2573,8 @@
   <nav class="nav">
     <div class="tabs" role="tablist">
       <button class="tab-btn" role="tab" aria-selected="true" data-tab="weekly"><span class="tab-icon" aria-hidden="true">&#128197;</span><span class="tab-label" data-short="Planner">Weekly Planner</span></button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="dashboard"><span class="tab-icon" aria-hidden="true">&#9776;</span><span class="tab-label" data-short="Recs">Recommender</span></button>
-      <button class="tab-btn" role="tab" aria-selected="false" data-tab="explorer"><span class="tab-icon" aria-hidden="true">&#9835;</span><span class="tab-label" data-short="Playlists">Playlists</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="dashboard"><span class="tab-icon" aria-hidden="true">💡</span><span class="tab-label" data-short="Recs">Recommender</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="explorer"><span class="tab-icon" aria-hidden="true">🎵</span><span class="tab-label" data-short="Playlists">Playlists</span></button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="history"><span class="tab-icon" aria-hidden="true">&#128214;</span><span class="tab-label" data-short="History">History</span></button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="guests"><span class="tab-icon" aria-hidden="true">&#128101;</span><span class="tab-label" data-short="Guests">Guests</span></button>
       <button class="tab-btn" role="tab" aria-selected="false" data-tab="settings"><span class="tab-icon" aria-hidden="true">&#9881;</span><span class="tab-label" data-short="Settings">Settings</span></button>
@@ -2148,47 +2582,45 @@
   </nav>
   <main class="container">
     <section id="dashboard" class="hidden fade-in">
-      <div class="hero">
-        <h1>Playlist Recommender</h1>
-        <div class="subtle" id="currentDateTime"></div>
+      <div class="rec-header">
         <div id="connection-status" class="connection-status disconnected">
           <div class="status-dot disconnected"></div>
           <span>Not signed in</span>
         </div>
-        <div class="step-label"><span class="step-num">1</span> Select Planned Classes</div>
-        <div class="row" style="margin-top:0;">
-          <div class="search-wrap" style="flex:1;">
-            <select id="playlistWindow" class="select" title="Replay-ready window">
-              <option value="45" selected>Replay-ready ≥ 45 days</option>
-              <option value="30">Replay-ready ≥ 30 days</option>
-              <option value="60">Replay-ready ≥ 60 days</option>
-              <option value="90">Replay-ready ≥ 90 days</option>
-            </select>
-          </div>
-        </div>
-        <div class="class-picker-container" style="margin-top:8px;">
-          <div class="class-picker-actions" style="display:flex; gap:8px; margin-bottom:6px;">
-            <button type="button" class="btn-xs" id="selectAllDraftsBtn">Select All Drafts</button>
-            <button type="button" class="btn-xs" id="clearAllClassesBtn">Clear All</button>
+        <h2 class="rec-section-title">Select Classes</h2>
+        <div class="class-picker-container">
+          <div class="class-picker-actions">
+            <button type="button" class="btn-link" id="selectAllDraftsBtn">Select All Drafts</button>
+            <button type="button" class="btn-link" id="clearAllClassesBtn">Clear All</button>
           </div>
           <div class="class-picker-list" id="plannedClassList" style="max-height:180px; overflow-y:auto; background:var(--surface); border-radius:var(--radius-md); padding:8px;"></div>
         </div>
-        <div class="row" style="margin-top:10px;">
+        <div id="rec-selection-summary" class="rec-selection-summary"></div>
+        <!-- Hidden pills kept for JS compatibility -->
+        <div style="display:none;">
           <span class="pill" id="selectedClassPill">No classes selected</span>
           <span class="pill" id="selectedClassTypePill">Class type: --</span>
           <span class="pill" id="selectedPlaylistPill">Assigned playlist: --</span>
           <span class="pill" id="recordsCountPill">0 records</span>
+          <div class="subtle" id="currentDateTime"></div>
         </div>
       </div>
-      <div class="step-label" style="margin-top:18px;"><span class="step-num">2</span> Recommendation</div>
       <div class="cards">
         <div class="card primary-card" id="bestCard">
           <div class="body">
-            <div class="title">Best Fit Playlist</div>
-            <div class="muted">Based on the selected class roster, date, and class type</div>
+            <div class="rec-best-header">
+              <div class="title">Best Fit Playlist</div>
+              <div class="rec-window-selector">
+                <select id="playlistWindow" class="select select--compact" title="Replay-ready window">
+                  <option value="45" selected>≥ 45 days</option>
+                  <option value="30">≥ 30 days</option>
+                  <option value="60">≥ 60 days</option>
+                  <option value="90">≥ 90 days</option>
+                </select>
+              </div>
+            </div>
             <div id="bestSummary" style="margin-top:10px;"></div>
             <div id="bestStrength" class="best-strength-row"></div>
-            <div class="recommender-explain">Ranked by never-heard coverage, replay-ready coverage, and median days since last played.</div>
             <div class="metric-row">
               <div class="metric">
                 <div class="value" id="bestNever">--</div>
@@ -2205,17 +2637,16 @@
             </div>
             <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
               <button class="btn btn-primary" id="assignBestPlaylistBtn">Assign Best Playlist</button>
-              <button class="btn" id="previewRosterBtn">View Details</button>
+              <button class="btn" id="previewRosterBtn">Roster Details</button>
             </div>
           </div>
         </div>
         <div class="card">
           <div class="body">
             <div class="title">All Ranked Playlists</div>
-            <div class="muted">Most recommended to least recommended for the selected class</div>
           </div>
           <div class="table-container dashboard-rankings-wrap" style="margin: 0 16px 16px;">
-            <table class="data-table">
+            <table class="data-table" id="rankings-table">
               <thead>
                 <tr>
                   <th style="width:64px;">Rank</th>
@@ -2251,31 +2682,27 @@
       <div class="calendar-grid" id="calendarGrid"></div>
     </section>
     <section id="explorer" class="hidden fade-in">
-      <div class="hero">
-        <h1>Playlist Manager</h1>
-        <div class="subtle">Manage playlists, tags, and status</div>
-        <button class="btn btn-primary" id="addPlaylistBtn" style="margin-top:14px;">+ Add Playlist</button>
+      <div class="explorer-header">
+        <h2 class="explorer-title">Playlists</h2>
+        <button type="button" class="btn-link" id="addPlaylistBtn">+ Add Playlist</button>
       </div>
-      <div id="addPlaylistForm" class="card add-playlist-form" style="display:none;">
-        <div class="body">
-          <div style="font-family:var(--font-display); font-weight:600; font-size:15px; margin-bottom:10px;">New Playlist</div>
-          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <input type="text" id="newPlaylistId" placeholder="Playlist number (e.g. 13)" class="input-field" style="width:180px;" />
-            <button class="btn btn-primary btn-sm" id="confirmAddPlaylist">Add</button>
-            <button class="btn btn-sm btn-ghost" id="cancelAddPlaylist">Cancel</button>
-          </div>
-          <div id="addPlaylistError" style="color:var(--danger); font-size:13px; margin-top:6px; display:none;"></div>
+      <div id="addPlaylistForm" class="add-playlist-form" style="display:none;">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <input type="text" id="newPlaylistId" placeholder="Playlist # (e.g. 13)" class="input-field" style="width:140px;" />
+          <button class="btn btn-primary btn-sm" id="confirmAddPlaylist">Add</button>
+          <button class="btn btn-sm btn-ghost" id="cancelAddPlaylist">Cancel</button>
         </div>
+        <div id="addPlaylistError" style="color:var(--danger); font-size:13px; margin-top:6px; display:none;"></div>
       </div>
       <div class="card">
         <div class="table-container">
           <table class="data-table" id="playlist-manager-table">
             <thead>
               <tr>
-                <th class="sortable" data-sort="playlist">Playlist</th>
+                <th class="sortable" data-sort="playlist" style="width:30%">Playlist</th>
                 <th>Tags</th>
-                <th class="sortable" data-sort="status">Status</th>
-                <th>Actions</th>
+                <th class="sortable" data-sort="status" style="width:90px">Status</th>
+                <th style="width:36px"></th>
               </tr>
             </thead>
             <tbody id="explorerTbody"></tbody>
@@ -2426,7 +2853,7 @@
           </div>
         </div>
         <div class="modal__footer">
-          <button id="delete-class-modal" class="btn btn-danger" style="margin-right: auto;">🗑️ Delete</button>
+          <button id="delete-class-modal" class="btn btn-danger" style="margin-right: auto;">🗑️<span class="btn-label"> Delete</span></button>
           <button id="cancel-modal" class="btn">Cancel</button>
           <button id="save-draft-modal" class="btn btn-warning">💾 Save as Draft</button>
         </div>
@@ -3239,6 +3666,42 @@
     const d = String(date.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
   };
+
+  // --- Month Grid Helpers (desktop calendar) ---
+  function getMonthGrid(year, month) {
+    const firstOfMonth = new Date(year, month, 1);
+    const lastOfMonth = new Date(year, month + 1, 0);
+    const startDow = firstOfMonth.getDay(); // 0=Sunday
+    const gridStart = new Date(year, month, 1 - startDow);
+    const daysInMonth = lastOfMonth.getDate();
+    const totalCells = startDow + daysInMonth;
+    const numWeeks = Math.ceil(totalCells / 7);
+    const gridSize = numWeeks * 7;
+    const cells = [];
+    for (let i = 0; i < gridSize; i++) {
+      const d = new Date(gridStart);
+      d.setDate(gridStart.getDate() + i);
+      cells.push(d);
+    }
+    return cells;
+  }
+
+  function getMonthForWeekStart(weekStart) {
+    // Use Thursday of the week to determine the displayed month
+    const thursday = new Date(weekStart);
+    thursday.setDate(weekStart.getDate() + 4);
+    return { year: thursday.getFullYear(), month: thursday.getMonth() };
+  }
+
+  function isInSelectedWeek(dayDate, weekStart) {
+    const dayKey = formatDateKey(dayDate);
+    const startKey = formatDateKey(weekStart);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    const endKey = formatDateKey(weekEnd);
+    return dayKey >= startKey && dayKey <= endKey;
+  }
+
   // --- Initialize App ---
   async function initializeApp() {
     debugLog('Initializing app...');
@@ -3256,6 +3719,10 @@
       mq.addEventListener('change', place);
       place(mq);
     })();
+
+    // Re-render calendar when crossing mobile/desktop breakpoint
+    const calendarMQ = window.matchMedia('(max-width: 768px)');
+    calendarMQ.addEventListener('change', () => { renderWeeklyCalendar(); });
 
     loadStateFromLocalStorage();
 
@@ -3522,11 +3989,13 @@
     const selectedClassPill = $("#selectedClassPill");
     const selectedClassTypePill = $("#selectedClassTypePill");
     const selectedPlaylistPill = $("#selectedPlaylistPill");
+    const summaryEl = $("#rec-selection-summary");
     if (!selectedClassPill || !selectedClassTypePill || !selectedPlaylistPill) return;
     if (!selectedEntries || selectedEntries.length === 0) {
       selectedClassPill.textContent = 'No classes selected';
       selectedClassTypePill.textContent = 'Class type: --';
       selectedPlaylistPill.textContent = 'Assigned playlist: --';
+      if (summaryEl) summaryEl.textContent = '';
       return;
     }
     // Aggregate info
@@ -3552,19 +4021,39 @@
     }
     selectedClassTypePill.textContent = classTypes.size === 1 ? `Class type: ${[...classTypes][0]}` : classTypes.size > 1 ? `Class types: ${[...classTypes].join(', ')}` : 'Class type: All Types';
     selectedPlaylistPill.textContent = playlists.size === 1 ? `Assigned playlist: #${[...playlists][0]}` : playlists.size > 1 ? `Assigned playlists: ${[...playlists].map(p => '#' + p).join(', ')}` : 'Assigned playlist: --';
+    // Update visible selection summary line
+    if (summaryEl) {
+      const typeLabel = classTypes.size === 1 ? [...classTypes][0] : classTypes.size > 1 ? 'Mixed' : 'All Types';
+      const parts = [];
+      parts.push(count === 1 ? '1 class' : `${count} classes`);
+      parts.push(typeLabel);
+      parts.push(`${guestCount} guest${guestCount !== 1 ? 's' : ''}`);
+      summaryEl.textContent = parts.join(' \u00b7 ');
+    }
   }
   function updateRecordsPill() {
     $("#recordsCountPill").textContent = `${state.records.length} records`;
   }
   // --- Weekly Calendar ---
   function renderWeeklyCalendar() {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      renderMobileWeekView();
+    } else {
+      renderDesktopMonthView();
+    }
+    updateWeeklyStats();
+  }
+
+  // --- Mobile: unchanged week view ---
+  function renderMobileWeekView() {
     const calendarGrid = $("#calendarGrid"), weekStrip = $("#weekStrip");
     const weekDays = getWeekDays(state.currentWeekStart);
     const dayNamesFull = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const dayNamesShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const dayLetters = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     const todayKey = formatDateKey(new Date());
-    const isMobile = window.innerWidth <= 768;
+
+    calendarGrid.className = 'calendar-grid';
 
     if (weekStrip) {
       weekStrip.innerHTML = '';
@@ -3624,11 +4113,10 @@
         ? `<button class="btn btn-sm btn-success" onclick="finalizeDayDrafts('${dayKey}')">✔ Finalize ${draftCount}</button>`
         : '';
       const todayLabel = isToday ? '<span class="day-today-label">Today</span>' : '';
-      const dayLabel = isMobile ? dayNamesFull[index] : dayNamesShort[index];
 
       dayCard.innerHTML = `
         <div class="day-header">
-          <div class="day-name"><span class="day-badge">${day.getDate()}</span><span class="day-name-text">${dayLabel}</span>${todayLabel}</div>
+          <div class="day-name"><span class="day-badge">${day.getDate()}</span><span class="day-name-text">${dayNamesFull[index]}</span>${todayLabel}</div>
         </div>
         <div class="class-list">${classesHTML}</div>
         <div class="class-actions">
@@ -3639,16 +4127,117 @@
 
       calendarGrid.appendChild(dayCard);
     });
-    updateWeeklyStats();
   }
+
+  // --- Desktop: full month calendar view ---
+  function renderDesktopMonthView() {
+    const calendarGrid = $("#calendarGrid");
+    const { year, month } = getMonthForWeekStart(state.currentWeekStart);
+    const cells = getMonthGrid(year, month);
+    const todayKey = formatDateKey(new Date());
+    const dayLetters = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+    calendarGrid.innerHTML = '';
+    calendarGrid.className = 'month-grid';
+
+    // Day-of-week header row
+    dayLetters.forEach(letter => {
+      const hdr = document.createElement('div');
+      hdr.className = 'month-dow-header';
+      hdr.textContent = letter;
+      calendarGrid.appendChild(hdr);
+    });
+
+    // Render each day cell
+    cells.forEach(day => {
+      const dayKey = formatDateKey(day);
+      const isToday = dayKey === todayKey;
+      const isPast = dayKey < todayKey && !isToday;
+      const isCurrentMonth = day.getMonth() === month && day.getFullYear() === year;
+      const isSelectedWeek = isInSelectedWeek(day, state.currentWeekStart);
+
+      const dayClasses = Array.from(state.weeklyPlan.entries())
+        .filter(([key]) => key.startsWith(dayKey))
+        .map(([key, cls]) => ({ ...cls, dateTimeKey: key }))
+        .sort((a, b) => a.time.localeCompare(b.time));
+
+      const cell = document.createElement('div');
+      const cssClasses = ['month-cell'];
+      if (isToday) cssClasses.push('month-cell-today');
+      if (isPast) cssClasses.push('month-cell-past');
+      if (!isCurrentMonth) cssClasses.push('month-cell-adjacent');
+      if (isSelectedWeek) cssClasses.push('month-cell-selected-week');
+      if (dayClasses.length === 0) cssClasses.push('month-cell-empty');
+      cell.className = cssClasses.join(' ');
+
+      if (isSelectedWeek) {
+        // Full detail rendering — class items, +Add, Finalize
+        const classesHTML = dayClasses.map(cls => `
+          <div class="class-item ${cls.status === 'draft' ? 'status-draft-bar' : 'status-finalized-bar'}" onclick="openClassModal('${cls.dateTimeKey}')">
+            <div class="class-time">${formatTime(cls.time)}</div>
+            <div class="class-info">${cls.classType ? esc(cls.classType) + ' \u2022 ' : ''}${cls.playlist ? '#' + esc(cls.playlist) : 'No playlist'} \u2022 ${cls.attendees.size}g</div>
+            <div class="pill ${cls.status === 'draft' ? 'status-draft' : 'status-finalized'}" style="margin-top:3px; font-size:10px; padding:2px 6px;">${cls.status}</div>
+          </div>
+        `).join('');
+
+        const draftCount = dayClasses.filter(c => c.status === 'draft').length;
+        const finalizeBtn = draftCount > 0
+          ? `<button class="btn btn-sm btn-success" onclick="event.stopPropagation(); finalizeDayDrafts('${dayKey}');" style="font-size:11px; padding:4px 8px;">\u2714 ${draftCount}</button>`
+          : '';
+
+        cell.innerHTML = `
+          <div class="month-cell-header">
+            <span class="month-cell-date${isToday ? ' month-cell-date-today' : ''}">${day.getDate()}</span>
+          </div>
+          <div class="month-cell-classes">${classesHTML}</div>
+          <div class="month-cell-actions">
+            <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); openNewClassModal('${dayKey}');" style="font-size:11px; padding:4px 8px;">+</button>
+            ${finalizeBtn}
+          </div>
+        `;
+      } else {
+        // Compact rendering — day number + small class pills
+        const pillsHTML = dayClasses.map(cls => `
+          <div class="month-pill ${cls.status === 'draft' ? 'month-pill-draft' : 'month-pill-finalized'}"
+               onclick="event.stopPropagation(); openClassModal('${cls.dateTimeKey}');">
+            <span class="month-pill-time">${formatTime(cls.time)}</span>
+            <span class="month-pill-type">${cls.classType ? esc(cls.classType) : ''}</span>
+          </div>
+        `).join('');
+
+        cell.innerHTML = `
+          <div class="month-cell-header">
+            <span class="month-cell-date${isToday ? ' month-cell-date-today' : ''}">${day.getDate()}</span>
+          </div>
+          <div class="month-cell-pills">${pillsHTML}</div>
+        `;
+
+        // Click on cell selects that week
+        cell.addEventListener('click', () => {
+          state.currentWeekStart = getWeekStart(day);
+          renderWeeklyCalendar();
+        });
+      }
+
+      calendarGrid.appendChild(cell);
+    });
+  }
+
   function updateWeeklyStats() {
+    const isMobile = window.innerWidth <= 768;
     const weekStart = state.currentWeekStart;
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
     weekEnd.setHours(23, 59, 59, 999);
 
-    const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    $("#weekRangePill").textContent = `${fmt(weekStart)} – ${fmt(weekEnd)}`;
+    if (isMobile) {
+      const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      $("#weekRangePill").textContent = `${fmt(weekStart)} \u2013 ${fmt(weekEnd)}`;
+    } else {
+      const { year, month } = getMonthForWeekStart(weekStart);
+      const monthName = new Date(year, month, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      $("#weekRangePill").textContent = monthName;
+    }
 
     let drafts = 0, finalized = 0;
     state.weeklyPlan.forEach(cls => {
@@ -4188,14 +4777,14 @@
         : `<button type="button" class="btn btn-sm"${allRowAssigned ? ' disabled' : ''} data-assign-playlist="${esc(row.playlist)}">${allRowAssigned ? 'Assigned' : 'Assign'}</button>`;
       return `
         <tr${allRowAssigned ? ' class="rank-row-assigned"' : ''}>
-          <td>${index + 1}</td>
-          <td><strong>#${esc(row.playlist)}</strong></td>
-          <td>${row.never}/${row.rosterSize} (${row.neverPct}%)</td>
-          <td>${row.dueCount}/${row.rosterSize} (${row.readyPct}%)</td>
-          <td>${row.median}d</td>
-          <td>${row.recentCount}/${row.rosterSize} (${row.recentPct}%)</td>
-          <td><span class="rank-score">${scoreLabel}</span></td>
-          <td>${actionHTML}</td>
+          <td data-label="Rank">${index + 1}</td>
+          <td data-label="Playlist"><strong>#${esc(row.playlist)}</strong></td>
+          <td data-label="Never-heard">${row.neverPct}% new</td>
+          <td data-label="Replay-ready">${row.readyPct}% ready</td>
+          <td data-label="Median">${row.median}d med</td>
+          <td data-label="Recent">${row.recentCount}/${row.rosterSize} (${row.recentPct}%)</td>
+          <td data-label="Score"><span class="rank-score">${scoreLabel}</span></td>
+          <td data-label="Action">${actionHTML}</td>
         </tr>
       `;
     }).join('');
@@ -4230,34 +4819,38 @@
     rows.forEach(row => {
       const pl = row.playlist;
       const isRetired = row.status === 'Retired';
+      const isExpanded = state.expandedPlaylist === pl;
       const tags = state.playlistTags.get(pl) || [];
       const tr = document.createElement('tr');
-      tr.className = 'explorer-row' + (isRetired ? ' retired-row' : '');
+      tr.className = 'explorer-row' + (isRetired ? ' retired-row' : '') + (isExpanded ? ' explorer-row--expanded' : '');
 
-      // Tags cell content
-      const tagsDiv = document.createElement('div');
-      tagsDiv.className = 'manager-tags-cell';
-      tags.forEach(t => {
-        const chip = document.createElement('span');
-        chip.className = 'tag-chip-removable';
-        chip.dataset.tag = t;
-        chip.innerHTML = `<span>${esc(t)}</span><span class="remove-tag">\u2715</span>`;
-        chip.querySelector('.remove-tag').addEventListener('click', e => {
-          e.stopPropagation();
-          updatePlaylistMetadata(pl, { removeTag: t });
-        });
-        tagsDiv.appendChild(chip);
-      });
-      const addTagBtn = document.createElement('span');
-      addTagBtn.className = 'add-tag-btn';
-      addTagBtn.textContent = '+';
-      addTagBtn.title = 'Add tag';
-      addTagBtn.addEventListener('click', e => {
-        e.stopPropagation();
+      // Make whole row tappable to expand/collapse tag editor
+      tr.addEventListener('click', () => {
         state.expandedPlaylist = state.expandedPlaylist === pl ? null : pl;
         refreshExplorer();
       });
-      tagsDiv.appendChild(addTagBtn);
+
+      // Tags cell content — chips + empty-state affordance
+      const tagsDiv = document.createElement('div');
+      tagsDiv.className = 'manager-tags-cell';
+      if (tags.length === 0) {
+        const emptyHint = document.createElement('span');
+        emptyHint.className = 'manager-tags-empty';
+        emptyHint.textContent = '+ Add tags';
+        tagsDiv.appendChild(emptyHint);
+      } else {
+        tags.forEach(t => {
+          const chip = document.createElement('span');
+          chip.className = 'tag-chip-removable';
+          chip.dataset.tag = t;
+          chip.innerHTML = `<span>${esc(t)}</span><span class="remove-tag">\u2715</span>`;
+          chip.querySelector('.remove-tag').addEventListener('click', e => {
+            e.stopPropagation();
+            updatePlaylistMetadata(pl, { removeTag: t });
+          });
+          tagsDiv.appendChild(chip);
+        });
+      }
 
       // Status cell content
       const statusPill = document.createElement('span');
@@ -4268,26 +4861,26 @@
         updatePlaylistMetadata(pl, { status: isRetired ? 'Active' : 'Retired' });
       });
 
-      // Actions cell content
-      const removeBtn = document.createElement('button');
-      removeBtn.className = 'btn-remove-playlist';
-      removeBtn.textContent = 'Remove';
-      removeBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        removePlaylist(pl);
-      });
+      // Chevron indicator for expand/collapse
+      const chevron = document.createElement('span');
+      chevron.className = 'explorer-chevron' + (isExpanded ? ' explorer-chevron--open' : '');
+      chevron.textContent = '›';
 
       tr.appendChild(createCell('Playlist', `<strong>Playlist #${esc(pl)}</strong>`));
       tr.appendChild(createCell('Tags', tagsDiv));
       tr.appendChild(createCell('Status', statusPill));
-      tr.appendChild(createCell('Actions', removeBtn));
+      tr.appendChild(createCell('', chevron));
       tbody.appendChild(tr);
 
-      // Expanded tag editor row
-      if (state.expandedPlaylist === pl) {
+      // Expanded tag editor row (includes Remove at bottom)
+      if (isExpanded) {
         const editorTr = document.createElement('tr');
         editorTr.className = 'tag-editor-row';
-        editorTr.innerHTML = `<td colspan="4">${buildTagEditorHTML(pl)}</td>`;
+        editorTr.innerHTML = `<td colspan="4">${buildTagEditorHTML(pl)}
+          <div class="tag-editor-remove">
+            <button class="btn-remove-playlist" onclick="event.stopPropagation(); removePlaylist('${esc(pl)}');">Remove Playlist</button>
+          </div>
+        </td>`;
         editorTr.addEventListener('click', e => e.stopPropagation());
         tbody.appendChild(editorTr);
         wireTagEditor(pl, editorTr);
@@ -4305,10 +4898,14 @@
     return `<div class="tag-editor">
       <div style="font-weight:600; font-size:13px; color:var(--ink-light);">Class Types for Playlist #${playlistNum}</div>
       <div class="tag-editor-chips">${chips || '<span style="color:var(--secondary-text); font-size:13px;">No tags yet</span>'}</div>
-      <select class="tag-select select" style="margin-top:6px;">
-        <option value="" disabled selected>Add class type...</option>
+      ${available.length ? `<select class="tag-select select" style="margin-top:6px;">
+        <option value="" hidden>Select class type</option>
         ${options}
-      </select>
+      </select>` : ''}
+      <div class="tag-custom-row" style="margin-top:8px;">
+        <input type="text" class="tag-custom-input" placeholder="Add new class type" />
+        <button class="btn btn-sm btn-primary tag-custom-add">Add</button>
+      </div>
     </div>`;
   }
   function wireTagEditor(playlistNum, editorTr) {
@@ -4330,6 +4927,31 @@
           updatePlaylistMetadata(playlistNum, { addTag: value });
         }
       });
+    }
+
+    // Custom class type input
+    const customInput = editorTr.querySelector('.tag-custom-input');
+    const customBtn = editorTr.querySelector('.tag-custom-add');
+    if (customInput && customBtn) {
+      const addCustomTag = () => {
+        const value = customInput.value.trim();
+        if (!value) return;
+        const existing = (state.playlistTags.get(playlistNum) || []).map(t => t.toLowerCase());
+        if (existing.includes(value.toLowerCase())) {
+          customInput.value = '';
+          return;
+        }
+        updatePlaylistMetadata(playlistNum, { addTag: value });
+      };
+      customBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        addCustomTag();
+      });
+      customInput.addEventListener('keydown', (e) => {
+        e.stopPropagation();
+        if (e.key === 'Enter') { e.preventDefault(); addCustomTag(); }
+      });
+      customInput.addEventListener('click', (e) => e.stopPropagation());
     }
   }
   function buildHistoryRow(row) {
