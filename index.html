@@ -50,7 +50,6 @@
     html, body {
       margin: 0;
       padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-      background-color: var(--page-bg);
       background: var(--page-bg);
       color: var(--cream);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
@@ -147,8 +146,6 @@
       transition: all .2s ease;
       color: var(--ink-light);
     }
-    .pill:hover {
-    }
     /* Class-type tags */
     .class-type-tag {
       display: inline-flex; align-items: center; gap: 4px;
@@ -199,19 +196,6 @@
       font-size: 13px;
       animation: fadeIn .2s ease;
     }
-    .remove-tag {
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-      font-size: 12px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 28px;
-      min-height: 28px;
-      border-radius: 50%;
-    }
-    .remove-tag:hover { opacity: 1; background: var(--surface-secondary); }
     .tag-input-wrapper {
       position: relative;
     }
@@ -259,9 +243,6 @@
     .explorer-row:hover { background: var(--surface-hover) !important; }
     .explorer-row.retired-row { opacity: .55; }
     /* Add Playlist form */
-    .add-playlist-form {
-      margin-bottom: 0;
-    }
     .add-playlist-form .input-field {
       padding: 8px 12px;
       background: var(--surface);
@@ -494,7 +475,6 @@
       border-top-color: var(--border-strong);
     }
     .tooltip-wrapper:hover .tooltip-text { opacity: 1; }
-    .btn:disabled { cursor: not-allowed; }
     .btn {
       padding: 10px 16px;
       border-radius: 12px;
@@ -565,7 +545,6 @@
     .btn-info:hover {
       background: #6B8DA8;
     }
-    .suggestions { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--gap); }
     .recommender-explain {
       margin-top: 10px;
       font-size: 13px;
@@ -636,56 +615,12 @@
       text-align: right;
       font-size: 14px;
     }
-    .suggestion-card {
-      padding: 14px;
-      transition: all .2s ease;
-      border: 1px solid var(--border);
-      background: var(--surface);
-    }
-    .suggestion-card:hover {
-      background: var(--surface-hover);
-      transform: translateY(-2px);
-      border-color: rgba(107,91,138,0.18);
-    }
-    .runner-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .runner-score-delta {
-      font-size: 12px;
-      color: var(--secondary-text);
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--surface-secondary);
-      white-space: nowrap;
-    }
-    .runner-meta {
-      margin-top: 8px;
-      font-size: 12px;
-      color: var(--ink-light);
-    }
-    .runner-actions {
-      margin-top: 10px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .rec-empty-action {
-      margin-top: 10px;
-    }
     .rank-row-assigned td {
       background: rgba(107,160,122,0.06);
     }
     .rank-score {
       font-weight: 700;
       color: var(--primary);
-    }
-    .dashboard-rankings-wrap {
-      overflow-x: auto;
     }
     .class-picker-item {
       display: flex;
@@ -817,7 +752,8 @@
     .selected-guest-item:hover .drag-handle {
       opacity: 1;
     }
-    .remove-guest {
+    .remove-guest,
+    .remove-tag {
       cursor: pointer;
       opacity: 0.7;
       transition: all 0.2s;
@@ -829,7 +765,8 @@
       border-radius: 50%;
       font-size: 12px;
     }
-    .remove-guest:hover {
+    .remove-guest:hover,
+    .remove-tag:hover {
       opacity: 1;
       background: var(--surface-secondary);
     }
@@ -876,7 +813,7 @@
     
     .search-container input {
       width: 100%;
-      padding: 12px 40px 12px 40px;
+      padding: 12px 40px;
       border-radius: 12px;
       background: var(--surface);
       border: 1px solid var(--border-strong);
@@ -927,18 +864,20 @@
       min-height: 16px;
     }
     .search-wrap { display:flex; gap:8px; flex-wrap:wrap; }
-    .search {
-      flex:1;
-      min-width: 240px;
+    .search,
+    .select {
       background: var(--surface);
-      border:1px solid var(--border-strong);
-      padding: 10px 12px; border-radius: 12px; color: var(--ink);
+      border: 1px solid var(--border-strong);
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--ink);
+    }
+    .search {
+      flex: 1;
+      min-width: 240px;
     }
     .select {
       min-width: 160px;
-      background: var(--surface);
-      border:1px solid var(--border-strong);
-      padding: 10px 12px; border-radius: 12px; color: var(--ink);
       cursor: pointer;
     }
     /* Enhanced Tables */
@@ -1292,122 +1231,6 @@
       position: relative;
       z-index: 1;
     }
-    /* Modal Recommendation Panel */
-    .modal-recommendation {
-      background: rgba(107,91,138,0.04);
-      border: 1px solid rgba(107,91,138,0.12);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-    .modal-rec-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .modal-rec-title {
-      font-weight: 600;
-      font-size: 13px;
-      color: var(--primary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .modal-rec-best {
-      margin-bottom: 10px;
-    }
-    .modal-rec-best-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .modal-rec-best-name {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--ink);
-    }
-    .modal-rec-best-name .accent { color: var(--primary); }
-    .modal-rec-metrics {
-      display: flex;
-      gap: 16px;
-      margin-top: 8px;
-    }
-    .modal-rec-metric {
-      text-align: center;
-    }
-    .modal-rec-metric .val {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--cream);
-    }
-    .modal-rec-metric .lbl {
-      font-size: 11px;
-      color: var(--secondary-text);
-      margin-top: 2px;
-    }
-    .modal-rec-strength {
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--ink-light);
-    }
-    .modal-rec-strength strong {
-      color: var(--primary);
-      margin-right: 4px;
-    }
-    .modal-rec-alternatives {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-    .modal-rec-alternatives .alt-label {
-      font-size: 12px;
-      color: var(--secondary-text);
-      margin-right: 4px;
-    }
-    .modal-rec-alt-pill {
-      padding: 6px 14px;
-      min-height: 36px;
-      background: var(--surface-hover);
-      border: 1px solid var(--border-strong);
-      border-radius: 999px;
-      color: var(--ink);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all .15s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .modal-rec-alt-pill .meta {
-      opacity: .75;
-      font-size: 11px;
-      font-weight: 500;
-    }
-    .modal-rec-alt-pill:hover {
-      background: rgba(107,91,138,0.08);
-      border-color: rgba(107,91,138,0.25);
-      transform: translateY(-1px);
-    }
-    .modal-rec-use-btn {
-      padding: 6px 16px;
-      min-height: 36px;
-      background: linear-gradient(180deg, rgba(107,91,138,0.15), rgba(107,91,138,0.08));
-      border: 1px solid rgba(107,91,138,0.25);
-      border-radius: 8px;
-      color: var(--primary);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .15s ease;
-    }
-    .modal-rec-use-btn:hover {
-      background: linear-gradient(180deg, rgba(107,91,138,0.22), rgba(107,91,138,0.12));
-      transform: translateY(-1px);
-    }
     /* Form styling */
     .form-group {
       margin-bottom: 20px;
@@ -1620,20 +1443,9 @@
       animation: slideInRight .3s ease;
     }
 
-    .toast.success {
-      background: var(--surface);
-      border-left-color: var(--success);
-    }
-
-    .toast.error {
-      background: var(--surface);
-      border-left-color: var(--danger);
-    }
-
-    .toast.info {
-      background: var(--surface);
-      border-left-color: var(--info);
-    }
+    .toast.success { border-left-color: var(--success); }
+    .toast.error { border-left-color: var(--danger); }
+    .toast.info { border-left-color: var(--info); }
     /* Loading indicator */
     .loading-spinner {
       display: inline-block;
@@ -1676,9 +1488,7 @@
     }
     @media (hover: none) {
       .tab-btn:hover,
-      .pill:hover,
       .card:hover,
-      .suggestion-card:hover,
       .day-card:hover,
       .class-item:hover,
       .guest-card:hover,
@@ -1727,8 +1537,6 @@
       body { padding-bottom: calc(80px + var(--safe-bottom)); }
       .container { margin-top: 12px; margin-bottom: 12px; }
       .nav {
-        position: sticky;
-        top: 0;
         flex-wrap: nowrap;
         gap: 8px;
         padding: calc(8px + var(--safe-top)) 12px 8px;
@@ -1831,9 +1639,6 @@
         font-size: 12px;
         min-height: 36px;
       }
-      #weekRangePill {
-        order: 0;
-      }
       /* Compact empty day cards on mobile */
       .day-card.empty {
         padding: 8px 12px;
@@ -1845,13 +1650,9 @@
       .day-card.empty .day-header .day-date {
         font-size: 11px;
       }
-      .metric-row {
-        grid-template-columns: repeat(3, 1fr);
-      }
       .best-summary-title { font-size: 20px; }
       .best-insight { font-size: 12px; }
       .best-insight b { min-width: 32px; }
-      .runner-actions .btn { width: 100%; justify-content: center; }
       .form-row {
         grid-template-columns: 1fr;
       }
@@ -1883,7 +1684,7 @@
         background: rgba(0,0,0,0.15);
       }
       .modal__header {
-        padding: 12px 16px 12px;
+        padding: 12px 16px;
       }
       .modal__header h3 {
         font-size: 18px;
@@ -1891,10 +1692,7 @@
       .modal__body {
         padding: 16px;
       }
-      /* Section dividers in modal form */
       .modal__body .form-section-divider {
-        border: none;
-        border-top: 1px solid var(--border);
         margin: 8px 0 20px;
       }
       .modal__footer {
@@ -2753,34 +2551,51 @@
   }
 
   // --- Firestore Write Functions ---
+
+  // Returns a Firestore collection ref under the current user's doc.
+  // Requires state.firebaseUser to be set.
+  function getUserCollectionRef(collectionName) {
+    return db.collection('users').doc(state.firebaseUser.uid).collection(collectionName);
+  }
+
+  // Accepts an array of batch operations and commits them in chunks of 500.
+  // Each op: { action: 'set'|'delete'|'update', ref: docRef, data?: object }
+  async function runFirestoreBatch(ops) {
+    const CHUNK_SIZE = 500;
+    for (let i = 0; i < ops.length; i += CHUNK_SIZE) {
+      const chunk = ops.slice(i, i + CHUNK_SIZE);
+      const batch = db.batch();
+      for (const op of chunk) {
+        if (op.action === 'set') batch.set(op.ref, op.data);
+        else if (op.action === 'delete') batch.delete(op.ref);
+        else if (op.action === 'update') batch.update(op.ref, op.data);
+      }
+      await batch.commit();
+    }
+  }
+
   async function writeRecordsToFirestore(classData) {
     if (!state.firebaseUser) {
       showToast('Please sign in first.', 'error');
       return false;
     }
-    const uid = state.firebaseUser.uid;
-    const batch = db.batch();
-    const recordsRef = db.collection('users').doc(uid).collection('records');
-
-    for (const guest of classData.attendees) {
+    const recordsRef = getUserCollectionRef('records');
+    const ops = [...classData.attendees].map(guest => {
       const recordKey = buildRecordKey({
         date: classData.date,
         time: normalizeTime(classData.time),
         guest,
         playlist: classData.playlist
       });
-      const docRef = recordsRef.doc(safeDocId(recordKey));
-      batch.set(docRef, {
-        date: classData.date,
-        time: normalizeTime(classData.time),
-        guest,
-        playlist: classData.playlist,
-        recordKey
-      });
-    }
+      return {
+        action: 'set',
+        ref: recordsRef.doc(safeDocId(recordKey)),
+        data: { date: classData.date, time: normalizeTime(classData.time), guest, playlist: classData.playlist, recordKey }
+      };
+    });
 
     try {
-      await batch.commit();
+      await runFirestoreBatch(ops);
       showToast(`Synced ${classData.attendees.size} records`, 'success');
       return true;
     } catch (error) {
@@ -2794,10 +2609,8 @@
       showToast('Please sign in first.', 'error');
       return false;
     }
-    const uid = state.firebaseUser.uid;
-    const docId = safeDocId(dateTimeKey);
     try {
-      await db.collection('users').doc(uid).collection('classes').doc(docId).set({
+      await getUserCollectionRef('classes').doc(safeDocId(dateTimeKey)).set({
         date: classData.date,
         time: classData.time,
         playlist: classData.playlist,
@@ -2816,9 +2629,7 @@
 
   async function deleteClassFromFirestore(dateTimeKey) {
     if (!state.firebaseUser) return;
-    const uid = state.firebaseUser.uid;
-    const docId = safeDocId(dateTimeKey);
-    await db.collection('users').doc(uid).collection('classes').doc(docId).delete();
+    await getUserCollectionRef('classes').doc(safeDocId(dateTimeKey)).delete();
   }
 
   async function clearAllFirestoreData() {
@@ -2844,60 +2655,53 @@
       .collection('playlists').doc(playlistId)
       .set(payload, { merge: true });
   }
-  async function setPlaylistStatus(playlistNum, status) {
-    const playlistId = normalizePlaylistId(playlistNum);
-    const normalizedStatus = normalizePlaylistStatus(status);
-    if (!playlistId || !normalizedStatus) return;
-    state.playlistStatus.set(playlistId, normalizedStatus);
-    ensurePlaylistInState(playlistId);
-    saveStateToLocalStorage();
-    refreshAll();
-    if (state.firebaseUser) {
-      try {
-        await upsertPlaylistMetadata(playlistId, { status: normalizedStatus });
-      } catch (err) {
-        showToast('Playlist status save failed: ' + err.message, 'error');
-      }
-    }
-  }
-  async function addPlaylistTag(playlistNum, tag) {
+  async function updatePlaylistMetadata(playlistNum, changes) {
     const playlistId = normalizePlaylistId(playlistNum);
     if (!playlistId) return;
-    const trimmed = tag.trim();
-    if (!trimmed) return;
-    const current = state.playlistTags.get(playlistId) || [];
-    if (current.includes(trimmed)) return;
-    const updated = [...current, trimmed];
-    state.playlistTags.set(playlistId, updated);
-    ensurePlaylistInState(playlistId);
-    saveStateToLocalStorage();
-    refreshAll();
-    if (state.firebaseUser) {
-      try {
-        await upsertPlaylistMetadata(playlistId, { classTypes: updated });
-      } catch (err) {
-        showToast('Tag save failed: ' + err.message, 'error');
-      }
+    const payload = {};
+
+    if (changes.status !== undefined) {
+      const normalizedStatus = normalizePlaylistStatus(changes.status);
+      if (!normalizedStatus) return;
+      state.playlistStatus.set(playlistId, normalizedStatus);
+      payload.status = normalizedStatus;
     }
-  }
-  async function removePlaylistTag(playlistNum, tag) {
-    const playlistId = normalizePlaylistId(playlistNum);
-    if (!playlistId) return;
-    const current = state.playlistTags.get(playlistId) || [];
-    const updated = current.filter(t => t !== tag);
-    if (updated.length > 0) {
+
+    if (changes.addTag !== undefined) {
+      const trimmed = changes.addTag.trim();
+      if (!trimmed) return;
+      const current = state.playlistTags.get(playlistId) || [];
+      if (current.includes(trimmed)) return;
+      const updated = [...current, trimmed];
       state.playlistTags.set(playlistId, updated);
-    } else {
-      state.playlistTags.delete(playlistId);
+      payload.classTypes = updated;
     }
-    rebuildPlaylistsFromData();
+
+    if (changes.removeTag !== undefined) {
+      const current = state.playlistTags.get(playlistId) || [];
+      const updated = current.filter(t => t !== changes.removeTag);
+      if (updated.length > 0) {
+        state.playlistTags.set(playlistId, updated);
+      } else {
+        state.playlistTags.delete(playlistId);
+      }
+      payload.classTypes = updated;
+    }
+
+    if (changes.removeTag !== undefined) {
+      rebuildPlaylistsFromData();
+    } else {
+      ensurePlaylistInState(playlistId);
+    }
+
     saveStateToLocalStorage();
     refreshAll();
-    if (state.firebaseUser) {
+
+    if (state.firebaseUser && Object.keys(payload).length > 0) {
       try {
-        await upsertPlaylistMetadata(playlistId, { classTypes: updated });
+        await upsertPlaylistMetadata(playlistId, payload);
       } catch (err) {
-        showToast('Tag remove failed: ' + err.message, 'error');
+        showToast('Playlist save failed: ' + err.message, 'error');
       }
     }
   }
@@ -3674,123 +3478,129 @@
       }
     });
   }
+  function setupDragReorder(container, itemSelector, handleSelector, onReorder) {
+    const items = container.querySelectorAll(itemSelector);
+
+    items.forEach(function(item) {
+      const idx = parseInt(item.dataset.index, 10);
+
+      // Desktop drag-and-drop
+      item.addEventListener("dragstart", function(e) {
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", String(idx));
+        requestAnimationFrame(() => item.classList.add("dragging"));
+      });
+      item.addEventListener("dragend", function() {
+        item.classList.remove("dragging");
+        container.querySelectorAll(itemSelector).forEach(el => el.classList.remove("drag-over"));
+      });
+      item.addEventListener("dragover", function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        container.querySelectorAll(itemSelector).forEach(el => el.classList.remove("drag-over"));
+        item.classList.add("drag-over");
+      });
+      item.addEventListener("dragleave", function() {
+        item.classList.remove("drag-over");
+      });
+      item.addEventListener("drop", function(e) {
+        e.preventDefault();
+        item.classList.remove("drag-over");
+        const fromIdx = parseInt(e.dataTransfer.getData("text/plain"), 10);
+        if (fromIdx !== idx) onReorder(fromIdx, idx);
+      });
+
+      // Touch drag-and-drop
+      let touchClone = null;
+      let touchStarted = false;
+      let holdTimer = null;
+
+      const handle = item.querySelector(handleSelector);
+      if (!handle) return;
+
+      handle.addEventListener("touchstart", function(e) {
+        holdTimer = setTimeout(function() {
+          touchStarted = true;
+          item.classList.add("dragging");
+          const touch = e.touches[0];
+          touchClone = item.cloneNode(true);
+          touchClone.classList.add("touch-clone");
+          touchClone.style.position = "fixed";
+          touchClone.style.left = (touch.clientX - 40) + "px";
+          touchClone.style.top = (touch.clientY - 20) + "px";
+          touchClone.style.zIndex = "9999";
+          touchClone.style.pointerEvents = "none";
+          document.body.appendChild(touchClone);
+        }, 150);
+      }, { passive: true });
+
+      handle.addEventListener("touchmove", function(e) {
+        if (!touchStarted) { clearTimeout(holdTimer); return; }
+        e.preventDefault();
+        const touch = e.touches[0];
+        if (touchClone) {
+          touchClone.style.left = (touch.clientX - 40) + "px";
+          touchClone.style.top = (touch.clientY - 20) + "px";
+        }
+        container.querySelectorAll(itemSelector).forEach(el => el.classList.remove("drag-over"));
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (target) {
+          const hit = target.closest(itemSelector);
+          if (hit && hit !== item) hit.classList.add("drag-over");
+        }
+      }, { passive: false });
+
+      function touchEnd() {
+        clearTimeout(holdTimer);
+        if (!touchStarted) return;
+        touchStarted = false;
+        item.classList.remove("dragging");
+        if (touchClone) { touchClone.remove(); touchClone = null; }
+        const overEl = container.querySelector(itemSelector + ".drag-over");
+        if (overEl) {
+          const toIdx = parseInt(overEl.dataset.index, 10);
+          overEl.classList.remove("drag-over");
+          if (idx !== toIdx) onReorder(idx, toIdx);
+        }
+        container.querySelectorAll(itemSelector).forEach(el => el.classList.remove("drag-over"));
+      }
+      handle.addEventListener("touchend", touchEnd);
+      handle.addEventListener("touchcancel", touchEnd);
+    });
+  }
+
   function renderModalSelectedGuests() {
     const container = $("#modal-selected-guests");
     container.innerHTML = "";
-    
+
     if (state.modalAttendees.length === 0) {
       container.innerHTML = `<div class="no-selection">No guests selected</div>`;
-    } else {
-      state.modalAttendees.forEach((name, idx) => {
-        const guestChip = document.createElement("div");
-        guestChip.className = "selected-guest-item";
-        guestChip.draggable = true;
-        guestChip.dataset.index = idx;
-        guestChip.dataset.guest = name;
-        guestChip.innerHTML = `<span class="drag-handle" aria-label="Drag to reorder">⠿</span><span>${esc(name)}</span><span class="remove-guest" data-guest="${esc(name)}">✕</span>`;
-        guestChip.querySelector(".remove-guest").addEventListener("click", (e) => {
-          e.stopPropagation();
-          state.modalAttendees = state.modalAttendees.filter(g => g !== name);
-          renderModalSelectedGuests();
-          updateModalGuestListSelection();
-        });
-
-        // Desktop drag-and-drop
-        guestChip.addEventListener("dragstart", (e) => {
-          e.dataTransfer.effectAllowed = "move";
-          e.dataTransfer.setData("text/plain", String(idx));
-          requestAnimationFrame(() => guestChip.classList.add("dragging"));
-        });
-        guestChip.addEventListener("dragend", () => {
-          guestChip.classList.remove("dragging");
-          container.querySelectorAll(".selected-guest-item").forEach(el => el.classList.remove("drag-over"));
-        });
-        guestChip.addEventListener("dragover", (e) => {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = "move";
-          container.querySelectorAll(".selected-guest-item").forEach(el => el.classList.remove("drag-over"));
-          guestChip.classList.add("drag-over");
-        });
-        guestChip.addEventListener("dragleave", () => {
-          guestChip.classList.remove("drag-over");
-        });
-        guestChip.addEventListener("drop", (e) => {
-          e.preventDefault();
-          guestChip.classList.remove("drag-over");
-          const fromIdx = parseInt(e.dataTransfer.getData("text/plain"), 10);
-          const toIdx = idx;
-          if (fromIdx !== toIdx) {
-            const moved = state.modalAttendees.splice(fromIdx, 1)[0];
-            state.modalAttendees.splice(toIdx, 0, moved);
-            renderModalSelectedGuests();
-          }
-        });
-
-        // Touch drag-and-drop
-        let touchClone = null;
-        let touchStarted = false;
-        let holdTimer = null;
-
-        const handleEl = guestChip.querySelector(".drag-handle");
-        handleEl.addEventListener("touchstart", (e) => {
-          holdTimer = setTimeout(() => {
-            touchStarted = true;
-            guestChip.classList.add("dragging");
-            const touch = e.touches[0];
-            touchClone = guestChip.cloneNode(true);
-            touchClone.classList.add("touch-clone");
-            touchClone.style.position = "fixed";
-            touchClone.style.left = (touch.clientX - 40) + "px";
-            touchClone.style.top = (touch.clientY - 20) + "px";
-            touchClone.style.zIndex = "9999";
-            touchClone.style.pointerEvents = "none";
-            document.body.appendChild(touchClone);
-          }, 150);
-        }, { passive: true });
-
-        handleEl.addEventListener("touchmove", (e) => {
-          if (!touchStarted) { clearTimeout(holdTimer); return; }
-          e.preventDefault();
-          const touch = e.touches[0];
-          if (touchClone) {
-            touchClone.style.left = (touch.clientX - 40) + "px";
-            touchClone.style.top = (touch.clientY - 20) + "px";
-          }
-          // Highlight drop target
-          container.querySelectorAll(".selected-guest-item").forEach(el => el.classList.remove("drag-over"));
-          const target = document.elementFromPoint(touch.clientX, touch.clientY);
-          if (target) {
-            const chip = target.closest(".selected-guest-item");
-            if (chip && chip !== guestChip) chip.classList.add("drag-over");
-          }
-        }, { passive: false });
-
-        const touchEnd = () => {
-          clearTimeout(holdTimer);
-          if (!touchStarted) return;
-          touchStarted = false;
-          guestChip.classList.remove("dragging");
-          if (touchClone) { touchClone.remove(); touchClone = null; }
-          // Find drop target
-          const overEl = container.querySelector(".selected-guest-item.drag-over");
-          if (overEl) {
-            const toIdx = parseInt(overEl.dataset.index, 10);
-            const fromIdx = idx;
-            overEl.classList.remove("drag-over");
-            if (fromIdx !== toIdx) {
-              const moved = state.modalAttendees.splice(fromIdx, 1)[0];
-              state.modalAttendees.splice(toIdx, 0, moved);
-              renderModalSelectedGuests();
-            }
-          }
-          container.querySelectorAll(".selected-guest-item").forEach(el => el.classList.remove("drag-over"));
-        };
-        handleEl.addEventListener("touchend", touchEnd);
-        handleEl.addEventListener("touchcancel", touchEnd);
-
-        container.appendChild(guestChip);
-      });
+      return;
     }
+
+    state.modalAttendees.forEach(function(name, idx) {
+      const chip = document.createElement("div");
+      chip.className = "selected-guest-item";
+      chip.draggable = true;
+      chip.dataset.index = idx;
+      chip.dataset.guest = name;
+      chip.innerHTML = `<span class="drag-handle" aria-label="Drag to reorder">⠿</span><span>${esc(name)}</span><span class="remove-guest" data-guest="${esc(name)}">✕</span>`;
+
+      chip.querySelector(".remove-guest").addEventListener("click", function(e) {
+        e.stopPropagation();
+        state.modalAttendees = state.modalAttendees.filter(g => g !== name);
+        renderModalSelectedGuests();
+        updateModalGuestListSelection();
+      });
+
+      container.appendChild(chip);
+    });
+
+    setupDragReorder(container, ".selected-guest-item", ".drag-handle", function(fromIdx, toIdx) {
+      const moved = state.modalAttendees.splice(fromIdx, 1)[0];
+      state.modalAttendees.splice(toIdx, 0, moved);
+      renderModalSelectedGuests();
+    });
   }
   function updateModalGuestListSelection() {
     $$("#modal-guest-list .guest-list-item").forEach(item => {
@@ -4049,55 +3859,51 @@
       `;
     }).join('');
   }
+  function createCell(label, content) {
+    const td = document.createElement('td');
+    td.dataset.label = label;
+    if (typeof content === 'string') {
+      td.innerHTML = content;
+    } else {
+      td.appendChild(content);
+    }
+    return td;
+  }
   function refreshExplorer() {
     const tbody = $("#explorerTbody");
     tbody.innerHTML = "";
     const { column, ascending } = state.explorerSortOrder;
+    const dir = ascending ? 1 : -1;
 
-    // Build playlist data array for sorting
-    const rows = state.playlists.map(pl => {
-      const status = state.playlistStatus.get(pl) || 'Active';
-      return { playlist: pl, status };
-    });
+    const rows = state.playlists.map(pl => ({
+      playlist: pl,
+      status: state.playlistStatus.get(pl) || 'Active'
+    }));
 
     rows.sort((a, b) => {
-      if (column === 'playlist') {
-        const cmp = comparePlaylistIds(a.playlist, b.playlist);
-        return ascending ? cmp : -cmp;
-      }
-      if (column === 'status') {
-        const cmp = a.status.localeCompare(b.status);
-        return ascending ? cmp : -cmp;
-      }
+      if (column === 'playlist') return dir * comparePlaylistIds(a.playlist, b.playlist);
+      if (column === 'status') return dir * a.status.localeCompare(b.status);
       return 0;
     });
 
     rows.forEach(row => {
       const pl = row.playlist;
-      const status = row.status;
+      const isRetired = row.status === 'Retired';
       const tags = state.playlistTags.get(pl) || [];
-      const isRetired = status === 'Retired';
       const tr = document.createElement('tr');
       tr.className = 'explorer-row' + (isRetired ? ' retired-row' : '');
 
-      // Playlist name cell
-      const tdName = document.createElement('td');
-      tdName.dataset.label = 'Playlist';
-      tdName.innerHTML = `<strong>Playlist #${esc(pl)}</strong>`;
-
-      // Tags cell
-      const tdTags = document.createElement('td');
-      tdTags.dataset.label = 'Tags';
+      // Tags cell content
       const tagsDiv = document.createElement('div');
       tagsDiv.className = 'manager-tags-cell';
       tags.forEach(t => {
         const chip = document.createElement('span');
         chip.className = 'tag-chip-removable';
         chip.dataset.tag = t;
-        chip.innerHTML = `<span>${esc(t)}</span><span class="remove-tag">✕</span>`;
+        chip.innerHTML = `<span>${esc(t)}</span><span class="remove-tag">\u2715</span>`;
         chip.querySelector('.remove-tag').addEventListener('click', e => {
           e.stopPropagation();
-          removePlaylistTag(pl, t);
+          updatePlaylistMetadata(pl, { removeTag: t });
         });
         tagsDiv.appendChild(chip);
       });
@@ -4107,31 +3913,21 @@
       addTagBtn.title = 'Add tag';
       addTagBtn.addEventListener('click', e => {
         e.stopPropagation();
-        if (state.expandedPlaylist === pl) {
-          state.expandedPlaylist = null;
-        } else {
-          state.expandedPlaylist = pl;
-        }
+        state.expandedPlaylist = state.expandedPlaylist === pl ? null : pl;
         refreshExplorer();
       });
       tagsDiv.appendChild(addTagBtn);
-      tdTags.appendChild(tagsDiv);
 
-      // Status cell
-      const tdStatus = document.createElement('td');
-      tdStatus.dataset.label = 'Status';
+      // Status cell content
       const statusPill = document.createElement('span');
       statusPill.className = 'status-toggle ' + (isRetired ? 'retired' : 'active');
-      statusPill.textContent = status;
+      statusPill.textContent = row.status;
       statusPill.addEventListener('click', e => {
         e.stopPropagation();
-        setPlaylistStatus(pl, isRetired ? 'Active' : 'Retired');
+        updatePlaylistMetadata(pl, { status: isRetired ? 'Active' : 'Retired' });
       });
-      tdStatus.appendChild(statusPill);
 
-      // Actions cell
-      const tdActions = document.createElement('td');
-      tdActions.dataset.label = 'Actions';
+      // Actions cell content
       const removeBtn = document.createElement('button');
       removeBtn.className = 'btn-remove-playlist';
       removeBtn.textContent = 'Remove';
@@ -4139,12 +3935,11 @@
         e.stopPropagation();
         removePlaylist(pl);
       });
-      tdActions.appendChild(removeBtn);
 
-      tr.appendChild(tdName);
-      tr.appendChild(tdTags);
-      tr.appendChild(tdStatus);
-      tr.appendChild(tdActions);
+      tr.appendChild(createCell('Playlist', `<strong>Playlist #${esc(pl)}</strong>`));
+      tr.appendChild(createCell('Tags', tagsDiv));
+      tr.appendChild(createCell('Status', statusPill));
+      tr.appendChild(createCell('Actions', removeBtn));
       tbody.appendChild(tr);
 
       // Expanded tag editor row
@@ -4181,7 +3976,7 @@
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const tag = btn.closest('.tag-chip-removable').dataset.tag;
-        removePlaylistTag(playlistNum, tag);
+        updatePlaylistMetadata(playlistNum, { removeTag: tag });
       });
     });
 
@@ -4191,129 +3986,121 @@
       select.addEventListener('change', () => {
         const value = select.value;
         if (value) {
-          addPlaylistTag(playlistNum, value);
+          updatePlaylistMetadata(playlistNum, { addTag: value });
         }
       });
     }
   }
+  function buildHistoryRow(row) {
+    const guestArray = [...row.guests].sort();
+    const classTypeText = row.classType
+      ? esc(row.classType)
+      : '<span style="color:var(--secondary-text);">-</span>';
+    const moreCount = guestArray.length - 3;
+    const moreText = moreCount > 0
+      ? ` <span class="history-expand-guests" style="color:var(--primary); cursor:pointer;">+${moreCount} more</span>`
+      : '';
+    const shortNames = guestArray.slice(0, 3).map(g => esc(g)).join(", ");
+    const allNames = guestArray.map(g => esc(g)).join(", ");
+    return `<tr data-date="${esc(row.date)}" data-time="${esc(row.time)}" data-playlist="${esc(row.playlist)}">
+      <td data-label="Date & Time">${formatDate(row.date)} ${formatTime(row.time)}</td>
+      <td data-label="Class Type">${classTypeText}</td>
+      <td data-label="Playlist"><strong>Playlist #${row.playlist}</strong></td>
+      <td data-label="Attendees"><span class="pill">${guestArray.length}</span></td>
+      <td data-label="Guest Names"><span class="guest-names-short">${shortNames}${moreText}</span><span class="guest-names-full" style="display:none;">${allNames} <span class="history-collapse-guests" style="color:var(--primary); cursor:pointer;">show less</span></span></td>
+      <td data-label="Status"><span class="pill status-finalized">Completed</span></td>
+      <td data-label="Actions"><div class="history-actions"><button class="history-edit-btn" title="Edit class">&#9998;</button><button class="history-delete-btn" title="Delete class">&#128465;</button></div></td>
+    </tr>`;
+  }
+  function getHistorySortValue(row, column) {
+    if (column === 'datetime') return new Date(`${row.date}T${row.time}`);
+    if (column === 'count') return row.guests.size;
+    return row[column];
+  }
   function refreshHistory() {
     const tbody = $("#historyTbody");
     const searchTerm = $("#history-search").value.toLowerCase();
-    
+
     const byClass = new Map();
-    [...state.records, ...Array.from(state.weeklyPlan.values()).filter(c => c.status === 'finalized')]
-    .forEach(r => {
-        if (!r.playlist) return;
-        const normalizedTime = normalizeTime(r.time, '00:00');
-        const classNumber = normalizeClassNumber(r.classNumber);
-        const key = classNumber
-          ? `${r.date}T${normalizedTime}::${r.playlist}::${classNumber}`
-          : `${r.date}T${normalizedTime}::${r.playlist}`;
-        if (!byClass.has(key)) {
-            byClass.set(key, { date: r.date, time: normalizedTime, playlist: r.playlist, classType: r.classType || '', classNumber, guests: new Set(), status: 'finalized' });
-        }
-        const entry = byClass.get(key);
-        if (!entry.classType && r.classType) entry.classType = r.classType;
-        if (!entry.classNumber && classNumber) entry.classNumber = classNumber;
-        if (r.guest) {
-            entry.guests.add(r.guest);
-        } else if (r.attendees) {
-            r.attendees.forEach(g => entry.guests.add(g));
-        }
+    const sources = [...state.records, ...Array.from(state.weeklyPlan.values()).filter(c => c.status === 'finalized')];
+    sources.forEach(r => {
+      if (!r.playlist) return;
+      const normalizedTime = normalizeTime(r.time, '00:00');
+      const classNumber = normalizeClassNumber(r.classNumber);
+      const key = classNumber
+        ? `${r.date}T${normalizedTime}::${r.playlist}::${classNumber}`
+        : `${r.date}T${normalizedTime}::${r.playlist}`;
+      if (!byClass.has(key)) {
+        byClass.set(key, { date: r.date, time: normalizedTime, playlist: r.playlist, classType: r.classType || '', classNumber, guests: new Set(), status: 'finalized' });
+      }
+      const entry = byClass.get(key);
+      if (!entry.classType && r.classType) entry.classType = r.classType;
+      if (!entry.classNumber && classNumber) entry.classNumber = classNumber;
+      if (r.guest) {
+        entry.guests.add(r.guest);
+      } else if (r.attendees) {
+        r.attendees.forEach(g => entry.guests.add(g));
+      }
     });
 
-    let rows = [...byClass.values()].filter(row => {
-        if (!searchTerm) return true;
-        const guestNames = [...row.guests].join(' ').toLowerCase();
-        const classType = (row.classType || '').toLowerCase();
-        const classNumber = (row.classNumber || '').toLowerCase();
-        return row.date.includes(searchTerm) || row.playlist.toString().includes(searchTerm) || classType.includes(searchTerm) || classNumber.includes(searchTerm) || guestNames.includes(searchTerm);
-    });
-    
+    let rows = [...byClass.values()];
+    if (searchTerm) {
+      rows = rows.filter(row => {
+        const searchable = [
+          row.date,
+          row.playlist.toString(),
+          row.classType || '',
+          row.classNumber || '',
+          [...row.guests].join(' ')
+        ].join(' ').toLowerCase();
+        return searchable.includes(searchTerm);
+      });
+    }
+
     const { column, ascending } = state.sortOrder;
     rows.sort((a, b) => {
-        let aVal, bVal;
-        if (column === 'datetime') {
-            aVal = new Date(`${a.date}T${a.time}`);
-            bVal = new Date(`${b.date}T${b.time}`);
-        } else if (column === 'count') {
-            aVal = a.guests.size;
-            bVal = b.guests.size;
-        } else {
-            aVal = a[column];
-            bVal = b[column];
-        }
-        if (aVal < bVal) return ascending ? -1 : 1;
-        if (aVal > bVal) return ascending ? 1 : -1;
-        return 0;
+      const aVal = getHistorySortValue(a, column);
+      const bVal = getHistorySortValue(b, column);
+      if (aVal < bVal) return ascending ? -1 : 1;
+      if (aVal > bVal) return ascending ? 1 : -1;
+      return 0;
     });
 
-    // Update history summary stats
-    const histStats = $("#history-stats");
     const totalClasses = rows.length;
     const uniquePlaylists = new Set(rows.map(r => r.playlist)).size;
     const uniqueGuests = new Set(rows.flatMap(r => [...r.guests])).size;
-    histStats.innerHTML = `
+    $("#history-stats").innerHTML = `
       <div class="stat-item"><span class="stat-value">${totalClasses}</span> classes</div>
       <div class="stat-item"><span class="stat-value">${uniquePlaylists}</span> playlists used</div>
       <div class="stat-item"><span class="stat-value">${uniqueGuests}</span> unique guests</div>
     `;
 
-    tbody.innerHTML = "";
     if (rows.length === 0) {
       tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:48px 20px; color:var(--secondary-text);"><div style="font-size:48px; opacity:.4; margin-bottom:12px;">&#128214;</div><div style="font-size:16px; color:var(--ink-light); margin-bottom:6px;">No class history yet</div><div style="font-size:13px;">Finalize classes from the Weekly Planner to build your history.</div></td></tr>`;
       return;
     }
-    rows.forEach(row => {
-      const guestArray = [...row.guests].sort();
-      const classTypeText = row.classType ? esc(row.classType) : '<span style="color:var(--secondary-text);">-</span>';
-      const moreCount = guestArray.length - 3;
-      const moreText = moreCount > 0
-        ? ` <span class="history-expand-guests" style="color:var(--primary); cursor:pointer;" data-guests="${guestArray.map(g => esc(g)).join('|||')}">+${moreCount} more</span>`
-        : '';
-      const tr = `
-        <tr data-date="${esc(row.date)}" data-time="${esc(row.time)}" data-playlist="${esc(row.playlist)}">
-          <td data-label="Date & Time">${formatDate(row.date)} ${formatTime(row.time)}</td>
-          <td data-label="Class Type">${classTypeText}</td>
-          <td data-label="Playlist"><strong>Playlist #${row.playlist}</strong></td>
-          <td data-label="Attendees"><span class="pill">${guestArray.length}</span></td>
-          <td data-label="Guest Names"><span class="guest-names-short">${guestArray.slice(0, 3).map(g => esc(g)).join(", ")}${moreText}</span><span class="guest-names-full" style="display:none;">${guestArray.map(g => esc(g)).join(", ")} <span class="history-collapse-guests" style="color:var(--primary); cursor:pointer;">show less</span></span></td>
-          <td data-label="Status"><span class="pill status-finalized">Completed</span></td>
-          <td data-label="Actions"><div class="history-actions"><button class="history-edit-btn" title="Edit class">&#9998;</button><button class="history-delete-btn" title="Delete class">&#128465;</button></div></td>
-        </tr>
-      `;
-      tbody.innerHTML += tr;
-    });
-    // Expandable guest names
-    tbody.querySelectorAll('.history-expand-guests').forEach(el => {
-      el.addEventListener('click', (e) => {
-        const td = e.target.closest('td');
+
+    tbody.innerHTML = rows.map(buildHistoryRow).join('');
+
+    // Event delegation for all history table interactions
+    tbody.onclick = function(e) {
+      const target = e.target;
+      const td = target.closest('td');
+      const tr = target.closest('tr');
+      if (target.closest('.history-expand-guests')) {
         td.querySelector('.guest-names-short').style.display = 'none';
         td.querySelector('.guest-names-full').style.display = '';
-      });
-    });
-    tbody.querySelectorAll('.history-collapse-guests').forEach(el => {
-      el.addEventListener('click', (e) => {
-        const td = e.target.closest('td');
+      } else if (target.closest('.history-collapse-guests')) {
         td.querySelector('.guest-names-short').style.display = '';
         td.querySelector('.guest-names-full').style.display = 'none';
-      });
-    });
-    // Edit/Delete buttons
-    tbody.querySelectorAll('.history-edit-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      } else if (target.closest('.history-edit-btn')) {
         e.stopPropagation();
-        const tr = e.target.closest('tr');
         openHistoryClassModal(tr.dataset.date, tr.dataset.time, tr.dataset.playlist);
-      });
-    });
-    tbody.querySelectorAll('.history-delete-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      } else if (target.closest('.history-delete-btn')) {
         e.stopPropagation();
-        const tr = e.target.closest('tr');
         deleteHistoryEntry(tr.dataset.date, tr.dataset.time, tr.dataset.playlist);
-      });
-    });
+      }
+    };
   }
   function refreshGuests() {
     const container = $("#guests-grid");
@@ -4411,21 +4198,70 @@
   }
 
   function showAddGuestPrompt() {
-    const name = prompt('Enter new guest name:');
-    if (name === null) return;
-    const trimmed = name.trim();
-    if (!trimmed) {
-      showToast('Guest name cannot be empty.', 'error');
-      return;
+    // Remove any existing add-guest modal
+    const existing = $('#add-guest-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'add-guest-modal';
+    overlay.className = 'modal';
+    overlay.innerHTML = `
+      <div class="modal__content" style="max-width:400px;">
+        <div class="modal__header">
+          <h3>Add New Guest</h3>
+          <button class="modal__close" data-action="close">&times;</button>
+        </div>
+        <div class="modal__body">
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="add-guest-input">Guest Name</label>
+            <input type="text" id="add-guest-input" placeholder="Enter guest name" autocomplete="off">
+          </div>
+        </div>
+        <div class="modal__footer" style="justify-content:flex-end;gap:8px;">
+          <button class="btn" data-action="close">Cancel</button>
+          <button class="btn btn-primary" data-action="add">Add Guest</button>
+        </div>
+      </div>`;
+
+    document.body.appendChild(overlay);
+
+    const input = overlay.querySelector('#add-guest-input');
+    const addBtn = overlay.querySelector('[data-action="add"]');
+
+    function close() {
+      overlay.remove();
     }
-    if (state.allGuests.has(trimmed)) {
-      showToast(`"${trimmed}" already exists.`, 'error');
-      return;
+
+    function addGuest() {
+      const trimmed = input.value.trim();
+      if (!trimmed) {
+        showToast('Guest name cannot be empty.', 'error');
+        input.focus();
+        return;
+      }
+      if (state.allGuests.has(trimmed)) {
+        showToast(`"${esc(trimmed)}" already exists.`, 'error');
+        input.focus();
+        return;
+      }
+      state.allGuests.add(trimmed);
+      saveStateToLocalStorage();
+      refreshGuests();
+      showToast(`"${esc(trimmed)}" added.`, 'success');
+      close();
     }
-    state.allGuests.add(trimmed);
-    saveStateToLocalStorage();
-    refreshGuests();
-    showToast(`"${trimmed}" added.`, 'success');
+
+    // Close on overlay backdrop click or close/cancel buttons
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay || e.target.dataset.action === 'close') close();
+    });
+    addBtn.addEventListener('click', addGuest);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addGuest();
+      if (e.key === 'Escape') close();
+    });
+
+    input.focus();
   }
 
   async function renameGuest(oldName, newName) {
@@ -4570,8 +4406,8 @@
   }
 
   // --- EVENT LISTENERS ---
-  function addEventListeners() {
-      // Tab navigation
+
+  function wireNavEvents() {
       $$('.tab-btn').forEach(btn => {
           btn.addEventListener('click', () => {
               const tab = btn.dataset.tab;
@@ -4582,7 +4418,6 @@
               section.classList.remove('hidden');
               section.classList.add('section-enter');
 
-              // Refresh content on tab switch
               if(tab === 'weekly') renderWeeklyCalendar();
               if(tab === 'dashboard') refreshAll();
               if(tab === 'history') refreshHistory();
@@ -4590,7 +4425,9 @@
               if(tab === 'explorer') refreshAll();
           });
       });
-      // Dashboard controls — class picker
+  }
+
+  function wireDashboardEvents() {
       const selectAllDraftsBtn = $('#selectAllDraftsBtn');
       if (selectAllDraftsBtn) {
         selectAllDraftsBtn.addEventListener('click', () => {
@@ -4644,7 +4481,6 @@
           showToast('Select planned classes with attendees to view details.', 'error');
           return;
         }
-        // Merge attendees from all selected classes
         const mergedAttendees = new Set();
         selectedEntries.forEach(entry => {
           const cls = entry.cls || {};
@@ -4685,24 +4521,24 @@
           ? esc(formatDateTime(selectedEntries[0].cls.date, selectedEntries[0].cls.time))
           : `${classCount} classes selected`;
         let html = `<h4 style="margin-bottom:12px;">Playlist #${best.playlist} — Roster Breakdown</h4>`;
-        html += `<p class="muted" style="margin-bottom:12px;">${classLabel} \u2022 ${roster.length} attendees \u2022 Replay-ready threshold: ${windowDays} days</p>`;
+        html += `<p class="muted" style="margin-bottom:12px;">${classLabel} • ${roster.length} attendees • Replay-ready threshold: ${windowDays} days</p>`;
         if (neverList.length > 0) {
           html += `<div style="margin-bottom:12px;"><strong>Never Heard (${neverList.length})</strong><div style="margin-top:4px;">${neverList.map(g => `<span class="pill">${esc(g)}</span>`).join(' ')}</div></div>`;
         }
         if (readyList.length > 0) {
-          html += `<div style="margin-bottom:12px;"><strong>Replay-ready (${readyList.length})</strong><div style="margin-top:4px;">${readyList.map(g => `<span class="pill status-draft">${esc(g.name)} \u2014 ${g.days}d ago</span>`).join(' ')}</div></div>`;
+          html += `<div style="margin-bottom:12px;"><strong>Replay-ready (${readyList.length})</strong><div style="margin-top:4px;">${readyList.map(g => `<span class="pill status-draft">${esc(g.name)} — ${g.days}d ago</span>`).join(' ')}</div></div>`;
         }
         if (recentList.length > 0) {
-          html += `<div style="margin-bottom:12px;"><strong>Recently heard (${recentList.length})</strong><div style="margin-top:4px;">${recentList.map(g => `<span class="pill status-finalized">${esc(g.name)} \u2014 ${g.days}d ago</span>`).join(' ')}</div></div>`;
+          html += `<div style="margin-bottom:12px;"><strong>Recently heard (${recentList.length})</strong><div style="margin-top:4px;">${recentList.map(g => `<span class="pill status-finalized">${esc(g.name)} — ${g.days}d ago</span>`).join(' ')}</div></div>`;
         }
         $('#guest-modal-title').textContent = 'Playlist Detail';
         $('#guest-modal-content').innerHTML = html;
         $('#guest-modal').classList.remove('hidden');
         });
       }
-      
-      // Guest search
-      // Search with clear buttons
+  }
+
+  function wireSearchEvents() {
       function setupSearchClear(inputId, clearId, onClear) {
         const input = $(inputId);
         const btn = $(clearId);
@@ -4711,10 +4547,12 @@
         input.addEventListener('input', syncBtn);
         btn.addEventListener('click', () => { input.value = ''; syncBtn(); if (onClear) onClear(); });
       }
+
       // Guests tab search & add
       $('#guest-search-filter').addEventListener('input', refreshGuests);
       setupSearchClear('#guest-search-filter', '#guest-filter-clear', refreshGuests);
       $('#add-guest-btn').addEventListener('click', showAddGuestPrompt);
+
       // Modal guest search
       $('#modal-guest-search').addEventListener('input', () => {
           filterModalGuestVisibility();
@@ -4731,11 +4569,13 @@
       setupSearchClear('#modal-guest-search', '#modal-guest-search-clear', () => {
         filterModalGuestVisibility();
       });
+
       // History search
       $('#history-search').addEventListener('input', refreshHistory);
       setupSearchClear('#history-search', '#history-search-clear', refreshHistory);
+  }
 
-      // Add Playlist form handlers
+  function wireExplorerEvents() {
       $('#addPlaylistBtn').addEventListener('click', () => {
         const form = $('#addPlaylistForm');
         form.style.display = form.style.display === 'none' ? '' : 'none';
@@ -4767,8 +4607,9 @@
           $('#addPlaylistForm').style.display = 'none';
         }
       });
+  }
 
-      // Sorting table headers
+  function wireSortEvents() {
       $$('#history-table .sortable, #explorer thead .sortable').forEach(header => {
           header.addEventListener('click', () => {
               const sortKey = header.dataset.sort;
@@ -4781,15 +4622,16 @@
                   sortState.column = sortKey;
                   sortState.ascending = false;
               }
-              
+
               header.closest('table').querySelectorAll('.sortable').forEach(h => h.classList.remove('asc', 'desc'));
               header.classList.add(sortState.ascending ? 'asc' : 'desc');
-              
+
               if (isExplorer) refreshExplorer(); else refreshHistory();
           });
       });
+  }
 
-      // Sync All Finalized
+  function wirePlannerEvents() {
       // Finalize All Drafts
       $('#syncAllBtn').addEventListener('click', async () => {
         if (!state.firebaseUser) {
@@ -4851,12 +4693,14 @@
         }
       });
 
-      // Weekly Planner Navigation
+      // Week navigation
       $('#prevWeekBtn').addEventListener('click', () => navigateWeek(-1));
       $('#currentWeekBtn').addEventListener('click', () => navigateWeek(0));
       $('#nextWeekBtn').addEventListener('click', () => navigateWeek(1));
+  }
 
-      // Auth Buttons
+  function wireSettingsEvents() {
+      // Auth
       const signInHandler = async () => {
         const provider = new firebase.auth.GoogleAuthProvider();
         try {
@@ -4872,7 +4716,7 @@
       $('#settingsSignInBtn').addEventListener('click', signInHandler);
       $('#settingsSignOutBtn').addEventListener('click', () => auth.signOut());
 
-      // Settings Buttons
+      // Data management
       $('#clearDataBtn').addEventListener('click', async () => {
           if (confirm('Are you sure you want to delete ALL data? This cannot be undone.')) {
               try {
@@ -4892,18 +4736,29 @@
       $('#importCsvBtn').addEventListener('click', () => $('#fileInput').click());
       $('#exportCsvBtn').addEventListener('click', exportToCsv);
       $('#fileInput').addEventListener('change', handleCsvImport);
+  }
 
-      // Modals
+  function wireModalEvents() {
       $$('#close-class-modal, #cancel-modal').forEach(btn => btn.addEventListener('click', () => $('#class-modal').classList.add('hidden')));
       $('#close-guest-modal').addEventListener('click', () => $('#guest-modal').classList.add('hidden'));
       $('#save-draft-modal').addEventListener('click', handleModalSave);
       $('#delete-class-modal').addEventListener('click', handleModalDelete);
-      // Modal Clear All
       $('#modalClearAllBtn').addEventListener('click', () => {
         state.modalAttendees = [];
         renderModalSelectedGuests();
         updateModalGuestListSelection();
       });
+  }
+
+  function addEventListeners() {
+      wireNavEvents();
+      wireDashboardEvents();
+      wireSearchEvents();
+      wireExplorerEvents();
+      wireSortEvents();
+      wirePlannerEvents();
+      wireSettingsEvents();
+      wireModalEvents();
   }
 
   // --- Modal Handlers ---
@@ -4951,14 +4806,12 @@
 
       try {
         if (state.firebaseUser) {
-          const uid = state.firebaseUser.uid;
           if (oldKey !== newKey) {
-            const batch = db.batch();
-            batch.delete(db.collection('users').doc(uid).collection('classes').doc(safeDocId(oldKey)));
-            batch.set(db.collection('users').doc(uid).collection('classes').doc(safeDocId(newKey)), {
-              ...classData, attendees: Array.from(classData.attendees), dateTimeKey: newKey
-            });
-            await batch.commit();
+            const classesRef = getUserCollectionRef('classes');
+            await runFirestoreBatch([
+              { action: 'delete', ref: classesRef.doc(safeDocId(oldKey)) },
+              { action: 'set', ref: classesRef.doc(safeDocId(newKey)), data: { ...classData, attendees: Array.from(classData.attendees), dateTimeKey: newKey } }
+            ]);
           } else {
             const saved = await saveClassToFirestore(newKey, classData);
             if (!saved) return;
@@ -5012,10 +4865,9 @@
       }
 
       try {
-        const uid = state.firebaseUser.uid;
         const batch = db.batch();
-        const classesRef = db.collection('users').doc(uid).collection('classes');
-        const recordsRef = db.collection('users').doc(uid).collection('records');
+        const classesRef = getUserCollectionRef('classes');
+        const recordsRef = getUserCollectionRef('records');
         const latestClass = state.weeklyPlan.get(oldKey) || cls;
         const playlist = normalizePlaylistId($('#modal-class-playlist').value || latestClass.playlist || cls.playlist);
         if (!playlist) {
@@ -5105,27 +4957,32 @@
     if (!confirm(`Finalize ${drafts.length} draft${drafts.length !== 1 ? 's' : ''} for this day?`)) return;
 
     try {
-      const uid = state.firebaseUser.uid;
-      const batch = db.batch();
-      const classesRef = db.collection('users').doc(uid).collection('classes');
-      const recordsRef = db.collection('users').doc(uid).collection('records');
+      const classesRef = getUserCollectionRef('classes');
+      const recordsRef = getUserCollectionRef('records');
+      const ops = [];
 
       for (const [key, cls] of drafts) {
         const playlist = normalizePlaylistId(cls.playlist);
         const attendees = cls.attendees instanceof Set ? [...cls.attendees] : [...(cls.attendees || [])];
-        batch.set(classesRef.doc(safeDocId(key)), {
-          date: cls.date, time: cls.time, playlist,
-          attendees, status: 'finalized',
-          notes: cls.notes || '', classType: cls.classType || '', dateTimeKey: key
+        ops.push({
+          action: 'set',
+          ref: classesRef.doc(safeDocId(key)),
+          data: {
+            date: cls.date, time: cls.time, playlist,
+            attendees, status: 'finalized',
+            notes: cls.notes || '', classType: cls.classType || '', dateTimeKey: key
+          }
         });
         for (const guest of attendees) {
           const recordKey = buildRecordKey({ date: cls.date, time: normalizeTime(cls.time), guest, playlist });
-          batch.set(recordsRef.doc(safeDocId(recordKey)), {
-            date: cls.date, time: normalizeTime(cls.time), guest, playlist, classType: cls.classType || '', recordKey
+          ops.push({
+            action: 'set',
+            ref: recordsRef.doc(safeDocId(recordKey)),
+            data: { date: cls.date, time: normalizeTime(cls.time), guest, playlist, classType: cls.classType || '', recordKey }
           });
         }
       }
-      await batch.commit();
+      await runFirestoreBatch(ops);
       showToast(`${drafts.length} class${drafts.length !== 1 ? 'es' : ''} finalized!`, 'success');
       refreshAll();
       renderWeeklyCalendar();
@@ -5137,39 +4994,38 @@
   async function handleModalDelete() {
     const cls = state.selectedClass;
     if (!cls) return;
-    if (confirm('Are you sure you want to delete this class?')) {
-        const key = createDateTimeKey(cls.date, cls.time);
-        state.selectedRecommendationClassKeys.delete(key);
-        if (state.firebaseUser) {
-          const uid = state.firebaseUser.uid;
-          const batch = db.batch();
-          const classesRef = db.collection('users').doc(uid).collection('classes');
-          batch.delete(classesRef.doc(safeDocId(key)));
+    if (!confirm('Are you sure you want to delete this class?')) return;
 
-          // Also delete attendance records if this was a finalized class
-          if (cls.status === 'finalized') {
-            const recordsRef = db.collection('users').doc(uid).collection('records');
-            const oldPlaylist = normalizePlaylistId(cls.playlist);
-            if (oldPlaylist) {
-              const oldAttendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
-              const oldTime = normalizeTime(cls.time);
-              oldAttendees.forEach(guest => {
-                const recordKey = buildRecordKey({ date: cls.date, time: oldTime, guest, playlist: oldPlaylist });
-                batch.delete(recordsRef.doc(safeDocId(recordKey)));
-              });
-            }
-          }
+    const key = createDateTimeKey(cls.date, cls.time);
+    state.selectedRecommendationClassKeys.delete(key);
 
-          await batch.commit();
-        } else {
-          state.weeklyPlan.delete(key);
-          saveStateToLocalStorage();
-          renderWeeklyCalendar();
+    if (state.firebaseUser) {
+      const classesRef = getUserCollectionRef('classes');
+      const ops = [{ action: 'delete', ref: classesRef.doc(safeDocId(key)) }];
+
+      // Also delete attendance records if this was a finalized class
+      if (cls.status === 'finalized') {
+        const recordsRef = getUserCollectionRef('records');
+        const oldPlaylist = normalizePlaylistId(cls.playlist);
+        if (oldPlaylist) {
+          const oldAttendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+          const oldTime = normalizeTime(cls.time);
+          oldAttendees.forEach(guest => {
+            const recordKey = buildRecordKey({ date: cls.date, time: oldTime, guest, playlist: oldPlaylist });
+            ops.push({ action: 'delete', ref: recordsRef.doc(safeDocId(recordKey)) });
+          });
         }
-        refreshAll();
-        showToast('Class deleted.', 'info');
-        $('#class-modal').classList.add('hidden');
+      }
+
+      await runFirestoreBatch(ops);
+    } else {
+      state.weeklyPlan.delete(key);
+      saveStateToLocalStorage();
+      renderWeeklyCalendar();
     }
+    refreshAll();
+    showToast('Class deleted.', 'info');
+    $('#class-modal').classList.add('hidden');
   }
   async function deleteHistoryEntry(date, time, playlist) {
     const normalizedTime = normalizeTime(time, '00:00');
@@ -5185,19 +5041,16 @@
 
     if (state.firebaseUser) {
       try {
-        const uid = state.firebaseUser.uid;
-        const batch = db.batch();
-        const classesRef = db.collection('users').doc(uid).collection('classes');
-        const recordsRef = db.collection('users').doc(uid).collection('records');
-
-        batch.delete(classesRef.doc(safeDocId(dateTimeKey)));
-
-        matchingRecords.forEach(record => {
-          const recordKey = buildRecordKey(record);
-          batch.delete(recordsRef.doc(safeDocId(recordKey)));
-        });
-
-        await batch.commit();
+        const classesRef = getUserCollectionRef('classes');
+        const recordsRef = getUserCollectionRef('records');
+        const ops = [
+          { action: 'delete', ref: classesRef.doc(safeDocId(dateTimeKey)) },
+          ...matchingRecords.map(record => ({
+            action: 'delete',
+            ref: recordsRef.doc(safeDocId(buildRecordKey(record)))
+          }))
+        ];
+        await runFirestoreBatch(ops);
         showToast('Class and records deleted.', 'info');
       } catch (error) {
         showToast('Delete failed: ' + error.message, 'error');
@@ -5410,45 +5263,37 @@
           updateRecordsPill();
           refreshAll();
 
+          // Build import details suffix
+          const details = [];
+          if (taggedPlaylists.size > 0) details.push(`${taggedPlaylists.size} class-type tag set${taggedPlaylists.size !== 1 ? 's' : ''}`);
+          if (statusPlaylists.size > 0) details.push(`${statusPlaylists.size} playlist status${statusPlaylists.size !== 1 ? 'es' : ''}`);
+
           // Push to Firestore in chunked batches
           if (state.firebaseUser && (importedRecords.length > 0 || taggedPlaylists.size > 0 || statusPlaylists.size > 0)) {
-            const uid = state.firebaseUser.uid;
             try {
               if (importedRecords.length > 0) {
-                const recordsRef = db.collection('users').doc(uid).collection('records');
-                const chunks = [];
-                for (let i = 0; i < importedRecords.length; i += 500) {
-                  chunks.push(importedRecords.slice(i, i + 500));
-                }
-                for (const chunk of chunks) {
-                  const batch = db.batch();
-                  chunk.forEach(r => {
-                    const key = buildRecordKey(r);
-                    batch.set(recordsRef.doc(safeDocId(key)), { ...r, recordKey: key });
-                  });
-                  await batch.commit();
-                }
+                const recordsRef = getUserCollectionRef('records');
+                const ops = importedRecords.map(r => {
+                  const key = buildRecordKey(r);
+                  return { action: 'set', ref: recordsRef.doc(safeDocId(key)), data: { ...r, recordKey: key } };
+                });
+                await runFirestoreBatch(ops);
               }
+              const playlistsRef = getUserCollectionRef('playlists');
               const playlistDocUpdates = new Set([...taggedPlaylists, ...statusPlaylists]);
               for (const playlistId of playlistDocUpdates) {
                 const payload = {};
                 if (taggedPlaylists.has(playlistId)) payload.classTypes = state.playlistTags.get(playlistId) || [];
                 if (statusPlaylists.has(playlistId)) payload.status = state.playlistStatus.get(playlistId) || '';
                 if (Object.keys(payload).length === 0) continue;
-                await db.collection('users').doc(uid).collection('playlists').doc(playlistId).set(payload, { merge: true });
+                await playlistsRef.doc(playlistId).set(payload, { merge: true });
               }
-              const details = [];
-              if (taggedPlaylists.size > 0) details.push(`${taggedPlaylists.size} class-type tag set${taggedPlaylists.size !== 1 ? 's' : ''}`);
-              if (statusPlaylists.size > 0) details.push(`${statusPlaylists.size} playlist status${statusPlaylists.size !== 1 ? 'es' : ''}`);
               const detailMsg = details.length > 0 ? ` and synced ${details.join(' and ')}` : '';
               showToast(`Imported ${importedCount} records${detailMsg} to Firebase`, 'success');
             } catch (err) {
               showToast(`Imported locally but Firebase sync failed: ${err.message}`, 'error');
             }
           } else {
-            const details = [];
-            if (taggedPlaylists.size > 0) details.push(`${taggedPlaylists.size} class-type tag set${taggedPlaylists.size !== 1 ? 's' : ''}`);
-            if (statusPlaylists.size > 0) details.push(`${statusPlaylists.size} playlist status${statusPlaylists.size !== 1 ? 'es' : ''}`);
             const detailMsg = details.length > 0 ? ` and ${details.join(' and ')}` : '';
             showToast(`Imported ${importedCount} records${detailMsg}.`, 'success');
           }
