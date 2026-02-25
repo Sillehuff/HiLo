@@ -2947,7 +2947,8 @@
 
     // Current selection for recommender
     selectedRecommendationClassKey: '',
-    selectedRecommendationClassKeys: new Set()
+    selectedRecommendationClassKeys: new Set(),
+    recAutoSelectDone: false  // true after first auto-select; prevents re-auto-select after user clears
   };
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -3843,8 +3844,9 @@
       state.selectedRecommendationClassKeys.clear();
       return [];
     }
-    // If no explicit selection, auto-select the next upcoming draft
-    if (state.selectedRecommendationClassKeys.size === 0) {
+    // Auto-select next upcoming draft only on first visit (not after user clears)
+    if (state.selectedRecommendationClassKeys.size === 0 && !state.recAutoSelectDone) {
+      state.recAutoSelectDone = true;
       const now = new Date();
       const nowKey = createDateTimeKey(
         formatDateKey(now),
@@ -3910,6 +3912,7 @@
   }
   function refreshRecommenderFromSelection() {
     const selectedEntries = getSelectedRecommenderClassEntries();
+    populatePlannedClassList();
     const metrics = getMetricsForSelectedClasses(selectedEntries);
     refreshDashboard(metrics, selectedEntries);
     updateDashboardStatus(selectedEntries);
