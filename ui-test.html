@@ -1,0 +1,5079 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Hilo Playlist – UI Test Artifact</title>
+  <meta name="description" content="UI testing artifact with mock data — no Firebase dependency" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='22' stroke='%236B5B8A' stroke-width='2' fill='none'/><path d='M14 30C16 20 20 16 24 16C28 16 32 20 34 30' stroke='%236B5B8A' stroke-width='3' stroke-linecap='round'/><path d='M12 36H36' stroke='%236B5B8A' stroke-width='2' stroke-linecap='round'/></svg>" />
+  <meta name="theme-color" content="#FAFAF7" />
+
+  <style>
+    :root {
+      --primary: #6B5B8A;
+      --accent: #8B78AD;
+      --cream: #2D2A26;
+      --ink: #1A1816;
+      --ink-light: #6B6560;
+      --secondary-text: #8A8580;
+      --glass: rgba(107,91,138,0.04);
+      --surface: #FFFFFF;
+      --surface-hover: #F8F7F5;
+      --surface-secondary: #F2F0ED;
+      --page-bg: #FAFAF7;
+      --border: rgba(0,0,0,0.06);
+      --border-strong: rgba(0,0,0,0.12);
+      --radius: 16px;
+      --radius-lg: 22px;
+      --shadow-rest: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-raised: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-floating: 0 8px 32px rgba(0,0,0,0.12);
+      --shadow: var(--shadow-rest);
+      --inner-shadow: none;
+      --blur: blur(12px);
+      --gap: 28px;
+      --success: #6BA07A;
+      --warning: #C4956B;
+      --danger: #B87070;
+      --info: #7A9DB8;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+    }
+    /* Apple-like base */
+    html, body {
+      margin: 0;
+      padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      background-color: var(--page-bg);
+      background: var(--page-bg);
+      color: var(--cream);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-text-size-adjust: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+    * { box-sizing: border-box; }
+    a { color: inherit; text-decoration: none; }
+    .nav {
+      position: sticky; top: 0; z-index: 20;
+      display: flex; align-items: center; justify-content: center;
+      padding: calc(14px + var(--safe-top)) clamp(14px, 3vw, 28px) 14px;
+      min-height: 58px;
+      background: rgba(250, 250, 247, .88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex; gap: 8px; flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--ink-light);
+      cursor: pointer;
+      transition: all .15s ease;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .tab-btn .tab-icon { font-size: 15px; line-height: 1; }
+    .tab-btn .tab-label { white-space: nowrap; }
+    .tab-btn[aria-selected="true"] {
+      background: rgba(107,91,138,0.08);
+      border-color: rgba(107,91,138,0.15);
+      box-shadow: none;
+      color: var(--primary);
+    }
+    .tab-btn:hover {
+      background: rgba(107,91,138,0.05);
+      transform: translateY(-1px);
+    }
+    .tab-btn:active { transform: scale(.95); }
+    .container {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 clamp(12px, 3vw, 24px);
+      display: grid;
+      gap: var(--gap);
+    }
+    .container > section + section {
+      margin-top: 24px;
+    }
+    /* Hero */
+    .hero {
+      position: relative;
+      border-radius: var(--radius-lg);
+      padding: clamp(24px, 4vw, 40px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .hero h1 {
+      margin: 0 0 8px 0;
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 700;
+      letter-spacing: .2px;
+      color: var(--ink);
+    }
+    .subtle { color: var(--secondary-text); font-weight: 500; font-size: 14px; }
+    .hero .row {
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 10px;
+    }
+    .pill {
+      display:inline-flex; align-items:center; gap:8px;
+      background: var(--surface-secondary);
+      border:1px solid var(--border);
+      padding: 8px 12px; border-radius:999px;
+      font-size: 13px;
+      transition: all .2s ease;
+      color: var(--ink-light);
+    }
+    .pill:hover {
+    }
+    /* Class-type tags */
+    .class-type-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(122,157,184,0.10);
+      border: 1px solid rgba(122,157,184,0.25);
+      color: #5E8399;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      min-height: 36px;
+    }
+    .class-type-tag.compact {
+      padding: 2px 7px;
+      font-size: 11px;
+    }
+    .playlist-tags-inline {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .tag-editor-row td {
+      background: rgba(0,0,0,.25) !important;
+      padding: 12px 20px !important;
+    }
+    .tag-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tag-editor-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 28px;
+    }
+    .tag-chip-removable {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(122,157,184,0.10);
+      border: 1px solid rgba(122,157,184,0.25);
+      color: #5E8399;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 13px;
+      animation: fadeIn .2s ease;
+    }
+    .remove-tag {
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      min-height: 28px;
+      border-radius: 50%;
+    }
+    .remove-tag:hover { opacity: 1; background: var(--surface-secondary); }
+    .tag-input-wrapper {
+      position: relative;
+    }
+    .tag-input-wrapper input {
+      width: 200px;
+      padding: 7px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      color: var(--ink);
+      font-size: 13px;
+    }
+    .tag-input-wrapper input:focus {
+      outline: none;
+      border-color: var(--info);
+      box-shadow: 0 0 0 3px rgba(122,157,184,0.15);
+    }
+    .tag-autocomplete {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 200px;
+      max-height: 160px;
+      overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      margin-top: 4px;
+      z-index: 50;
+      box-shadow: var(--shadow-floating);
+    }
+    .tag-autocomplete-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--cream);
+      transition: background .15s;
+    }
+    .tag-autocomplete-item:hover,
+    .tag-autocomplete-item.active {
+      background: var(--surface-secondary);
+      color: var(--ink);
+    }
+    .explorer-row { cursor: pointer; transition: background .15s; }
+    .explorer-row:hover { background: var(--surface-hover) !important; }
+    .explorer-row.retired-row { opacity: .55; }
+    /* Add Playlist form */
+    .add-playlist-form {
+      margin-bottom: 0;
+    }
+    .add-playlist-form .input-field {
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+    .add-playlist-form .input-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107,91,138,0.10);
+    }
+    /* Status pill toggle */
+    .status-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid;
+      transition: all .2s ease;
+      user-select: none;
+    }
+    .status-toggle.active {
+      background: rgba(107,160,122,0.12);
+      border-color: rgba(107,160,122,0.30);
+      color: #5A8A66;
+    }
+    .status-toggle.retired {
+      background: var(--surface-secondary);
+      border-color: var(--border);
+      color: var(--secondary-text);
+    }
+    .status-toggle:hover {
+      transform: scale(1.05);
+    }
+    /* Remove playlist button */
+    .btn-remove-playlist {
+      background: rgba(184,112,112,0.08);
+      border: 1px solid rgba(184,112,112,0.20);
+      color: #9B5E5E;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+    .btn-remove-playlist:hover {
+      background: rgba(184,112,112,0.15);
+      border-color: rgba(184,112,112,0.35);
+      color: var(--danger);
+    }
+    /* Ghost button */
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--ink-light);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .btn-ghost:hover {
+      background: var(--surface-secondary);
+    }
+    /* Tags cell in manager table */
+    .manager-tags-cell {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+    .manager-tags-cell .add-tag-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--surface-hover);
+      border: 1px dashed var(--border-strong);
+      color: var(--secondary-text);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all .15s ease;
+    }
+    .manager-tags-cell .add-tag-btn:hover {
+      background: rgba(107,91,138,0.08);
+      border-color: rgba(107,91,138,0.25);
+      color: var(--primary);
+    }
+    /* Status indicators — 12% bg, 35% border, 100% text */
+    .status-connected { background: rgba(107,160,122,0.10); border-color: rgba(107,160,122,0.25); color: #5A8A66; }
+    .status-disconnected { background: rgba(184,112,112,0.10); border-color: rgba(184,112,112,0.25); color: #9B5E5E; }
+    .status-draft { background: rgba(196,149,107,0.10); border-color: rgba(196,149,107,0.25); color: #9B7A54; }
+    .status-finalized { background: rgba(107,160,122,0.10); border-color: rgba(107,160,122,0.25); color: #5A8A66; }
+    .status-info { background: rgba(122,157,184,0.10); border-color: rgba(122,157,184,0.25); color: #5E8399; }
+    /* History action buttons */
+    .history-actions { display: flex; gap: 6px; align-items: center; }
+    .history-edit-btn,
+    .history-delete-btn {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all .2s ease;
+      color: var(--ink-light);
+      touch-action: manipulation;
+      min-height: 36px;
+    }
+    .history-edit-btn:hover { background: var(--surface-secondary); color: var(--ink); }
+    .history-delete-btn:hover { background: rgba(184,112,112,0.10); border-color: rgba(184,112,112,0.25); color: var(--danger); }
+    /* Glass cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--gap);
+    }
+    .card {
+      position: relative;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transition: all .3s ease;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-raised);
+    }
+    .card .body { padding: 24px; }
+    .card .title { font-weight: 600; font-size: 15px; letter-spacing:.2px; margin-bottom: 6px; color: var(--ink); }
+    .card .muted { color: var(--secondary-text); font-size: 14px; }
+    .primary-card {
+      background: var(--surface);
+      border-left: 3px solid var(--primary);
+    }
+    .primary-card .title { color: var(--ink); font-size: 18px; font-weight: 700; }
+    .metric-row {
+      display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px;
+    }
+    .metric {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align:center;
+    }
+    .metric .value { font-weight: 700; font-size: 22px; color: var(--ink); }
+    .metric .label { color: var(--secondary-text); font-size: 11px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 4px; font-weight: 600; }
+    /* Tooltips */
+    .info-tip {
+      position: relative;
+      cursor: help;
+      opacity: 0.5;
+      font-size: 12px;
+      font-style: normal;
+      transition: opacity .2s;
+    }
+    .info-tip:hover, .info-tip:focus { opacity: 1; }
+    .info-tip .tip-text {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      white-space: normal;
+      width: 200px;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s ease;
+      z-index: 100;
+      box-shadow: var(--shadow-floating);
+      color: var(--cream);
+    }
+    .info-tip .tip-text::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--border-strong);
+    }
+    .info-tip:hover .tip-text, .info-tip:focus .tip-text { opacity: 1; }
+    .tooltip-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    .tooltip-wrapper .tooltip-text {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s ease;
+      z-index: 100;
+      box-shadow: var(--shadow-floating);
+      color: var(--cream);
+    }
+    .tooltip-wrapper .tooltip-text::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--border-strong);
+    }
+    .tooltip-wrapper:hover .tooltip-text { opacity: 1; }
+    .btn:disabled { cursor: not-allowed; }
+    .btn {
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: var(--surface-secondary);
+      border: 1px solid var(--border-strong);
+      color: var(--ink-light); cursor:pointer;
+      transition: all .15s ease;
+      font-weight: 600;
+      font-size: 14px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn:hover {
+      background: #E8E5E0;
+    }
+    .btn:focus-visible {
+      box-shadow: 0 0 0 3px rgba(107,91,138,0.15);
+    }
+    .btn,
+    .tab-btn,
+    .btn-xs,
+    .status-toggle,
+    .btn-remove-playlist,
+    .search-clear,
+    .modal__close,
+    .manager-tags-cell .add-tag-btn {
+      touch-action: manipulation;
+    }
+    .btn:active { transform: scale(.97); box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn:disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .btn-primary {
+      background: var(--primary); border-color: var(--primary); color: #fff;
+    }
+    .btn-primary:hover {
+      background: #5C4D7A; box-shadow: 0 2px 8px rgba(107,91,138,0.25);
+    }
+    .btn-success {
+      background: var(--success); border-color: var(--success); color: #fff;
+    }
+    .btn-success:hover {
+      background: #5C8E6B;
+    }
+    .btn-warning {
+      background: var(--warning); border-color: var(--warning); color: #fff;
+    }
+    .btn-warning:hover {
+      background: #B3865E;
+    }
+    .btn-danger {
+      background: var(--danger); border-color: var(--danger); color: #fff;
+    }
+    .btn-danger:hover {
+      background: #A86262;
+    }
+    .btn-info {
+      background: var(--info); border-color: var(--info); color: #fff;
+    }
+    .btn-info:hover {
+      background: #6B8DA8;
+    }
+    .suggestions { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--gap); }
+    .recommender-explain {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--secondary-text);
+    }
+    .best-strength-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .rec-strength-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .rec-strength-pill.strong {
+      background: rgba(107,160,122,0.12);
+      border: 1px solid rgba(107,160,122,0.30);
+      color: #4A7A56;
+    }
+    .rec-strength-pill.moderate {
+      background: rgba(196,149,107,0.12);
+      border: 1px solid rgba(196,149,107,0.30);
+      color: #8B6A44;
+    }
+    .rec-strength-pill.close {
+      background: rgba(122,157,184,0.12);
+      border: 1px solid rgba(122,157,184,0.30);
+      color: #4E7389;
+    }
+    .best-summary-title {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-top: 8px;
+    }
+    .best-summary-meta {
+      margin-top: 6px;
+      color: var(--secondary-text);
+      font-size: 13px;
+    }
+    .best-insight-list {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+    .best-insight {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--cream);
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+    .best-insight b {
+      color: var(--primary);
+      min-width: 38px;
+      text-align: right;
+      font-size: 14px;
+    }
+    .suggestion-card {
+      padding: 14px;
+      transition: all .2s ease;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .suggestion-card:hover {
+      background: var(--surface-hover);
+      transform: translateY(-2px);
+      border-color: rgba(107,91,138,0.18);
+    }
+    .runner-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .runner-score-delta {
+      font-size: 12px;
+      color: var(--secondary-text);
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-secondary);
+      white-space: nowrap;
+    }
+    .runner-meta {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--ink-light);
+    }
+    .runner-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .rec-empty-action {
+      margin-top: 10px;
+    }
+    .rank-row-assigned td {
+      background: rgba(107,160,122,0.06);
+    }
+    .rank-score {
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .dashboard-rankings-wrap {
+      overflow-x: auto;
+    }
+    .class-picker-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .15s ease;
+      font-size: 13px;
+    }
+    .class-picker-item:hover {
+      background: var(--surface-hover);
+    }
+    .class-picker-item input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .class-picker-item.checked {
+      background: rgba(107,91,138,0.06);
+    }
+    .class-picker-item .class-picker-label {
+      flex: 1;
+      line-height: 1.4;
+    }
+    .class-picker-item .class-picker-status {
+      font-size: 11px;
+      opacity: 0.6;
+    }
+    /* Date/Time Selection */
+    .datetime-selector {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      background: var(--surface-secondary);
+      border-radius: var(--radius);
+      padding: 16px;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+    }
+    .datetime-selector label {
+      font-weight: 500;
+      color: var(--ink);
+      font-size: 14px;
+    }
+    .datetime-selector input {
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+    .datetime-selector input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107,91,138,0.10);
+    }
+    /* Guest Selection UI */
+    .guest-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--surface-secondary);
+      border-radius: var(--radius);
+      padding: 16px;
+      border: 1px solid var(--border);
+    }
+    .selected-guests-container {
+      min-height: 50px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .selected-guests {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .no-selection {
+      color: var(--secondary-text);
+      font-style: italic;
+      padding: 8px 4px;
+    }
+    .selected-guest-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(180deg, rgba(107,91,138,0.10), rgba(107,91,138,0.05));
+      border: 1px solid rgba(107,91,138,0.18);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 14px;
+      animation: fadeIn .2s ease;
+      cursor: grab;
+      transition: opacity .2s, border-color .2s, box-shadow .2s;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .selected-guest-item.dragging {
+      opacity: 0.4;
+      border-color: rgba(107,91,138,0.35);
+    }
+    .selected-guest-item.drag-over {
+      box-shadow: inset 0 0 0 2px var(--primary);
+      border-color: var(--primary);
+    }
+    .selected-guest-item.touch-clone {
+      opacity: 0.85;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      transform: scale(1.05);
+    }
+    .drag-handle {
+      cursor: grab;
+      opacity: 0.5;
+      font-size: 14px;
+      line-height: 1;
+      touch-action: none;
+      transition: opacity .2s;
+    }
+    .drag-handle:hover,
+    .selected-guest-item:hover .drag-handle {
+      opacity: 1;
+    }
+    .remove-guest {
+      cursor: pointer;
+      opacity: 0.7;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      min-height: 28px;
+      border-radius: 50%;
+      font-size: 12px;
+    }
+    .remove-guest:hover {
+      opacity: 1;
+      background: var(--surface-secondary);
+    }
+    .guest-list-container {
+      max-height: 225px;
+      overflow-y: auto;
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .guest-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      padding: 12px;
+    }
+    .guest-list-item {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      min-height: 44px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    .guest-list-item:hover {
+      background: var(--surface-secondary);
+      border-color: rgba(107,91,138,0.18);
+      transform: translateY(-1px);
+    }
+    .guest-list-item.selected {
+      background: linear-gradient(180deg, rgba(107,91,138,0.10), rgba(107,91,138,0.05));
+      border-color: rgba(107,91,138,0.25);
+      font-weight: 500;
+    }
+    /* Search Container */
+    .search-container {
+      position: relative;
+      max-width: 300px;
+    }
+    
+    .search-container input {
+      width: 100%;
+      padding: 12px 40px 12px 40px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      color: var(--cream);
+      font-size: 14px;
+    }
+    .search-container::before {
+      content: '🔍';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .search-container.no-icon::before {
+      content: none;
+    }
+    .search-container.no-icon input {
+      padding-left: 14px;
+    }
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--surface-secondary);
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--secondary-text);
+      font-size: 13px;
+      line-height: 1;
+      transition: all .15s ease;
+      padding: 0;
+    }
+    .search-clear:hover { background: #E8E5E0; color: var(--ink); }
+    .search-clear.visible { display: flex; }
+    .search-result-count {
+      font-size: 12px;
+      color: var(--secondary-text);
+      margin-top: 4px;
+      min-height: 16px;
+    }
+    .search-wrap { display:flex; gap:8px; flex-wrap:wrap; }
+    .search {
+      flex:1;
+      min-width: 240px;
+      background: var(--surface);
+      border:1px solid var(--border-strong);
+      padding: 10px 12px; border-radius: 12px; color: var(--ink);
+    }
+    .select {
+      min-width: 160px;
+      background: var(--surface);
+      border:1px solid var(--border-strong);
+      padding: 10px 12px; border-radius: 12px; color: var(--ink);
+      cursor: pointer;
+    }
+    /* Enhanced Tables */
+    .table-container {
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .table-container.dashboard-rankings-wrap {
+      overflow-x: auto;
+    }
+    .dashboard-rankings-wrap .data-table {
+      min-width: 700px;
+    }
+    
+    .data-table { 
+      width:100%; 
+      border-collapse: collapse; 
+      background: transparent;
+    }
+    
+    .data-table th, .data-table td {
+      text-align:left;
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    
+    .data-table th {
+      color: var(--secondary-text);
+      font-weight: 600;
+      background: var(--surface-hover);
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+    
+    .data-table tbody tr:hover {
+      background: var(--surface-hover);
+      transition: background 0.2s ease;
+    }
+    
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding: 16px 20px;
+    }
+
+    .sortable:hover {
+      color: var(--primary);
+    }
+    
+    .sortable::after {
+      content: '↕';
+      position: absolute;
+      right: 8px;
+      opacity: 0.5;
+      font-size: 12px;
+    }
+    .sortable.asc::after {
+      content: '↑';
+      opacity: 1;
+    }
+    .sortable.desc::after {
+      content: '↓';
+      opacity: 1;
+    }
+    /* Section Header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    
+    .section-header h2 {
+      margin: 0;
+      padding-top: 8px;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    /* Weekly Calendar */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .day-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      min-height: 120px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .day-card.empty {
+      min-height: unset;
+      padding: 10px 16px;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface-hover);
+    }
+    .day-card.empty .day-header {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+      flex-shrink: 0;
+      gap: 6px;
+    }
+    .day-card.empty .class-list { display: none; }
+    .day-card.empty .class-actions {
+      margin-top: 0;
+      margin-left: auto;
+    }
+    .day-card:hover {
+      box-shadow: var(--shadow-raised);
+    }
+    .day-card.today {
+      border-left: 3px solid var(--primary);
+      box-shadow: var(--shadow-rest);
+    }
+    .day-card.has-classes {
+      border-color: rgba(107,91,138,0.12);
+      background: rgba(107,91,138,0.03);
+    }
+    .day-card.today.has-classes {
+      border-color: var(--border);
+      border-left: 3px solid var(--primary);
+    }
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .day-name {
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .day-date {
+      font-size: 12px;
+      color: var(--secondary-text);
+    }
+    .class-list {
+      flex-grow: 1;
+    }
+    .class-item {
+      background: var(--surface-hover);
+      border-radius: 8px;
+      padding: 8px 8px 8px 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .2s ease;
+      border-left: 3px solid var(--border-strong);
+    }
+    .class-item.status-draft-bar {
+      border-left-color: var(--warning);
+    }
+    .class-item.status-finalized-bar {
+      border-left-color: var(--success);
+    }
+    .class-item:hover {
+      background: #EFEDEA;
+      transform: translateX(2px);
+    }
+    .class-time {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .class-info {
+      color: var(--ink-light);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .class-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .btn-sm {
+      padding: 8px 12px;
+      font-size: 13px;
+      min-height: 36px;
+    }
+    /* Guest Grid */
+    .guests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .guest-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .guest-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-raised);
+    }
+    .guest-card-header {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .guest-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 18px;
+      color: #fff;
+    }
+    .guest-info h4 {
+      margin: 0 0 4px 0;
+      font-size: 16px;
+      color: var(--ink);
+    }
+    .guest-info p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--secondary-text);
+    }
+    .guest-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .guest-stat {
+      text-align: center;
+      padding: 8px;
+      background: var(--surface-hover);
+      border-radius: 8px;
+    }
+    .guest-stat .value {
+      display: block;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .guest-stat .label {
+      display: block;
+      font-size: 11px;
+      color: var(--secondary-text);
+      margin-top: 2px;
+    }
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,.3);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn .2s ease;
+    }
+    
+    .modal__content {
+      background: var(--surface);
+      backdrop-filter: none;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-floating);
+      animation: slideUp .3s ease;
+    }
+    
+    /* Modal drag handle for sheet-style modals */
+    .modal__drag-handle {
+      display: none;
+    }
+    .modal__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .modal__header h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    
+    .modal__close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--secondary-text);
+      cursor: pointer;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .modal__close:hover {
+      background: var(--surface-secondary);
+      color: var(--ink);
+    }
+    
+    .modal__body {
+      padding: 24px;
+      overflow-y: auto;
+      min-height: 0;
+    }
+     .modal__footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    /* Modal Recommendation Panel */
+    .modal-recommendation {
+      background: rgba(107,91,138,0.04);
+      border: 1px solid rgba(107,91,138,0.12);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .modal-rec-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .modal-rec-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .modal-rec-best {
+      margin-bottom: 10px;
+    }
+    .modal-rec-best-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .modal-rec-best-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .modal-rec-best-name .accent { color: var(--primary); }
+    .modal-rec-metrics {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .modal-rec-metric {
+      text-align: center;
+    }
+    .modal-rec-metric .val {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--cream);
+    }
+    .modal-rec-metric .lbl {
+      font-size: 11px;
+      color: var(--secondary-text);
+      margin-top: 2px;
+    }
+    .modal-rec-strength {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--ink-light);
+    }
+    .modal-rec-strength strong {
+      color: var(--primary);
+      margin-right: 4px;
+    }
+    .modal-rec-alternatives {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .modal-rec-alternatives .alt-label {
+      font-size: 12px;
+      color: var(--secondary-text);
+      margin-right: 4px;
+    }
+    .modal-rec-alt-pill {
+      padding: 6px 14px;
+      min-height: 36px;
+      background: var(--surface-hover);
+      border: 1px solid var(--border-strong);
+      border-radius: 999px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .modal-rec-alt-pill .meta {
+      opacity: .75;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .modal-rec-alt-pill:hover {
+      background: rgba(107,91,138,0.08);
+      border-color: rgba(107,91,138,0.25);
+      transform: translateY(-1px);
+    }
+    .modal-rec-use-btn {
+      padding: 6px 16px;
+      min-height: 36px;
+      background: linear-gradient(180deg, rgba(107,91,138,0.15), rgba(107,91,138,0.08));
+      border: 1px solid rgba(107,91,138,0.25);
+      border-radius: 8px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .modal-rec-use-btn:hover {
+      background: linear-gradient(180deg, rgba(107,91,138,0.22), rgba(107,91,138,0.12));
+      transform: translateY(-1px);
+    }
+    /* Form styling */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 4px 0 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--ink);
+      font-size: 14px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      color: var(--cream);
+      font-size: 14px;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107,91,138,0.12);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-row--always-inline {
+      grid-template-columns: 1fr 1fr !important;
+    }
+    .form-row--always-inline .form-group {
+      min-width: 0;
+      overflow: hidden;
+    }
+    .form-row--always-inline .form-group input,
+    .form-row--always-inline .form-group select {
+      min-width: 0;
+      max-width: 100%;
+      width: 100%;
+    }
+    .form-group input[type="date"] {
+      text-align: left;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    /* Connection status */
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .connection-status.connected {
+      background: rgba(46, 204, 113, .1);
+      border: 1px solid rgba(46, 204, 113, .3);
+    }
+    .connection-status.disconnected {
+      background: rgba(231, 76, 60, .1);
+      border: 1px solid rgba(231, 76, 60, .3);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .status-dot.connected { background: var(--success); }
+    .status-dot.disconnected { background: var(--danger); }
+    /* Empty States */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--secondary-text);
+    }
+    .empty-state-icon {
+      font-size: 64px;
+      line-height: 1;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+    .empty-state h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      color: var(--ink-light);
+    }
+    .empty-state p {
+      margin: 0 0 20px;
+      font-size: 14px;
+    }
+    .empty-state .btn {
+      margin-top: 4px;
+    }
+    /* Step labels for dashboard workflow */
+    .step-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+    }
+    .step-label .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(107,91,138,0.10);
+      border: 1px solid rgba(107,91,138,0.25);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    /* Guest selector header row */
+    .guest-selector-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .guest-selector-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-xs {
+      padding: 8px 12px;
+      min-height: 44px;
+      font-size: 13px;
+      border-radius: 8px;
+      background: var(--surface-secondary);
+      border: 1px solid var(--border);
+      color: var(--ink-light);
+      cursor: pointer;
+      transition: all .15s ease;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-xs:hover {
+      background: #E8E5E0;
+      color: var(--ink);
+    }
+    /* Summary stats bar */
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 14px 20px;
+      background: var(--surface-hover);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .stats-bar .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--ink-light);
+    }
+    .stats-bar .stat-value {
+      font-weight: 700;
+      color: var(--primary);
+    }
+    /* Toast notifications */
+    #toast-container {
+      position: fixed;
+      bottom: calc(24px + var(--safe-bottom));
+      right: calc(24px + var(--safe-right));
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    
+    .toast {
+      pointer-events: auto;
+      min-width: 280px;
+      max-width: 420px;
+      background: var(--surface);
+      color: var(--cream);
+      padding: 14px 18px;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.3);
+      font: 500 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial;
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--primary);
+      animation: slideInRight .3s ease;
+    }
+
+    .toast.success {
+      background: var(--surface);
+      border-left-color: var(--success);
+    }
+
+    .toast.error {
+      background: var(--surface);
+      border-left-color: var(--danger);
+    }
+
+    .toast.info {
+      background: var(--surface);
+      border-left-color: var(--info);
+    }
+    /* Loading indicator */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--border-strong);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    @media (hover: none) {
+      .tab-btn:hover,
+      .pill:hover,
+      .card:hover,
+      .suggestion-card:hover,
+      .day-card:hover,
+      .class-item:hover,
+      .guest-card:hover,
+      .btn:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+    .hidden { display: none !important; }
+    .fade-in { animation: fadeIn .3s ease both; }
+    /* Tab content entrance animation */
+    @keyframes sectionEnter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .section-enter {
+      animation: sectionEnter .25s ease both;
+    }
+    /* Debug Panel */
+    .debug-panel {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0,0,0,.9);
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      max-width: 300px;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      z-index: 10000;
+    }
+    .debug-panel.show {
+      display: block;
+    }
+    /* Responsive - Tablet */
+    @media (max-width: 1024px) {
+      .calendar-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    /* Responsive - Mobile */
+    @media (max-width: 768px) {
+      body { padding-bottom: calc(80px + var(--safe-bottom)); }
+      .container { margin-top: 12px; margin-bottom: 12px; }
+      .nav {
+        position: sticky;
+        top: 0;
+        flex-wrap: nowrap;
+        gap: 8px;
+        padding: calc(8px + var(--safe-top)) 12px 8px;
+        min-height: 44px;
+        background: rgba(250, 250, 247, .98);
+      }
+      /* Mobile bottom tab bar — .tabs is moved to <body> via JS
+         to escape .nav's containing block (sticky/backdrop-filter break position:fixed in WebKit) */
+      body > .tabs {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        background: rgba(250, 250, 247, .98);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid var(--border);
+        padding: 6px calc(8px + var(--safe-right)) calc(6px + var(--safe-bottom)) calc(8px + var(--safe-left));
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 2px;
+      }
+      body > .tabs .tab-btn {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2px;
+        padding: 8px 2px 6px;
+        border-radius: 10px;
+        font-size: 10px;
+        min-width: 0;
+        min-height: 50px;
+        border: 1px solid transparent;
+        background: transparent;
+        position: relative;
+      }
+      body > .tabs .tab-btn .tab-icon { font-size: 22px; line-height: 1; }
+      /* Hide labels on mobile — icon-only tab bar */
+      body > .tabs .tab-btn .tab-label {
+        display: none;
+      }
+      /* Active dot indicator below icon */
+      body > .tabs .tab-btn[aria-selected="true"] {
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+      }
+      body > .tabs .tab-btn[aria-selected="true"] .tab-icon {
+        color: var(--primary);
+      }
+      body > .tabs .tab-btn[aria-selected="true"]::after {
+        content: '';
+        display: block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--primary);
+        margin-top: 3px;
+      }
+      .search-container { max-width: 100%; width: 100%; }
+      .btn-sm, .search-clear, .modal__close, .status-toggle, .manager-tags-cell .add-tag-btn, .btn-remove-playlist { min-height: 44px; }
+      .search-clear, .modal__close {
+        width: 44px;
+        height: 44px;
+      }
+      .search-container input {
+        padding-right: 52px;
+      }
+      .search-container input,
+      .search,
+      .select,
+      .form-group input,
+      .form-group select,
+      .form-group textarea,
+      .add-playlist-form .input-field,
+      .datetime-selector input,
+      .tag-input-wrapper input {
+        font-size: 16px;
+      }
+      .calendar-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      /* Compact planner banner on mobile */
+      #weekly .hero {
+        padding: 12px 14px;
+      }
+      #weekly .hero .row {
+        gap: 6px;
+        justify-content: center;
+      }
+      #weekly .hero .pill {
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+      #weekly .hero .btn-sm {
+        padding: 6px 10px;
+        font-size: 12px;
+        min-height: 36px;
+      }
+      #weekRangePill {
+        order: 0;
+      }
+      /* Compact empty day cards on mobile */
+      .day-card.empty {
+        padding: 8px 12px;
+        gap: 8px;
+      }
+      .day-card.empty .day-header .day-name {
+        font-size: 14px;
+      }
+      .day-card.empty .day-header .day-date {
+        font-size: 11px;
+      }
+      .metric-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .best-summary-title { font-size: 20px; }
+      .best-insight { font-size: 12px; }
+      .best-insight b { min-width: 32px; }
+      .runner-actions .btn { width: 100%; justify-content: center; }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .datetime-selector {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .modal {
+        padding: 0;
+        align-items: flex-end;
+      }
+      .modal__content {
+        width: 100%;
+        max-width: none;
+        max-height: calc(100dvh - var(--safe-top));
+        border-radius: 20px 20px 0 0;
+      }
+      .modal__drag-handle {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0 2px;
+        flex-shrink: 0;
+      }
+      .modal__drag-handle::after {
+        content: '';
+        width: 40px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(0,0,0,0.15);
+      }
+      .modal__header {
+        padding: 12px 16px 12px;
+      }
+      .modal__header h3 {
+        font-size: 18px;
+      }
+      .modal__body {
+        padding: 16px;
+      }
+      /* Section dividers in modal form */
+      .modal__body .form-section-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 8px 0 20px;
+      }
+      .modal__footer {
+        background: var(--surface);
+        padding: 12px 16px calc(12px + var(--safe-bottom));
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .modal__footer .btn,
+      .modal__footer .tooltip-wrapper,
+      .modal__footer .tooltip-wrapper .btn {
+        width: 100%;
+      }
+      #save-draft-modal { order: 1; }
+      .modal__footer .tooltip-wrapper { order: 2; }
+      #cancel-modal { order: 3; display: none; }
+      #delete-class-modal {
+        order: 4;
+        margin-right: 0 !important;
+        background: transparent;
+        border-color: rgba(231, 76, 60, .3);
+        font-size: 13px;
+      }
+      .modal__footer .tooltip-text {
+        display: none;
+      }
+      #history .table-container,
+      #explorer .table-container {
+        background: transparent;
+        border: none;
+        overflow: visible;
+      }
+      #history-table,
+      #playlist-manager-table {
+        display: block;
+        width: 100%;
+      }
+      #history-table thead,
+      #playlist-manager-table thead {
+        display: none;
+      }
+      #history-table tbody,
+      #playlist-manager-table tbody {
+        display: grid;
+        gap: 10px;
+      }
+      #history-table tr,
+      #playlist-manager-table tr {
+        display: block;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      #history-table td,
+      #playlist-manager-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      #history-table td::before,
+      #playlist-manager-table td::before {
+        content: attr(data-label);
+        flex: 0 0 38%;
+        color: var(--secondary-text);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        line-height: 1.3;
+      }
+      #history-table td:last-child,
+      #playlist-manager-table td:last-child {
+        border-bottom: none;
+      }
+      #history-table td > :last-child,
+      #playlist-manager-table td > :last-child {
+        text-align: right;
+      }
+      #history-table td[colspan],
+      #playlist-manager-table td[colspan],
+      #playlist-manager-table .tag-editor-row td {
+        display: block;
+      }
+      #history-table td[colspan]::before,
+      #playlist-manager-table td[colspan]::before,
+      #playlist-manager-table .tag-editor-row td::before {
+        content: none;
+      }
+      #history-table .guest-names-short,
+      #history-table .guest-names-full {
+        text-align: right;
+      }
+      .history-edit-btn, .history-delete-btn { min-height: 44px; min-width: 44px; }
+      .history-actions { justify-content: flex-end; }
+      #toast-container {
+        bottom: calc(96px + var(--safe-bottom));
+        right: 12px;
+        left: 12px;
+      }
+      .toast { min-width: unset; max-width: unset; animation: slideUpToast .3s ease; }
+      @keyframes slideUpToast {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+    }
+  </style>
+</head>
+<body>
+  <div style="background: linear-gradient(90deg, #6B5B8A, #8B78AD); color: white; text-align: center; padding: 8px 16px; font-size: 13px; font-weight: 500; letter-spacing: 0.3px;">
+    UI Testing Artifact &mdash; Mock Data Mode (no Firebase)
+  </div>
+  <nav class="nav">
+    <div class="tabs" role="tablist">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="weekly"><span class="tab-icon" aria-hidden="true">&#128197;</span><span class="tab-label" data-short="Planner">Weekly Planner</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="dashboard"><span class="tab-icon" aria-hidden="true">&#9776;</span><span class="tab-label" data-short="Recs">Recommender</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="explorer"><span class="tab-icon" aria-hidden="true">&#9835;</span><span class="tab-label" data-short="Playlists">Playlists</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="history"><span class="tab-icon" aria-hidden="true">&#128214;</span><span class="tab-label" data-short="History">History</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="guests"><span class="tab-icon" aria-hidden="true">&#128101;</span><span class="tab-label" data-short="Guests">Guests</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="settings"><span class="tab-icon" aria-hidden="true">&#9881;</span><span class="tab-label" data-short="Settings">Settings</span></button>
+    </div>
+  </nav>
+  <main class="container">
+    <section id="dashboard" class="hidden fade-in">
+      <div class="hero">
+        <h1>Playlist Recommender</h1>
+        <div class="subtle" id="currentDateTime"></div>
+        
+        <div id="connection-status" class="connection-status disconnected">
+          <div class="status-dot disconnected"></div>
+          <span>Not signed in</span>
+        </div>
+        
+        <div class="step-label"><span class="step-num">1</span> Select Planned Classes</div>
+        <div class="row" style="margin-top:0;">
+          <div class="search-wrap" style="flex:1;">
+            <select id="playlistWindow" class="select" title="Replay-ready window">
+              <option value="45" selected>Replay-ready ≥ 45 days</option>
+              <option value="30">Replay-ready ≥ 30 days</option>
+              <option value="60">Replay-ready ≥ 60 days</option>
+              <option value="90">Replay-ready ≥ 90 days</option>
+            </select>
+          </div>
+        </div>
+        <div class="class-picker-container" style="margin-top:8px;">
+          <div class="class-picker-actions" style="display:flex; gap:8px; margin-bottom:6px;">
+            <button type="button" class="btn-xs" id="selectAllDraftsBtn">Select All Drafts</button>
+            <button type="button" class="btn-xs" id="clearAllClassesBtn">Clear All</button>
+          </div>
+          <div class="class-picker-list" id="plannedClassList" style="max-height:180px; overflow-y:auto; background:var(--surface); border-radius:12px; border:1px solid var(--border); padding:8px;"></div>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <span class="pill" id="selectedClassPill">No classes selected</span>
+          <span class="pill" id="selectedClassTypePill">Class type: --</span>
+          <span class="pill" id="selectedPlaylistPill">Assigned playlist: --</span>
+          <span class="pill" id="recordsCountPill">0 records</span>
+        </div>
+      </div>
+      <div class="step-label" style="margin-top:18px;"><span class="step-num">2</span> Recommendation</div>
+      <div class="cards">
+        <div class="card primary-card" id="bestCard">
+          <div class="body">
+            <div class="title">Best Fit Playlist</div>
+            <div class="muted">Based on the selected class roster, date, and class type</div>
+            <div id="bestSummary" style="margin-top:10px;"></div>
+            <div id="bestStrength" class="best-strength-row"></div>
+            <div class="recommender-explain">Ranked by never-heard coverage, replay-ready coverage, and median days since last played.</div>
+            <div class="metric-row">
+              <div class="metric">
+                <div class="value" id="bestNever">--</div>
+                <div class="label">Never-heard <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">% of attendees who have never heard this playlist — higher means better novelty</span></span></div>
+              </div>
+              <div class="metric">
+                <div class="value" id="bestMedian">--</div>
+                <div class="label">Median days <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">Typical days since attendees last heard this playlist — higher means less recent repetition</span></span></div>
+              </div>
+              <div class="metric">
+                <div class="value" id="bestReady">--</div>
+                <div class="label">Replay-ready <span class="info-tip" tabindex="0">&#9432;<span class="tip-text">% of attendees who last heard this at or before the replay-ready window</span></span></div>
+              </div>
+            </div>
+            <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-primary" id="assignBestPlaylistBtn">Assign Best Playlist</button>
+              <button class="btn" id="previewRosterBtn">View Details</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="body">
+            <div class="title">All Ranked Playlists</div>
+            <div class="muted">Most recommended to least recommended for the selected class</div>
+          </div>
+          <div class="table-container dashboard-rankings-wrap" style="margin: 0 16px 16px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width:64px;">Rank</th>
+                  <th>Playlist</th>
+                  <th>Never-heard</th>
+                  <th>Replay-ready</th>
+                  <th>Median days</th>
+                  <th>Recently heard</th>
+                  <th>Score</th>
+                  <th style="width:130px;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="runnerUps"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="weekly" class="fade-in">
+      <div class="hero" style="padding: clamp(14px, 2vw, 20px) clamp(16px, 3vw, 24px);">
+        <div class="row" style="margin-top:0; justify-content:center; flex-wrap:wrap;">
+          <button id="prevWeekBtn" class="btn btn-sm">← Prev</button>
+          <span class="pill" id="weekRangePill" style="font-weight:600;">Week of ...</span>
+          <button id="currentWeekBtn" class="btn btn-sm btn-info">Current</button>
+          <button id="nextWeekBtn" class="btn btn-sm">Next →</button>
+        </div>
+        <div class="row" style="margin-top:8px; justify-content:center; flex-wrap:wrap;">
+          <span class="pill status-draft" id="draftsCountPill">0 drafts</span>
+          <span class="pill status-finalized" id="finalizedCountPill">0 finalized</span>
+          <button id="syncAllBtn" class="btn btn-sm btn-success" disabled>Finalize All Drafts</button>
+        </div>
+      </div>
+      <div class="calendar-grid" id="calendarGrid">
+        </div>
+    </section>
+    <section id="explorer" class="hidden fade-in">
+      <div class="hero">
+        <h1>Playlist Manager</h1>
+        <div class="subtle">Manage playlists, tags, and status</div>
+        <button class="btn btn-primary" id="addPlaylistBtn" style="margin-top:12px;">+ Add Playlist</button>
+      </div>
+      <div id="addPlaylistForm" class="card add-playlist-form" style="display:none;">
+        <div style="font-weight:600; font-size:14px; margin-bottom:8px;">New Playlist</div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <input type="text" id="newPlaylistId" placeholder="Playlist number (e.g. 13)" class="input-field" style="width:180px;" />
+          <button class="btn btn-primary" id="confirmAddPlaylist">Add</button>
+          <button class="btn btn-ghost" id="cancelAddPlaylist">Cancel</button>
+        </div>
+        <div id="addPlaylistError" style="color:var(--danger); font-size:13px; margin-top:6px; display:none;"></div>
+      </div>
+      <div class="card">
+        <div class="table-container">
+          <table class="data-table" id="playlist-manager-table">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="playlist">Playlist</th>
+                <th>Tags</th>
+                <th class="sortable" data-sort="status">Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="explorerTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <section id="history" class="hidden fade-in">
+      <div class="section-header">
+        <h2>Class History</h2>
+        <div class="search-container">
+          <input type="text" id="history-search" placeholder="Search classes...">
+          <button type="button" class="search-clear" id="history-search-clear" aria-label="Clear search">✕</button>
+        </div>
+      </div>
+      <div id="history-stats" class="stats-bar"></div>
+      <div class="card">
+        <div class="table-container">
+          <table id="history-table" class="data-table">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="datetime">Date & Time</th>
+                <th class="sortable" data-sort="classType">Class Type</th>
+                <th class="sortable" data-sort="playlist">Playlist</th>
+                <th class="sortable" data-sort="count">Attendees</th>
+                <th>Guest Names</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <section id="guests" class="hidden fade-in">
+      <div class="section-header">
+        <h2>Guest Profiles</h2>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="search-container">
+            <input type="text" id="guest-search-filter" placeholder="Search guests...">
+            <button type="button" class="search-clear" id="guest-filter-clear" aria-label="Clear search">✕</button>
+          </div>
+          <button type="button" class="btn btn-primary" id="add-guest-btn" style="white-space:nowrap;">+ Add Guest</button>
+        </div>
+      </div>
+      <div id="guests-stats" class="stats-bar"></div>
+      <div id="guests-grid" class="guests-grid">
+        <div class="empty-state">
+          <div class="empty-state-icon">&#128101;</div>
+          <h3>Your guest list is waiting</h3>
+          <p>Sign in and import attendance data to see guest profiles</p>
+          <button class="btn btn-primary" onclick="$$('.tab-btn').find(b=>b.dataset.tab==='settings')?.click()">Import Data</button>
+        </div>
+      </div>
+    </section>
+    <section id="settings" class="hidden fade-in">
+      <div class="hero">
+        <h1>Settings</h1>
+        <div class="subtle">Manage your account and app data</div>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="body">
+            <div class="title">Account</div>
+            <div class="muted">Sign in with Google to sync your data across devices</div>
+            <div id="settings-auth-info" style="margin-top:16px; padding: 12px; background: var(--surface-secondary); border-radius: 8px; color: var(--ink);">
+              Not signed in
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;">
+              <button id="settingsSignInBtn" class="btn btn-primary">Sign In with Google</button>
+              <button id="settingsSignOutBtn" class="btn hidden">Sign Out</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="body">
+            <div class="title">Data Management</div>
+            <div class="muted">Import/export your class data</div>
+
+            <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+              <button id="importCsvBtn" class="btn">&#128229; Import CSV</button>
+              <button id="exportCsvBtn" class="btn">&#128228; Export CSV</button>
+            </div>
+            <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);">
+              <button id="clearDataBtn" class="btn btn-danger">&#128465; Clear All Data</button>
+              <p style="margin:8px 0 0; font-size:12px; color:var(--secondary-text);">This permanently deletes all local and cloud data.</p>
+            </div>
+            <input id="fileInput" type="file" accept=".csv" class="hidden" />
+          </div>
+        </div>
+      </div>
+    </section>
+    <div id="class-modal" class="modal hidden">
+      <div class="modal__content">
+        <div class="modal__drag-handle"></div>
+        <div class="modal__header">
+          <h3 id="class-modal-title">Plan Class</h3>
+          <button id="close-class-modal" class="modal__close">&times;</button>
+        </div>
+        <div class="modal__body">
+          <div class="form-row form-row--always-inline">
+            <div class="form-group">
+              <label for="modal-class-date">Date</label>
+              <input type="date" id="modal-class-date">
+            </div>
+            <div class="form-group">
+              <label for="modal-class-time">Time</label>
+              <select id="modal-class-time" class="select"></select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="modal-class-type">Class Type</label>
+            <select id="modal-class-type">
+              <option value="">All Types</option>
+            </select>
+          </div>
+
+          <hr class="form-section-divider">
+
+          <div class="form-group">
+            <label>Attendees</label>
+            <div class="guest-selector">
+              <div class="guest-selector-header">
+                <div class="search-container no-icon" style="max-width:100%; flex:1;">
+                  <input type="text" id="modal-guest-search" placeholder="Search guests...">
+                  <button type="button" class="search-clear" id="modal-guest-search-clear" aria-label="Clear search">✕</button>
+                </div>
+                <button type="button" class="btn-xs" id="modalClearAllBtn">Clear All</button>
+              </div>
+
+              <div class="guest-list-container" style="max-height: 225px;">
+                <div class="guest-list" id="modal-guest-list"></div>
+              </div>
+
+              <div class="selected-guests-container">
+                <div class="selected-guests" id="modal-selected-guests">
+                  <div class="no-selection">No guests selected</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="form-section-divider">
+
+          <div class="form-group">
+            <label>Playlist</label>
+            <div id="modal-class-playlist-display" class="pill status-info" style="display:flex; width:100%; justify-content:flex-start;">No playlist assigned yet</div>
+            <input id="modal-class-playlist" type="hidden" value="">
+            <div class="subtle" style="font-size:12px; margin-top:8px;">Assign playlist from the Recommender tab.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="modal-class-notes">Notes (optional)</label>
+            <textarea id="modal-class-notes" placeholder="Add any notes about this class..."></textarea>
+          </div>
+        </div>
+         <div class="modal__footer">
+            <button id="delete-class-modal" class="btn btn-danger" style="margin-right: auto;">🗑️ Delete</button>
+            <button id="cancel-modal" class="btn">Cancel</button>
+            <button id="save-draft-modal" class="btn btn-warning">💾 Save as Draft</button>
+        </div>
+      </div>
+    </div>
+    <div id="guest-modal" class="modal hidden">
+      <div class="modal__content">
+        <div class="modal__drag-handle"></div>
+        <div class="modal__header">
+          <h3 id="guest-modal-title">Guest Profile</h3>
+          <button id="close-guest-modal" class="modal__close">&times;</button>
+        </div>
+        <div class="modal__body" id="guest-modal-body">
+          <div id="guest-modal-content"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div id="debug-panel" class="debug-panel">
+    <strong>Debug Info:</strong>
+    <div id="debug-content"></div>
+  </div>
+<!-- UI Test: No Firebase SDK — using mock data -->
+<script>
+  // --- Debug Mode ---
+  const DEBUG_MODE = false; // Set to true to enable debug logging
+  function debugLog(...args) {
+    if (DEBUG_MODE) {
+      console.log('[DEBUG]', ...args);
+      const panel = document.getElementById('debug-panel');
+      const content = document.getElementById('debug-content');
+      if (panel && content) {
+        panel.classList.add('show');
+        const timestamp = new Date().toLocaleTimeString();
+        content.innerHTML = `<div>${timestamp}: ${args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' ')}</div>` + content.innerHTML;
+        const messages = content.querySelectorAll('div');
+        if (messages.length > 20) {
+          messages[messages.length - 1].remove();
+        }
+      }
+    }
+  }
+  // --- App State ---
+  const DEFAULT_PLAYLISTS = Array.from({ length: 12 }, (_, i) => String(i + 1));
+  const PREDEFINED_CLASS_TYPES = [];
+  const state = {
+    modalAttendees: [],
+    playlists: [...DEFAULT_PLAYLISTS],
+    records: [], // Historical records with date, time, guest, playlist
+    selectedWindow: 45,
+    allGuests: new Set(),
+    sortOrder: { column: 'datetime', ascending: false },
+    explorerSortOrder: { column: 'playlist', ascending: true },
+    
+    // Firebase integration
+    firebaseUser: null,
+    firestoreConnected: false,
+    firestoreHasPendingWrites: false,
+    unsubRecords: null,
+    unsubClasses: null,
+    unsubPlaylists: null,
+    playlistTags: new Map(),
+    playlistStatus: new Map(),
+    expandedPlaylist: null,
+
+    // Weekly planner state
+    weeklyPlan: new Map(), // DateTime string -> class object
+    currentWeekStart: null,
+    selectedClass: null, // Holds the class being edited in the modal
+
+    // Current selection for recommender
+    selectedRecommendationClassKey: '',
+    selectedRecommendationClassKeys: new Set()
+  };
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+  function normalizePlaylistId(value) {
+    if (value === null || value === undefined) return '';
+    let raw = typeof value === 'number'
+      ? (Number.isFinite(value) ? String(value) : '')
+      : String(value).trim();
+    if (!raw) return '';
+    raw = raw.replace(/^playlist\s*#?/i, '').trim();
+    if (!raw) return '';
+    if (!/^\d+(\.\d+)?$/.test(raw)) return '';
+    if (raw.includes('.')) {
+      raw = raw.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '').replace(/\.$/, '');
+    }
+    return raw;
+  }
+  function comparePlaylistIds(a, b) {
+    const aId = normalizePlaylistId(a);
+    const bId = normalizePlaylistId(b);
+    const aNum = aId && /^\d+(\.\d+)?$/.test(aId) ? Number(aId) : NaN;
+    const bNum = bId && /^\d+(\.\d+)?$/.test(bId) ? Number(bId) : NaN;
+    if (!Number.isNaN(aNum) && !Number.isNaN(bNum) && aNum !== bNum) return aNum - bNum;
+    if (!Number.isNaN(aNum) && Number.isNaN(bNum)) return -1;
+    if (Number.isNaN(aNum) && !Number.isNaN(bNum)) return 1;
+    return aId.localeCompare(bId, undefined, { numeric: true, sensitivity: 'base' });
+  }
+  function normalizePlaylistStatus(value) {
+    const raw = (value ?? '').toString().trim();
+    if (!raw) return '';
+    const lower = raw.toLowerCase();
+    if (lower === 'active') return 'Active';
+    if (lower === 'retired') return 'Retired';
+    if (lower === 'removed') return 'Removed';
+    return raw;
+  }
+  function ensurePlaylistInState(playlistId) {
+    const normalized = normalizePlaylistId(playlistId);
+    if (!normalized) return;
+    if (!state.playlists.includes(normalized)) {
+      state.playlists.push(normalized);
+      state.playlists.sort(comparePlaylistIds);
+    }
+  }
+  function rebuildPlaylistsFromData() {
+    const found = new Set();
+    const removed = new Set();
+    state.playlistStatus.forEach((status, playlistId) => {
+      const normalized = normalizePlaylistId(playlistId);
+      if (!normalized) return;
+      if (normalizePlaylistStatus(status) === 'Removed') {
+        removed.add(normalized);
+      }
+    });
+    const addIfVisible = (playlistId) => {
+      const normalized = normalizePlaylistId(playlistId);
+      if (!normalized || removed.has(normalized)) return;
+      found.add(normalized);
+    };
+    state.records.forEach(r => {
+      addIfVisible(r.playlist);
+    });
+    state.weeklyPlan.forEach(cls => {
+      addIfVisible(cls.playlist);
+    });
+    state.playlistTags.forEach((_, playlistId) => {
+      addIfVisible(playlistId);
+    });
+    state.playlistStatus.forEach((status, playlistId) => {
+      const normalized = normalizePlaylistId(playlistId);
+      if (!normalized) return;
+      if (normalizePlaylistStatus(status) === 'Removed') return;
+      found.add(normalized);
+    });
+    const fallbackPlaylists = [...DEFAULT_PLAYLISTS].filter(playlistId => !removed.has(playlistId));
+    state.playlists = (found.size > 0 ? Array.from(found) : fallbackPlaylists).sort(comparePlaylistIds);
+  }
+  // HTML escape for safe innerHTML interpolation
+  function esc(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+  function renderPlaylistTags(playlistNum, opts = {}) {
+    const playlistId = normalizePlaylistId(playlistNum);
+    const tags = playlistId ? (state.playlistTags.get(playlistId) || []) : [];
+    if (tags.length === 0) return '';
+    const cls = opts.compact ? 'class-type-tag compact' : 'class-type-tag';
+    return '<span class="playlist-tags-inline">' + tags.map(t => `<span class="${cls}">${esc(t)}</span>`).join('') + '</span>';
+  }
+  function getAllClassTypes() {
+    const types = new Set(PREDEFINED_CLASS_TYPES);
+    state.playlistTags.forEach(tags => tags.forEach(t => types.add(t)));
+    state.records.forEach(r => { if (r.classType) types.add(r.classType); });
+    state.weeklyPlan.forEach(cls => { if (cls.classType) types.add(cls.classType); });
+    return Array.from(types).sort();
+  }
+  function populateClassTypeDropdown(selectEl, selectedValue) {
+    const current = selectedValue || '';
+    selectEl.innerHTML = '<option value="">All Types</option>';
+    getAllClassTypes().forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = t;
+      if (t === current) opt.selected = true;
+      selectEl.appendChild(opt);
+    });
+  }
+  function normalizeTime(timeStr, fallback = '09:00') {
+    const raw = (timeStr ?? '').toString().trim();
+    if (!raw) return fallback;
+    const cleaned = raw.replace(/^\d{4}-\d{2}-\d{2}[T\s]+/, '').trim();
+    const match = cleaned.match(/^(\d{1,2})(?::(\d{1,2}))?(?::\d{1,2})?\s*([AaPp][Mm])?$/);
+    if (!match) return fallback;
+    let hours = Number.parseInt(match[1], 10);
+    const minutes = Number.parseInt(match[2] ?? '0', 10);
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) return fallback;
+    const meridiem = (match[3] || '').toUpperCase();
+    if (meridiem === 'PM' && hours < 12) hours += 12;
+    if (meridiem === 'AM' && hours === 12) hours = 0;
+    return `${String(Math.max(0, Math.min(23, hours))).padStart(2, '0')}:${String(Math.max(0, Math.min(59, minutes))).padStart(2, '0')}`;
+  }
+  function populateTimeSelect(selectEl, selectedTime) {
+    selectEl.innerHTML = '';
+    for (let h = 5; h <= 22; h++) {
+      for (let m = 0; m < 60; m += 15) {
+        const val = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+        const ampm = h < 12 ? 'AM' : 'PM';
+        const label = `${hour12}:${String(m).padStart(2, '0')} ${ampm}`;
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = label;
+        selectEl.appendChild(opt);
+      }
+    }
+    const nearest = snapToNearest15(selectedTime || '09:00');
+    if (selectEl.querySelector(`option[value="${nearest}"]`)) {
+      selectEl.value = nearest;
+    } else {
+      selectEl.value = '09:00';
+    }
+  }
+  function snapToNearest15(timeStr) {
+    const normalized = normalizeTime(timeStr);
+    const [h, m] = normalized.split(':').map(Number);
+    const snapped = Math.round(m / 15) * 15;
+    const finalM = snapped === 60 ? 0 : snapped;
+    const finalH = snapped === 60 ? Math.min(h + 1, 22) : h;
+    return `${String(finalH).padStart(2, '0')}:${String(finalM).padStart(2, '0')}`;
+  }
+  function normalizeClassNumber(value) {
+    return (value || '').toString().trim().replace(/\s+/g, ' ');
+  }
+  function parseImportedPlaylist(rawValue) {
+    const raw = (rawValue || '').toString().trim();
+    if (!raw) return { playlistId: '', inferredStatus: '' };
+    const direct = normalizePlaylistId(raw);
+    const inferredStatus = /\bretired\b/i.test(raw) ? 'Retired' : '';
+    if (direct) return { playlistId: direct, inferredStatus };
+    const match = raw.match(/\d+(\.\d+)?/);
+    if (!match) return { playlistId: '', inferredStatus };
+    return { playlistId: normalizePlaylistId(match[0]), inferredStatus };
+  }
+  function buildRecordKey(record) {
+    const classNumber = normalizeClassNumber(record.classNumber);
+    const base = `${record.date}|${normalizeTime(record.time)}|${(record.guest || '').trim()}|${record.playlist}`;
+    return classNumber ? `${base}|${classNumber}` : base;
+  }
+  function normalizeRecord(record) {
+    if (!record) return null;
+    const guest = (record.guest || '').toString().trim();
+    const playlist = normalizePlaylistId(record.playlist);
+    if (!guest || !playlist) return null;
+    let date = '';
+    if (typeof record.date === 'string') {
+      const rawDate = record.date.trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+        date = rawDate;
+      } else if (/^\d{4}-\d{2}-\d{2}T/.test(rawDate)) {
+        date = rawDate.slice(0, 10);
+      } else {
+        const parsedDate = new Date(rawDate);
+        if (!Number.isNaN(parsedDate.getTime())) {
+          date = formatDateKey(parsedDate);
+        }
+      }
+    } else {
+      const parsedDate = new Date(record.date);
+      if (!Number.isNaN(parsedDate.getTime())) {
+        date = formatDateKey(parsedDate);
+      }
+    }
+    if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+    return {
+      date,
+      time: normalizeTime(record.time),
+      guest,
+      playlist,
+      classType: (record.classType || '').toString().trim(),
+      classNumber: normalizeClassNumber(record.classNumber || record.classNum)
+    };
+  }
+  // Deduplicate records before pushing
+  function addRecordIfNew(record) {
+    const normalizedRecord = normalizeRecord(record);
+    if (!normalizedRecord) return false;
+    const key = buildRecordKey(normalizedRecord);
+    const exists = state.records.some(r => buildRecordKey(r) === key);
+    if (!exists) {
+      state.records.push(normalizedRecord);
+      ensurePlaylistInState(normalizedRecord.playlist);
+      return true;
+    }
+    return false;
+  }
+  // --- Firestore Document ID Helper ---
+  function safeDocId(recordKey) {
+    let hash = 0x811c9dc5;
+    for (let i = 0; i < recordKey.length; i++) {
+      hash ^= recordKey.charCodeAt(i);
+      hash = Math.imul(hash, 0x01000193);
+    }
+    const prefix = recordKey.slice(0, 40).replace(/[^a-zA-Z0-9_-]/g, '_');
+    return prefix + '__' + (hash >>> 0).toString(36);
+  }
+  // --- Firebase Data Layer ---
+   function setLoading(button, isLoading) {
+    if (!button) return;
+    if (isLoading) {
+      button.disabled = true;
+      button.dataset.originalContent = button.innerHTML;
+      button.innerHTML = '<div class="loading-spinner"></div>';
+    } else {
+      button.disabled = false;
+      if (button.dataset.originalContent) {
+        button.innerHTML = button.dataset.originalContent;
+      }
+    }
+  }
+  // --- Mock: No Firestore listeners needed ---
+  function setupFirestoreListeners() {
+    // No-op in mock mode — data is loaded from initializeMockData()
+  }
+
+  // --- Mock Auth State ---
+  function setupAuthListener() {
+    // In mock mode, immediately set up as signed in
+    state.firebaseUser = { uid: 'mock-user-123', displayName: 'Test User', email: 'test@example.com' };
+    state.firestoreConnected = true;
+    $('#settingsSignInBtn').classList.add('hidden');
+    $('#settingsSignOutBtn').classList.remove('hidden');
+    const infoEl = $('#settings-auth-info');
+    if (infoEl) infoEl.textContent = 'Signed in as Test User (Mock)';
+    updateConnectionStatus();
+  }
+
+  // --- Mock Firestore Write Functions (local-only) ---
+  async function writeRecordsToFirestore(classData) {
+    const attendees = classData.attendees instanceof Set ? classData.attendees : new Set(classData.attendees || []);
+    for (const guest of attendees) {
+      addRecordIfNew({
+        date: classData.date,
+        time: normalizeTime(classData.time),
+        guest,
+        playlist: classData.playlist
+      });
+      state.allGuests.add(guest);
+    }
+    showToast(`Synced ${attendees.size} records (mock)`, 'success');
+    return true;
+  }
+
+  async function saveClassToFirestore(dateTimeKey, classData) {
+    const cls = {
+      ...classData,
+      attendees: classData.attendees instanceof Set ? classData.attendees : new Set(classData.attendees || []),
+      dateTimeKey
+    };
+    state.weeklyPlan.set(dateTimeKey, cls);
+    saveStateToLocalStorage();
+    renderWeeklyCalendar();
+    return true;
+  }
+
+  async function deleteClassFromFirestore(dateTimeKey) {
+    state.weeklyPlan.delete(dateTimeKey);
+    saveStateToLocalStorage();
+    renderWeeklyCalendar();
+  }
+
+  async function clearAllFirestoreData() {
+    // Mock: just clear local state
+  }
+  async function upsertPlaylistMetadata(playlistId, payload) {
+    // Mock: no-op, data already updated in local state
+  }
+  async function setPlaylistStatus(playlistNum, status) {
+    const playlistId = normalizePlaylistId(playlistNum);
+    const normalizedStatus = normalizePlaylistStatus(status);
+    if (!playlistId || !normalizedStatus) return;
+    state.playlistStatus.set(playlistId, normalizedStatus);
+    ensurePlaylistInState(playlistId);
+    saveStateToLocalStorage();
+    refreshAll();
+    if (state.firebaseUser) {
+      try {
+        await upsertPlaylistMetadata(playlistId, { status: normalizedStatus });
+      } catch (err) {
+        showToast('Playlist status save failed: ' + err.message, 'error');
+      }
+    }
+  }
+  async function addPlaylistTag(playlistNum, tag) {
+    const playlistId = normalizePlaylistId(playlistNum);
+    if (!playlistId) return;
+    const trimmed = tag.trim();
+    if (!trimmed) return;
+    const current = state.playlistTags.get(playlistId) || [];
+    if (current.includes(trimmed)) return;
+    const updated = [...current, trimmed];
+    state.playlistTags.set(playlistId, updated);
+    ensurePlaylistInState(playlistId);
+    saveStateToLocalStorage();
+    refreshAll();
+    if (state.firebaseUser) {
+      try {
+        await upsertPlaylistMetadata(playlistId, { classTypes: updated });
+      } catch (err) {
+        showToast('Tag save failed: ' + err.message, 'error');
+      }
+    }
+  }
+  async function removePlaylistTag(playlistNum, tag) {
+    const playlistId = normalizePlaylistId(playlistNum);
+    if (!playlistId) return;
+    const current = state.playlistTags.get(playlistId) || [];
+    const updated = current.filter(t => t !== tag);
+    if (updated.length > 0) {
+      state.playlistTags.set(playlistId, updated);
+    } else {
+      state.playlistTags.delete(playlistId);
+    }
+    rebuildPlaylistsFromData();
+    saveStateToLocalStorage();
+    refreshAll();
+    if (state.firebaseUser) {
+      try {
+        await upsertPlaylistMetadata(playlistId, { classTypes: updated });
+      } catch (err) {
+        showToast('Tag remove failed: ' + err.message, 'error');
+      }
+    }
+  }
+  async function addNewPlaylist(rawId) {
+    const playlistId = normalizePlaylistId(rawId);
+    if (!playlistId) return { ok: false, error: 'Invalid playlist number. Use a numeric value (e.g. 13 or 2.5).' };
+    if (state.playlists.includes(playlistId)) return { ok: false, error: `Playlist #${playlistId} already exists.` };
+    state.playlists.push(playlistId);
+    state.playlists.sort(comparePlaylistIds);
+    state.playlistStatus.set(playlistId, 'Active');
+    saveStateToLocalStorage();
+    refreshAll();
+    if (state.firebaseUser) {
+      try {
+        await upsertPlaylistMetadata(playlistId, { status: 'Active', classTypes: [] });
+      } catch (err) {
+        showToast('Playlist save failed: ' + err.message, 'error');
+      }
+    }
+    showToast(`Playlist #${playlistId} added`, 'success');
+    return { ok: true };
+  }
+  async function removePlaylist(playlistNum) {
+    const playlistId = normalizePlaylistId(playlistNum);
+    if (!playlistId) return;
+    // Check for upcoming classes using this playlist
+    const upcoming = Array.from(state.weeklyPlan.values()).filter(
+      c => normalizePlaylistId(c.playlist) === playlistId && c.status !== 'finalized'
+    );
+    if (upcoming.length > 0) {
+      if (!confirm(`Playlist #${playlistId} is assigned to ${upcoming.length} upcoming class(es). Remove anyway?`)) return;
+    } else {
+      if (!confirm(`Remove Playlist #${playlistId}? Historical records will be kept.`)) return;
+    }
+    state.playlists = state.playlists.filter(p => p !== playlistId);
+    state.playlistTags.delete(playlistId);
+    state.playlistStatus.set(playlistId, 'Removed');
+    if (state.expandedPlaylist === playlistId) state.expandedPlaylist = null;
+    rebuildPlaylistsFromData();
+    saveStateToLocalStorage();
+    refreshAll();
+    if (state.firebaseUser) {
+      try {
+        await upsertPlaylistMetadata(playlistId, { status: 'Removed', classTypes: [] });
+      } catch (err) {
+        showToast('Playlist delete failed: ' + err.message, 'error');
+      }
+    }
+    showToast(`Playlist #${playlistId} removed`, 'success');
+  }
+  // --- Local Storage Persistence ---
+  function saveStateToLocalStorage() {
+      try {
+          // Convert weeklyPlan entries: attendees Set -> Array so JSON.stringify works
+          const weeklyPlanSerialized = Array.from(state.weeklyPlan.entries()).map(([key, cls]) => [
+              key,
+              { ...cls, attendees: Array.from(cls.attendees || []) }
+          ]);
+          const dataToSave = {
+              records: state.records,
+              weeklyPlan: weeklyPlanSerialized,
+              allGuests: Array.from(state.allGuests),
+              playlistTags: Array.from(state.playlistTags.entries()),
+              playlistStatus: Array.from(state.playlistStatus.entries())
+          };
+          localStorage.setItem('hiloPlaylistData', JSON.stringify(dataToSave));
+          debugLog('State saved to localStorage');
+      } catch (e) {
+          console.error("Failed to save state to localStorage", e);
+      }
+  }
+  function loadStateFromLocalStorage() {
+      try {
+          const savedData = localStorage.getItem('hiloPlaylistData');
+          if (savedData) {
+              const parsedData = JSON.parse(savedData);
+              state.records = [];
+              (parsedData.records || []).forEach(r => addRecordIfNew(r));
+              const normalizedWeeklyPlan = new Map();
+              new Map(parsedData.weeklyPlan || []).forEach((cls, key) => {
+                  const parsedKey = parseDateTimeKey(key);
+                  cls.date = cls.date || parsedKey.date;
+                  cls.time = normalizeTime(cls.time || parsedKey.time || '09:00');
+                  cls.playlist = normalizePlaylistId(cls.playlist);
+                  cls.id = cls.id || `${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+                  if (Array.isArray(cls.attendees)) {
+                      cls.attendees = new Set(cls.attendees);
+                  } else if (!(cls.attendees instanceof Set)) {
+                      cls.attendees = new Set();
+                  }
+                  const normalizedKey = createDateTimeKey(cls.date, cls.time);
+                  if (!normalizedWeeklyPlan.has(normalizedKey)) {
+                      normalizedWeeklyPlan.set(normalizedKey, cls);
+                  }
+              });
+              state.weeklyPlan = normalizedWeeklyPlan;
+              state.playlistTags = new Map();
+              (parsedData.playlistTags || []).forEach(entry => {
+                const [playlistId, tags] = entry;
+                const normalizedId = normalizePlaylistId(playlistId);
+                if (!normalizedId || !Array.isArray(tags)) return;
+                const cleanedTags = tags.map(t => (t ?? '').toString().trim()).filter(Boolean);
+                if (cleanedTags.length > 0) state.playlistTags.set(normalizedId, Array.from(new Set(cleanedTags)));
+              });
+              state.playlistStatus = new Map();
+              (parsedData.playlistStatus || []).forEach(entry => {
+                const [playlistId, status] = entry;
+                const normalizedId = normalizePlaylistId(playlistId);
+                const normalizedStatus = normalizePlaylistStatus(status);
+                if (!normalizedId || !normalizedStatus) return;
+                state.playlistStatus.set(normalizedId, normalizedStatus);
+              });
+              state.allGuests = new Set(parsedData.allGuests || []);
+              // Rebuild allGuests from records in case saved guest list was incomplete
+              state.records.forEach(r => { if (r.guest) state.allGuests.add(r.guest); });
+              state.weeklyPlan.forEach(cls => cls.attendees.forEach(guest => state.allGuests.add(guest)));
+              rebuildPlaylistsFromData();
+              debugLog('State loaded from localStorage');
+          }
+      } catch (e) {
+          console.error("Failed to load state from localStorage", e);
+      }
+  }
+  // --- Utility Functions ---
+  const parseDateInput = (d) => {
+    if (!d) return null;
+    if (typeof d === 'number' || (typeof d === 'string' && /^\d+(\.\d+)?$/.test(d.trim()))) {
+      const serial = Number(d);
+      if (Number.isFinite(serial) && serial > 59) {
+        const wholeDays = Math.trunc(serial);
+        const dayFraction = serial - wholeDays;
+        const utcMs = Date.UTC(1899, 11, 30) + (wholeDays * 86400 * 1000) + Math.round(dayFraction * 86400 * 1000);
+        const excelDate = new Date(utcMs);
+        if (!Number.isNaN(excelDate.getTime())) {
+          return new Date(
+            excelDate.getUTCFullYear(),
+            excelDate.getUTCMonth(),
+            excelDate.getUTCDate(),
+            excelDate.getUTCHours(),
+            excelDate.getUTCMinutes(),
+            excelDate.getUTCSeconds(),
+            excelDate.getUTCMilliseconds()
+          );
+        }
+      }
+    }
+    const parsed = (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d))
+      ? new Date(d + 'T00:00:00')
+      : new Date(d);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  };
+  const formatDate = (d) => {
+    if (!d) return '';
+    const date = parseDateInput(d);
+    if (!date) return '';
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+  const formatTime = (timeStr) => {
+    if (!timeStr) return '';
+    const [hours, minutes] = timeStr.split(':');
+    const hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${String(minutes).padStart(2, '0')} ${ampm}`;
+  };
+  const formatDateTime = (date, time) => {
+    return `${formatDate(date)} at ${formatTime(time)}`;
+  };
+  const createDateTimeKey = (date, time) => {
+    return `${date}T${normalizeTime(time)}`;
+  };
+  const parseDateTimeKey = (key) => {
+    const [date, time] = key.split('T');
+    return { date, time: normalizeTime(time) };
+  };
+  const daysBetween = (referenceDate, comparedDate) => {
+    const date1 = parseDateInput(referenceDate);
+    const date2 = parseDateInput(comparedDate);
+    if (!date1 || !date2) return 0;
+    const diffTime = date1.getTime() - date2.getTime();
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  };
+  const median = (arr) => {
+    if (!arr.length) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 ? sorted[mid] : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+  };
+  const getWeekStart = (date) => {
+    const d = parseDateInput(date) || new Date();
+    d.setHours(0, 0, 0, 0);
+    const day = d.getDay();
+    const diff = d.getDate() - day; // Sunday = 0
+    return new Date(d.setDate(diff));
+  };
+  const getWeekDays = (weekStart) => {
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(weekStart);
+      day.setDate(weekStart.getDate() + i);
+      days.push(day);
+    }
+    return days;
+  };
+  const formatDateKey = (date) => {
+    // Use local date components instead of UTC-based toISOString()
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
+  // --- Initialize App ---
+  async function initializeApp() {
+    debugLog('Initializing app (mock mode)...');
+
+    // Move tabs out of .nav on mobile so position:fixed works correctly.
+    (function() {
+      const tabs = document.querySelector('.tabs');
+      const nav = document.querySelector('.nav');
+      const mq = window.matchMedia('(max-width: 768px)');
+      function place(e) {
+        if (e.matches) document.body.appendChild(tabs);
+        else nav.appendChild(tabs);
+      }
+      mq.addEventListener('change', place);
+      place(mq);
+    })();
+
+    const today = new Date();
+    state.currentWeekStart = getWeekStart(today);
+
+    // Load from localStorage first; if empty, generate mock data
+    loadStateFromLocalStorage();
+    if (state.records.length === 0 && state.weeklyPlan.size === 0) {
+      initializeMockData();
+    }
+
+    // Wire up UI
+    addEventListeners();
+    setupAuthListener();
+    updateConnectionStatus();
+    updateDashboardStatus();
+    updateRecordsPill();
+    refreshAll();
+    renderWeeklyCalendar();
+    refreshHistory();
+    refreshGuests();
+
+    showToast('Mock data loaded — 12 guests, ' + state.records.length + ' records', 'info');
+  }
+  function updateCurrentDateTime() {
+    const now = new Date();
+    $("#currentDateTime").textContent = now.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
+  }
+  updateCurrentDateTime();
+  setInterval(updateCurrentDateTime, 60000);
+  
+  // --- Toast Notification System ---
+  function showToast(message, type = 'info', duration = 3000) {
+    let container = $('#toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    
+    const removeToast = () => {
+        toast.style.animation = 'slideOutRight 0.3s ease forwards';
+        toast.addEventListener('animationend', () => toast.remove());
+        setTimeout(() => { if (toast.parentNode) toast.remove(); }, 500);
+    };
+    
+    const timer = setTimeout(removeToast, duration);
+    
+    toast.addEventListener('click', () => {
+        clearTimeout(timer);
+        removeToast();
+    });
+  }
+  
+  // Add CSS for slide out animation
+  const styleSheet = document.createElement("style");
+  styleSheet.type = "text/css";
+  styleSheet.innerText = `@keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }`;
+  document.head.appendChild(styleSheet);
+  
+  function updateConnectionStatus() {
+    const statusEl = $("#connection-status");
+    const dotEl = statusEl.querySelector('.status-dot');
+    // Mock mode: always show connected
+    statusEl.className = 'connection-status connected';
+    dotEl.className = 'status-dot connected';
+    dotEl.style.background = '';
+    statusEl.querySelector('span').textContent = 'Connected (Mock Data)';
+    $("#syncAllBtn").disabled = false;
+    updateDashboardStatus();
+  }
+  // --- Class Management ---
+  function createClass(date, time, playlist = null, attendees = new Set(), notes = '', status = 'draft', classType = '') {
+    return {
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      date: date,
+      time: normalizeTime(time),
+      playlist: playlist,
+      attendees: new Set(attendees),
+      status: status,
+      notes: notes,
+      classType: classType || ''
+    };
+  }
+  function getRecommenderClassEntries() {
+    return Array.from(state.weeklyPlan.entries())
+      .map(([key, cls]) => ({ key, cls }))
+      .filter(({ cls }) => cls.status !== 'finalized')
+      .sort((a, b) => a.key.localeCompare(b.key));
+  }
+  function getSelectedRecommenderClassEntries() {
+    const entries = getRecommenderClassEntries();
+    if (entries.length === 0) {
+      state.selectedRecommendationClassKeys.clear();
+      return [];
+    }
+    // If no explicit selection, auto-select the next upcoming draft
+    if (state.selectedRecommendationClassKeys.size === 0) {
+      const now = new Date();
+      const nowKey = createDateTimeKey(
+        formatDateKey(now),
+        normalizeTime(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`)
+      );
+      const nextDraft = entries.find(entry => entry.cls.status !== 'finalized' && entry.key >= nowKey)
+        || entries.find(entry => entry.cls.status !== 'finalized');
+      if (nextDraft) {
+        state.selectedRecommendationClassKeys.add(nextDraft.key);
+      }
+    }
+    // Remove keys that no longer exist in the plan
+    const validKeys = new Set(entries.map(e => e.key));
+    for (const key of state.selectedRecommendationClassKeys) {
+      if (!validKeys.has(key)) state.selectedRecommendationClassKeys.delete(key);
+    }
+    return entries.filter(e => state.selectedRecommendationClassKeys.has(e.key));
+  }
+  // Backward-compat shim: returns first selected entry (used by previewRosterBtn etc.)
+  function getSelectedRecommenderClassEntry() {
+    const selected = getSelectedRecommenderClassEntries();
+    return selected.length > 0 ? selected[0] : null;
+  }
+  function formatRecommenderClassOption(entry) {
+    const cls = entry.cls || {};
+    const attendeeCount = cls.attendees instanceof Set ? cls.attendees.size : (cls.attendees || []).length;
+    const classType = (cls.classType || '').trim() || 'All Types';
+    return `${formatDate(cls.date)} ${formatTime(cls.time)} \u2022 ${classType} \u2022 ${attendeeCount} guest${attendeeCount !== 1 ? 's' : ''}`;
+  }
+  function populatePlannedClassList() {
+    const container = $('#plannedClassList');
+    if (!container) return;
+    const entries = getRecommenderClassEntries();
+    container.innerHTML = '';
+    if (entries.length === 0) {
+      container.innerHTML = '<div style="padding:16px; color:var(--secondary-text); font-size:13px; text-align:center;"><div style="font-size:28px; opacity:.4; margin-bottom:6px;">&#128197;</div>No planned classes yet. <a href="#" onclick="event.preventDefault();$$(\'.tab-btn\').find(b=>b.dataset.tab===\'weekly\')?.click()" style="color:var(--primary); text-decoration:underline;">Add classes in Weekly Planner</a></div>';
+      return;
+    }
+    entries.forEach(entry => {
+      const isChecked = state.selectedRecommendationClassKeys.has(entry.key);
+      const item = document.createElement('label');
+      item.className = `class-picker-item${isChecked ? ' checked' : ''}`;
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = isChecked;
+      checkbox.value = entry.key;
+      const label = document.createElement('span');
+      label.className = 'class-picker-label';
+      label.textContent = formatRecommenderClassOption(entry);
+      item.appendChild(checkbox);
+      item.appendChild(label);
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          state.selectedRecommendationClassKeys.add(entry.key);
+        } else {
+          state.selectedRecommendationClassKeys.delete(entry.key);
+        }
+        item.classList.toggle('checked', checkbox.checked);
+        refreshRecommenderFromSelection();
+      });
+      container.appendChild(item);
+    });
+  }
+  function refreshRecommenderFromSelection() {
+    const selectedEntries = getSelectedRecommenderClassEntries();
+    const metrics = getMetricsForSelectedClasses(selectedEntries);
+    refreshDashboard(metrics, selectedEntries);
+    updateDashboardStatus(selectedEntries);
+  }
+  function getMetricsForSelectedClasses(selectedEntries) {
+    if (!selectedEntries || selectedEntries.length === 0) return [];
+    // Merge attendees from all selected classes
+    const mergedAttendees = new Set();
+    selectedEntries.forEach(entry => {
+      const cls = entry.cls || {};
+      const att = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+      att.forEach(g => mergedAttendees.add(g));
+    });
+    if (mergedAttendees.size === 0) return [];
+    // Determine class type filter: use shared type if all match, else no filter
+    const classTypes = selectedEntries.map(e => (e.cls.classType || '').trim()).filter(Boolean);
+    const uniqueTypes = new Set(classTypes.map(t => t.toLowerCase()));
+    const classType = uniqueTypes.size === 1 ? classTypes[0] : '';
+    // Use earliest date as reference
+    const dates = selectedEntries.map(e => e.cls.date).filter(Boolean).sort();
+    const refDate = dates[0] || formatDateKey(new Date());
+    return computeMetrics({
+      attendees: mergedAttendees,
+      classType,
+      window: state.selectedWindow,
+      date: refDate
+    });
+  }
+  async function assignPlaylistToSelectedClasses(playlistId) {
+    const selectedEntries = getSelectedRecommenderClassEntries();
+    if (selectedEntries.length === 0) {
+      showToast('Select at least one planned class first.', 'error');
+      return;
+    }
+    const normalizedPlaylist = normalizePlaylistId(playlistId);
+    if (!normalizedPlaylist) {
+      showToast('Playlist format is invalid.', 'error');
+      return;
+    }
+    const draftEntries = selectedEntries.filter(e => e.cls.status !== 'finalized');
+    if (draftEntries.length === 0) {
+      showToast('All selected classes are finalized.', 'info');
+      return;
+    }
+    let savedCount = 0;
+    for (const { key, cls } of draftEntries) {
+      const updatedClass = {
+        ...cls,
+        playlist: normalizedPlaylist,
+        attendees: cls.attendees instanceof Set ? new Set(cls.attendees) : new Set(cls.attendees || [])
+      };
+      state.weeklyPlan.set(key, updatedClass);
+      savedCount++;
+      // Sync modal if open on this class
+      if (state.selectedClass && createDateTimeKey(state.selectedClass.date, state.selectedClass.time) === key) {
+        state.selectedClass = updatedClass;
+        const modalPlaylistInput = $('#modal-class-playlist');
+        if (modalPlaylistInput) modalPlaylistInput.value = normalizedPlaylist;
+        updateModalPlaylistDisplay(normalizedPlaylist);
+      }
+    }
+    saveStateToLocalStorage();
+    renderWeeklyCalendar();
+    const label = savedCount === 1 ? '1 class' : `${savedCount} classes`;
+    showToast(`Playlist #${normalizedPlaylist} assigned to ${label}`, 'success');
+    refreshAll();
+  }
+  function updateDashboardStatus(selectedEntries = getSelectedRecommenderClassEntries()) {
+    const selectedClassPill = $("#selectedClassPill");
+    const selectedClassTypePill = $("#selectedClassTypePill");
+    const selectedPlaylistPill = $("#selectedPlaylistPill");
+    if (!selectedClassPill || !selectedClassTypePill || !selectedPlaylistPill) return;
+    if (!selectedEntries || selectedEntries.length === 0) {
+      selectedClassPill.textContent = 'No classes selected';
+      selectedClassTypePill.textContent = 'Class type: --';
+      selectedPlaylistPill.textContent = 'Assigned playlist: --';
+      return;
+    }
+    // Aggregate info
+    const mergedAttendees = new Set();
+    const playlists = new Set();
+    const classTypes = new Set();
+    let allFinalized = true;
+    selectedEntries.forEach(entry => {
+      const cls = entry.cls || {};
+      const att = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+      att.forEach(g => mergedAttendees.add(g));
+      if (cls.playlist) playlists.add(cls.playlist);
+      if ((cls.classType || '').trim()) classTypes.add((cls.classType || '').trim());
+      if (cls.status !== 'finalized') allFinalized = false;
+    });
+    const count = selectedEntries.length;
+    const guestCount = mergedAttendees.size;
+    if (count === 1) {
+      const cls = selectedEntries[0].cls || {};
+      selectedClassPill.textContent = `${formatDate(cls.date)} ${formatTime(cls.time)} \u2022 ${guestCount} guest${guestCount !== 1 ? 's' : ''} \u2022 ${cls.status || 'draft'}`;
+    } else {
+      selectedClassPill.textContent = `${count} classes selected \u2022 ${guestCount} unique guest${guestCount !== 1 ? 's' : ''}`;
+    }
+    selectedClassTypePill.textContent = classTypes.size === 1 ? `Class type: ${[...classTypes][0]}` : classTypes.size > 1 ? `Class types: ${[...classTypes].join(', ')}` : 'Class type: All Types';
+    selectedPlaylistPill.textContent = playlists.size === 1 ? `Assigned playlist: #${[...playlists][0]}` : playlists.size > 1 ? `Assigned playlists: ${[...playlists].map(p => '#' + p).join(', ')}` : 'Assigned playlist: --';
+  }
+  function updateRecordsPill() {
+    $("#recordsCountPill").textContent = `${state.records.length} records`;
+  }
+  // --- Weekly Calendar ---
+  function renderWeeklyCalendar() {
+    const calendarGrid = $("#calendarGrid");
+    const weekDays = getWeekDays(state.currentWeekStart);
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    
+    calendarGrid.innerHTML = '';
+    
+    weekDays.forEach((day, index) => {
+      const dayKey = formatDateKey(day);
+      const isToday = dayKey === formatDateKey(new Date());
+      
+      const dayClasses = Array.from(state.weeklyPlan.entries())
+        .filter(([key]) => key.startsWith(dayKey))
+        .map(([key, cls]) => ({...cls, dateTimeKey: key}))
+        .sort((a, b) => a.time.localeCompare(b.time));
+      
+      const dayCard = document.createElement('div');
+      dayCard.className = `day-card${isToday ? ' today' : ''}${dayClasses.length > 0 ? ' has-classes' : ' empty'}`;
+      
+      let classesHTML = '';
+      if (dayClasses.length > 0) {
+        classesHTML = dayClasses.map(cls => `
+          <div class="class-item ${cls.status === 'draft' ? 'status-draft-bar' : 'status-finalized-bar'}" onclick="openClassModal('${cls.dateTimeKey}')">
+            <div class="class-time">${formatTime(cls.time)}</div>
+            <div class="class-info">
+              ${cls.classType ? esc(cls.classType) + ' • ' : ''}${cls.playlist ? `Playlist #${esc(cls.playlist)}` : 'No playlist assigned'} • ${cls.attendees.size} guests
+            </div>
+            ${cls.playlist ? renderPlaylistTags(cls.playlist, { compact: true }) : ''}
+            <div class="pill ${cls.status === 'draft' ? 'status-draft' : 'status-finalized'} " style="margin-top: 4px; font-size: 11px; padding: 4px 8px;">
+              ${cls.status}
+            </div>
+          </div>
+        `).join('');
+      } else {
+        classesHTML = '';
+      }
+      
+      const draftCount = dayClasses.filter(c => c.status === 'draft').length;
+      const finalizeBtn = draftCount > 0
+        ? `<button class="btn btn-sm btn-success" onclick="finalizeDayDrafts('${dayKey}')">✔ Finalize ${draftCount} Draft${draftCount !== 1 ? 's' : ''}</button>`
+        : '';
+
+      dayCard.innerHTML = `
+        <div class="day-header">
+          <div class="day-name">${dayNames[index]}${isToday ? ' <span style="color:var(--info); font-size:12px; font-weight:600; margin-left:4px;">TODAY</span>' : ''}</div>
+          <div class="day-date">${day.getMonth() + 1}/${day.getDate()}</div>
+        </div>
+        <div class="class-list">${classesHTML}</div>
+        <div class="class-actions">
+          <button class="btn btn-sm btn-primary" onclick="openNewClassModal('${dayKey}')">+ Add Class</button>
+          ${finalizeBtn}
+        </div>
+      `;
+      
+      calendarGrid.appendChild(dayCard);
+    });
+    
+    updateWeeklyStats();
+  }
+  function updateWeeklyStats() {
+    const weekStart = state.currentWeekStart;
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+    
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      $("#weekRangePill").textContent = `${fmt(weekStart)} – ${fmt(weekEnd)}`;
+    } else {
+      $("#weekRangePill").textContent = `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+    }
+    
+    let drafts = 0, finalized = 0;
+    state.weeklyPlan.forEach(cls => {
+        const clsDate = parseDateInput(cls.date);
+        if (clsDate >= weekStart && clsDate <= weekEnd) {
+            if (cls.status === 'draft') drafts++;
+            else finalized++;
+        }
+    });
+    
+    $("#draftsCountPill").textContent = `${drafts} draft${drafts !== 1 ? 's' : ''}`;
+    $("#finalizedCountPill").textContent = `${finalized} finalized`;
+  }
+  function navigateWeek(direction) {
+    if (direction === 0) {
+        state.currentWeekStart = getWeekStart(new Date());
+    } else {
+        const newStart = new Date(state.currentWeekStart);
+        newStart.setDate(newStart.getDate() + (direction * 7));
+        state.currentWeekStart = newStart;
+    }
+    renderWeeklyCalendar();
+  }
+  
+  window.openNewClassModal = function(dateKey) {
+    state.selectedClass = createClass(dateKey, '09:00');
+    state.modalAttendees = [];
+
+    $("#class-modal-title").textContent = 'Plan New Class';
+    $("#modal-class-date").value = dateKey;
+    populateTimeSelect($("#modal-class-time"), '09:00');
+    populateClassTypeDropdown($("#modal-class-type"), '');
+    $("#modal-class-playlist").value = '';
+    updateModalPlaylistDisplay('');
+    $("#modal-class-notes").value = '';
+
+    populateModalGuestList();
+    renderModalSelectedGuests();
+
+    $("#delete-class-modal").classList.add('hidden');
+    $("#class-modal").classList.remove('hidden');
+  };
+  window.openClassModal = function(dateTimeKey) {
+    const classData = state.weeklyPlan.get(dateTimeKey);
+    if (!classData) return;
+
+    state.selectedClass = classData;
+    state.modalAttendees = [...(classData.attendees || [])];
+
+    $("#class-modal-title").textContent = 'Edit Class';
+    $("#modal-class-date").value = classData.date;
+    populateTimeSelect($("#modal-class-time"), classData.time || '09:00');
+    populateClassTypeDropdown($("#modal-class-type"), classData.classType || '');
+    $("#modal-class-notes").value = classData.notes || '';
+    $("#modal-class-playlist").value = classData.playlist || '';
+    updateModalPlaylistDisplay(classData.playlist || '');
+    populateModalGuestList();
+    renderModalSelectedGuests();
+
+    $("#delete-class-modal").classList.remove('hidden');
+    $("#class-modal").classList.remove('hidden');
+  };
+  function openHistoryClassModal(date, time, playlist) {
+    const normalizedTime = normalizeTime(time, '00:00');
+    const dateTimeKey = createDateTimeKey(date, normalizedTime);
+
+    // If the class exists in weeklyPlan, open directly
+    const existingClass = state.weeklyPlan.get(dateTimeKey);
+    if (existingClass) {
+      openClassModal(dateTimeKey);
+      return;
+    }
+
+    // Records-only entry — build a synthetic class from matching records
+    const normalizedPlaylist = normalizePlaylistId(playlist);
+    const matchingRecords = state.records.filter(r =>
+      r.date === date &&
+      normalizeTime(r.time) === normalizedTime &&
+      normalizePlaylistId(r.playlist) === normalizedPlaylist
+    );
+
+    if (matchingRecords.length === 0) {
+      showToast('Could not find class data.', 'error');
+      return;
+    }
+
+    const attendees = new Set(matchingRecords.map(r => r.guest).filter(Boolean));
+    const classType = (matchingRecords.find(r => r.classType) || {}).classType || '';
+
+    const syntheticClass = createClass(date, normalizedTime, normalizedPlaylist, attendees, '', 'finalized', classType);
+    state.weeklyPlan.set(dateTimeKey, syntheticClass);
+
+    openClassModal(dateTimeKey);
+  }
+  function updateModalPlaylistDisplay(playlistId) {
+    const display = $('#modal-class-playlist-display');
+    if (!display) return;
+    const normalized = normalizePlaylistId(playlistId);
+    display.textContent = normalized ? `Playlist #${normalized}` : 'No playlist assigned yet';
+  }
+  // --- Guest Selection System ---
+  function populateModalGuestList() {
+    const modalGuestList = $("#modal-guest-list");
+    modalGuestList.innerHTML = "";
+
+    // Compute last-seen days for each guest
+    const todayKey = formatDateKey(new Date());
+    const guestLastSeen = new Map();
+    state.records.forEach(r => {
+      if (r.date && r.date <= todayKey) {
+        const prev = guestLastSeen.get(r.guest);
+        if (!prev || r.date > prev) guestLastSeen.set(r.guest, r.date);
+      }
+    });
+
+    Array.from(state.allGuests).sort().forEach(guest => {
+      const guestElement = document.createElement("div");
+      guestElement.className = `guest-list-item ${state.modalAttendees.includes(guest) ? 'selected' : ''}`;
+      guestElement.dataset.guest = guest;
+      guestElement.textContent = guest;
+
+      const lastDate = guestLastSeen.get(guest);
+      if (lastDate) {
+        guestElement.dataset.lastSeenDays = String(daysBetween(todayKey, lastDate));
+      } else {
+        guestElement.dataset.lastSeenDays = 'never';
+      }
+
+      guestElement.addEventListener("click", () => {
+        if (state.modalAttendees.includes(guest)) {
+          state.modalAttendees = state.modalAttendees.filter(g => g !== guest);
+        } else {
+          state.modalAttendees.push(guest);
+        }
+        renderModalSelectedGuests();
+        updateModalGuestListSelection();
+        // Clear search and apply default filter (don't refocus to avoid keyboard popup on tap)
+        const searchInput = $('#modal-guest-search');
+        const clearBtn = $('#modal-guest-search-clear');
+        searchInput.value = '';
+        if (clearBtn) clearBtn.classList.remove('visible');
+        filterModalGuestVisibility();
+      });
+      modalGuestList.appendChild(guestElement);
+    });
+    filterModalGuestVisibility();
+  }
+  function filterModalGuestVisibility() {
+    const term = ($('#modal-guest-search').value || '').toLowerCase();
+    $$("#modal-guest-list .guest-list-item").forEach(item => {
+      const guest = item.dataset.guest.toLowerCase();
+      if (term) {
+        // When searching, show all matching guests
+        item.style.display = guest.includes(term) ? '' : 'none';
+      } else {
+        // When not searching, only show recent guests (last 90 days) or already-selected guests
+        const days = item.dataset.lastSeenDays;
+        const isRecent = days !== 'never' && parseInt(days, 10) <= 90;
+        const isSelected = state.modalAttendees.includes(item.dataset.guest);
+        item.style.display = (isRecent || isSelected) ? '' : 'none';
+      }
+    });
+  }
+  function renderModalSelectedGuests() {
+    const container = $("#modal-selected-guests");
+    container.innerHTML = "";
+    
+    if (state.modalAttendees.length === 0) {
+      container.innerHTML = `<div class="no-selection">No guests selected</div>`;
+    } else {
+      state.modalAttendees.forEach((name, idx) => {
+        const guestChip = document.createElement("div");
+        guestChip.className = "selected-guest-item";
+        guestChip.draggable = true;
+        guestChip.dataset.index = idx;
+        guestChip.dataset.guest = name;
+        guestChip.innerHTML = `<span class="drag-handle" aria-label="Drag to reorder">⠿</span><span>${esc(name)}</span><span class="remove-guest" data-guest="${esc(name)}">✕</span>`;
+        guestChip.querySelector(".remove-guest").addEventListener("click", (e) => {
+          e.stopPropagation();
+          state.modalAttendees = state.modalAttendees.filter(g => g !== name);
+          renderModalSelectedGuests();
+          updateModalGuestListSelection();
+        });
+
+        // Desktop drag-and-drop
+        guestChip.addEventListener("dragstart", (e) => {
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", String(idx));
+          requestAnimationFrame(() => guestChip.classList.add("dragging"));
+        });
+        guestChip.addEventListener("dragend", () => {
+          guestChip.classList.remove("dragging");
+          container.querySelectorAll(".selected-guest-item").forEach(el => el.classList.remove("drag-over"));
+        });
+        guestChip.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+          container.querySelectorAll(".selected-guest-item").forEach(el => el.classList.remove("drag-over"));
+          guestChip.classList.add("drag-over");
+        });
+        guestChip.addEventListener("dragleave", () => {
+          guestChip.classList.remove("drag-over");
+        });
+        guestChip.addEventListener("drop", (e) => {
+          e.preventDefault();
+          guestChip.classList.remove("drag-over");
+          const fromIdx = parseInt(e.dataTransfer.getData("text/plain"), 10);
+          const toIdx = idx;
+          if (fromIdx !== toIdx) {
+            const moved = state.modalAttendees.splice(fromIdx, 1)[0];
+            state.modalAttendees.splice(toIdx, 0, moved);
+            renderModalSelectedGuests();
+          }
+        });
+
+        // Touch drag-and-drop
+        let touchClone = null;
+        let touchStarted = false;
+        let holdTimer = null;
+
+        const handleEl = guestChip.querySelector(".drag-handle");
+        handleEl.addEventListener("touchstart", (e) => {
+          holdTimer = setTimeout(() => {
+            touchStarted = true;
+            guestChip.classList.add("dragging");
+            const touch = e.touches[0];
+            touchClone = guestChip.cloneNode(true);
+            touchClone.classList.add("touch-clone");
+            touchClone.style.position = "fixed";
+            touchClone.style.left = (touch.clientX - 40) + "px";
+            touchClone.style.top = (touch.clientY - 20) + "px";
+            touchClone.style.zIndex = "9999";
+            touchClone.style.pointerEvents = "none";
+            document.body.appendChild(touchClone);
+          }, 150);
+        }, { passive: true });
+
+        handleEl.addEventListener("touchmove", (e) => {
+          if (!touchStarted) { clearTimeout(holdTimer); return; }
+          e.preventDefault();
+          const touch = e.touches[0];
+          if (touchClone) {
+            touchClone.style.left = (touch.clientX - 40) + "px";
+            touchClone.style.top = (touch.clientY - 20) + "px";
+          }
+          // Highlight drop target
+          container.querySelectorAll(".selected-guest-item").forEach(el => el.classList.remove("drag-over"));
+          const target = document.elementFromPoint(touch.clientX, touch.clientY);
+          if (target) {
+            const chip = target.closest(".selected-guest-item");
+            if (chip && chip !== guestChip) chip.classList.add("drag-over");
+          }
+        }, { passive: false });
+
+        const touchEnd = () => {
+          clearTimeout(holdTimer);
+          if (!touchStarted) return;
+          touchStarted = false;
+          guestChip.classList.remove("dragging");
+          if (touchClone) { touchClone.remove(); touchClone = null; }
+          // Find drop target
+          const overEl = container.querySelector(".selected-guest-item.drag-over");
+          if (overEl) {
+            const toIdx = parseInt(overEl.dataset.index, 10);
+            const fromIdx = idx;
+            overEl.classList.remove("drag-over");
+            if (fromIdx !== toIdx) {
+              const moved = state.modalAttendees.splice(fromIdx, 1)[0];
+              state.modalAttendees.splice(toIdx, 0, moved);
+              renderModalSelectedGuests();
+            }
+          }
+          container.querySelectorAll(".selected-guest-item").forEach(el => el.classList.remove("drag-over"));
+        };
+        handleEl.addEventListener("touchend", touchEnd);
+        handleEl.addEventListener("touchcancel", touchEnd);
+
+        container.appendChild(guestChip);
+      });
+    }
+  }
+  function updateModalGuestListSelection() {
+    $$("#modal-guest-list .guest-list-item").forEach(item => {
+      item.classList.toggle("selected", state.modalAttendees.includes(item.dataset.guest));
+    });
+  }
+  
+  // --- Metrics Calculation ---
+  function lastHeardMap(referenceDate) {
+    const refDate = parseDateInput(referenceDate || formatDateKey(new Date())) || new Date();
+    const map = new Map();
+    state.records.forEach(r => {
+      const recordDate = parseDateInput(r.date);
+      if (!recordDate || recordDate > refDate) return;
+      if (!map.has(r.guest)) map.set(r.guest, new Map());
+      const pm = map.get(r.guest);
+      const prev = pm.get(r.playlist);
+      if (!prev || recordDate > parseDateInput(prev)) {
+        pm.set(r.playlist, r.date);
+      }
+    });
+    return map;
+  }
+  function computeMetrics(opts = {}) {
+    const refDateISO = opts.date || formatDateKey(new Date());
+    const lm = lastHeardMap(refDateISO);
+    const rosterSource = opts.attendees instanceof Set ? Array.from(opts.attendees) : Array.from(opts.attendees || []);
+    const roster = rosterSource.filter(Boolean);
+    if (roster.length === 0) return [];
+    const windowDays = Number.isFinite(opts.window) ? opts.window : state.selectedWindow;
+    const classTypeFilter = opts.classType !== undefined ? opts.classType : '';
+    const classTypeFilterLower = classTypeFilter.toLowerCase();
+    const filteredPlaylists = state.playlists.filter(pl => {
+      const status = normalizePlaylistStatus(state.playlistStatus.get(pl) || 'Active');
+      if (status === 'Retired' || status === 'Removed') return false;
+      if (classTypeFilterLower) {
+        const tags = state.playlistTags.get(pl) || [];
+        return tags.some(t => t.toLowerCase() === classTypeFilterLower);
+      }
+      return true;
+    });
+    const byPlaylist = filteredPlaylists.map(pl => {
+      let never = 0;
+      let deltas = [];
+      let dueCount = 0;
+      let recentCount = 0;
+      roster.forEach(g => {
+        const last = lm.get(g)?.get(pl);
+        if (!last) {
+          never++;
+          return;
+        } else {
+          const d = daysBetween(refDateISO, last);
+          if (d < 0) {
+            never++;
+            return;
+          }
+          deltas.push(d);
+          if (d >= windowDays) {
+            dueCount++;
+          } else {
+            recentCount++;
+          }
+        }
+      });
+      const medianDays = deltas.length ? median(deltas) : 0;
+      const rosterSize = roster.length;
+      const neverPct = rosterSize ? Math.round((never / rosterSize) * 100) : 0;
+      const duePct = rosterSize ? Math.round((dueCount / rosterSize) * 100) : 0;
+      const recentPct = rosterSize ? Math.round((recentCount / rosterSize) * 100) : 0;
+      // Favor never-heard and replay-ready coverage while penalizing recently-heard overlap.
+      const score = (neverPct * 3.4) + (duePct * 2.2) + (medianDays * 0.12) - (recentPct * 2.6);
+
+      return {
+        playlist: pl,
+        never,
+        dueCount,
+        recentCount,
+        heardCount: deltas.length,
+        median: medianDays,
+        stalePct: duePct, // Backward compatible alias
+        readyPct: duePct,
+        neverPct,
+        recentPct,
+        rosterSize,
+        score
+      };
+    });
+    byPlaylist.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (b.neverPct !== a.neverPct) return b.neverPct - a.neverPct;
+      if (b.readyPct !== a.readyPct) return b.readyPct - a.readyPct;
+      if (b.median !== a.median) return b.median - a.median;
+      return comparePlaylistIds(a.playlist, b.playlist);
+    });
+    return byPlaylist;
+  }
+  function getRecommendationStrength(metrics) {
+    const best = metrics[0];
+    if (!best) return null;
+    const second = metrics[1];
+    if (!second) {
+      return {
+        tone: 'strong',
+        label: 'High confidence',
+        detail: 'Only one active playlist matches current filters.',
+        gap: null
+      };
+    }
+    const gap = Math.max(0, best.score - second.score);
+    const roundedGap = Math.round(gap * 10) / 10;
+    if (gap >= 18) {
+      return {
+        tone: 'strong',
+        label: 'High confidence',
+        detail: `${roundedGap} points ahead of #${second.playlist}.`,
+        gap: roundedGap
+      };
+    }
+    if (gap >= 8) {
+      return {
+        tone: 'moderate',
+        label: 'Medium confidence',
+        detail: `${roundedGap} points ahead of #${second.playlist}.`,
+        gap: roundedGap
+      };
+    }
+    return {
+      tone: 'close',
+      label: 'Close decision',
+      detail: `${roundedGap} points ahead of #${second.playlist}. Check runner-ups.`,
+      gap: roundedGap
+    };
+  }
+  // --- UI Refresh Functions ---
+  function refreshAll() {
+      const selectedEntries = getSelectedRecommenderClassEntries();
+      populatePlannedClassList();
+      const metrics = getMetricsForSelectedClasses(selectedEntries);
+      refreshDashboard(metrics, selectedEntries);
+      refreshExplorer();
+      updateDashboardStatus(selectedEntries);
+  }
+  function refreshDashboard(metrics, selectedEntries = getSelectedRecommenderClassEntries()) {
+    const best = metrics[0];
+    const bestSummary = $("#bestSummary");
+    const bestStrength = $("#bestStrength");
+    const rankingsBody = $("#runnerUps");
+    if (!bestSummary || !bestStrength || !rankingsBody) return;
+    const assignBestBtn = $("#assignBestPlaylistBtn");
+    if (assignBestBtn) {
+      assignBestBtn.disabled = true;
+      assignBestBtn.dataset.playlist = '';
+      assignBestBtn.textContent = 'Assign Best Playlist';
+    }
+
+    if (!selectedEntries || selectedEntries.length === 0) {
+      bestSummary.innerHTML = '<div class="muted">Add a class in Weekly Planner, then select it here for recommendations.</div>';
+      bestStrength.innerHTML = '';
+      $("#bestNever").textContent = "--";
+      $("#bestMedian").textContent = "--";
+      $("#bestReady").textContent = "--";
+      rankingsBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--secondary-text);">No planned classes available.</td></tr>';
+      return;
+    }
+
+    // Compute aggregate roster size
+    const mergedAttendees = new Set();
+    selectedEntries.forEach(entry => {
+      const cls = entry.cls || {};
+      const att = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+      att.forEach(g => mergedAttendees.add(g));
+    });
+    const rosterSize = mergedAttendees.size;
+    const classTypes = [...new Set(selectedEntries.map(e => (e.cls.classType || '').trim()).filter(Boolean))];
+    const classType = classTypes.length === 1 ? classTypes[0] : '';
+    const classCount = selectedEntries.length;
+    const draftEntries = selectedEntries.filter(e => e.cls.status !== 'finalized');
+    const allFinalized = draftEntries.length === 0;
+
+    // Check if best playlist is already assigned to ALL selected draft classes
+    const assignedPlaylists = new Set(selectedEntries.map(e => normalizePlaylistId(e.cls.playlist)).filter(Boolean));
+
+    if (!best || rosterSize === 0) {
+      bestSummary.innerHTML = rosterSize === 0
+        ? '<div class="muted">Selected classes have no attendees yet. Add attendees in Weekly Planner.</div>'
+        : (classType
+          ? `<div class="muted">No playlists tagged for <strong>${esc(classType)}</strong>. Tag playlists in the Playlist Manager or update class type.</div>`
+          : '<div class="muted">No active playlists are available for ranking.</div>');
+      bestStrength.innerHTML = '';
+      $("#bestNever").textContent = "--";
+      $("#bestMedian").textContent = "--";
+      $("#bestReady").textContent = "--";
+      rankingsBody.innerHTML = rosterSize === 0
+        ? '<tr><td colspan="8" style="text-align:center; color:var(--secondary-text);">No ranking yet — selected classes have no attendees.</td></tr>'
+        : '<tr><td colspan="8" style="text-align:center; color:var(--secondary-text);">No playlists match the selected class type.</td></tr>';
+      return;
+    }
+
+    const strength = getRecommendationStrength(metrics);
+    const selectionLabel = classCount === 1
+      ? `Selected class: ${esc(formatDateTime(selectedEntries[0].cls.date, selectedEntries[0].cls.time))} \u2022 ${rosterSize} attendees`
+      : `${classCount} classes selected \u2022 ${rosterSize} unique attendees`;
+    const assignedText = assignedPlaylists.size === 1 ? `#${esc([...assignedPlaylists][0])}` : assignedPlaylists.size > 1 ? 'Mixed' : 'None';
+    bestSummary.innerHTML = `
+      <div class="best-summary-title">
+        Playlist <span style="color: var(--primary);">#${best.playlist}</span>${renderPlaylistTags(best.playlist)}
+      </div>
+      <div class="best-summary-meta">${selectionLabel}</div>
+      <div class="best-summary-meta">Replay-ready threshold: ${state.selectedWindow} days${classType ? ' \u2022 ' + esc(classType) : ''} \u2022 Current assignment: ${assignedText}</div>
+      <div class="best-insight-list">
+        <div class="best-insight"><b>${best.never}</b><span>attendees have never heard this playlist</span></div>
+        <div class="best-insight"><b>${best.dueCount}</b><span>attendees are replay-ready (&ge; ${state.selectedWindow} days)</span></div>
+        <div class="best-insight"><b>${best.recentCount}</b><span>attendees heard it recently (&lt; ${state.selectedWindow} days)</span></div>
+      </div>
+    `;
+    bestStrength.innerHTML = strength
+      ? `<span class="rec-strength-pill ${strength.tone}">${esc(strength.label)}</span><span class="subtle" style="font-size:13px;">${esc(strength.detail)}</span>`
+      : '';
+
+    $("#bestNever").textContent = `${best.never} (${best.neverPct}%)`;
+    $("#bestMedian").textContent = `${best.median}d`;
+    $("#bestReady").textContent = `${best.readyPct}%`;
+
+    if (assignBestBtn) {
+      assignBestBtn.dataset.playlist = best.playlist;
+      const allAlreadyAssigned = draftEntries.length > 0 && draftEntries.every(e => normalizePlaylistId(e.cls.playlist) === best.playlist);
+      assignBestBtn.disabled = allFinalized || allAlreadyAssigned;
+      if (allFinalized) {
+        assignBestBtn.textContent = classCount === 1 ? 'Class Finalized' : 'All Classes Finalized';
+      } else if (allAlreadyAssigned) {
+        assignBestBtn.textContent = `Best Already Assigned (#${best.playlist})`;
+      } else {
+        const assignLabel = classCount === 1 ? `Assign Best (#${best.playlist})` : `Assign Best (#${best.playlist}) to ${draftEntries.length} class${draftEntries.length !== 1 ? 'es' : ''}`;
+        assignBestBtn.textContent = assignLabel;
+      }
+    }
+
+    rankingsBody.innerHTML = metrics.map((row, index) => {
+      const allRowAssigned = draftEntries.length > 0 && draftEntries.every(e => normalizePlaylistId(e.cls.playlist) === row.playlist);
+      const scoreLabel = (Math.round(row.score * 10) / 10).toFixed(1);
+      const actionHTML = allFinalized
+        ? '<span class="pill status-finalized" style="font-size:11px; padding:4px 8px;">Finalized</span>'
+        : `<button type="button" class="btn btn-sm"${allRowAssigned ? ' disabled' : ''} data-assign-playlist="${esc(row.playlist)}">${allRowAssigned ? 'Assigned' : 'Assign'}</button>`;
+      return `
+        <tr${allRowAssigned ? ' class="rank-row-assigned"' : ''}>
+          <td>${index + 1}</td>
+          <td><strong>#${esc(row.playlist)}</strong></td>
+          <td>${row.never}/${row.rosterSize} (${row.neverPct}%)</td>
+          <td>${row.dueCount}/${row.rosterSize} (${row.readyPct}%)</td>
+          <td>${row.median}d</td>
+          <td>${row.recentCount}/${row.rosterSize} (${row.recentPct}%)</td>
+          <td><span class="rank-score">${scoreLabel}</span></td>
+          <td>${actionHTML}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+  function refreshExplorer() {
+    const tbody = $("#explorerTbody");
+    tbody.innerHTML = "";
+    const { column, ascending } = state.explorerSortOrder;
+
+    // Build playlist data array for sorting
+    const rows = state.playlists.map(pl => {
+      const status = state.playlistStatus.get(pl) || 'Active';
+      return { playlist: pl, status };
+    });
+
+    rows.sort((a, b) => {
+      if (column === 'playlist') {
+        const cmp = comparePlaylistIds(a.playlist, b.playlist);
+        return ascending ? cmp : -cmp;
+      }
+      if (column === 'status') {
+        const cmp = a.status.localeCompare(b.status);
+        return ascending ? cmp : -cmp;
+      }
+      return 0;
+    });
+
+    rows.forEach(row => {
+      const pl = row.playlist;
+      const status = row.status;
+      const tags = state.playlistTags.get(pl) || [];
+      const isRetired = status === 'Retired';
+      const tr = document.createElement('tr');
+      tr.className = 'explorer-row' + (isRetired ? ' retired-row' : '');
+
+      // Playlist name cell
+      const tdName = document.createElement('td');
+      tdName.dataset.label = 'Playlist';
+      tdName.innerHTML = `<strong>Playlist #${esc(pl)}</strong>`;
+
+      // Tags cell
+      const tdTags = document.createElement('td');
+      tdTags.dataset.label = 'Tags';
+      const tagsDiv = document.createElement('div');
+      tagsDiv.className = 'manager-tags-cell';
+      tags.forEach(t => {
+        const chip = document.createElement('span');
+        chip.className = 'tag-chip-removable';
+        chip.dataset.tag = t;
+        chip.innerHTML = `<span>${esc(t)}</span><span class="remove-tag">✕</span>`;
+        chip.querySelector('.remove-tag').addEventListener('click', e => {
+          e.stopPropagation();
+          removePlaylistTag(pl, t);
+        });
+        tagsDiv.appendChild(chip);
+      });
+      const addTagBtn = document.createElement('span');
+      addTagBtn.className = 'add-tag-btn';
+      addTagBtn.textContent = '+';
+      addTagBtn.title = 'Add tag';
+      addTagBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (state.expandedPlaylist === pl) {
+          state.expandedPlaylist = null;
+        } else {
+          state.expandedPlaylist = pl;
+        }
+        refreshExplorer();
+      });
+      tagsDiv.appendChild(addTagBtn);
+      tdTags.appendChild(tagsDiv);
+
+      // Status cell
+      const tdStatus = document.createElement('td');
+      tdStatus.dataset.label = 'Status';
+      const statusPill = document.createElement('span');
+      statusPill.className = 'status-toggle ' + (isRetired ? 'retired' : 'active');
+      statusPill.textContent = status;
+      statusPill.addEventListener('click', e => {
+        e.stopPropagation();
+        setPlaylistStatus(pl, isRetired ? 'Active' : 'Retired');
+      });
+      tdStatus.appendChild(statusPill);
+
+      // Actions cell
+      const tdActions = document.createElement('td');
+      tdActions.dataset.label = 'Actions';
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'btn-remove-playlist';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        removePlaylist(pl);
+      });
+      tdActions.appendChild(removeBtn);
+
+      tr.appendChild(tdName);
+      tr.appendChild(tdTags);
+      tr.appendChild(tdStatus);
+      tr.appendChild(tdActions);
+      tbody.appendChild(tr);
+
+      // Expanded tag editor row
+      if (state.expandedPlaylist === pl) {
+        const editorTr = document.createElement('tr');
+        editorTr.className = 'tag-editor-row';
+        editorTr.innerHTML = `<td colspan="4">${buildTagEditorHTML(pl)}</td>`;
+        editorTr.addEventListener('click', e => e.stopPropagation());
+        tbody.appendChild(editorTr);
+        wireTagEditor(pl, editorTr);
+      }
+    });
+  }
+  function buildTagEditorHTML(playlistNum) {
+    const tags = state.playlistTags.get(playlistNum) || [];
+    const chips = tags.map(t =>
+      `<span class="tag-chip-removable" data-tag="${esc(t)}"><span>${esc(t)}</span><span class="remove-tag">✕</span></span>`
+    ).join('');
+    const currentTags = new Set(tags.map(t => t.toLowerCase()));
+    const available = getAllClassTypes().filter(t => !currentTags.has(t.toLowerCase()));
+    const options = available.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+    return `<div class="tag-editor">
+      <div style="font-weight:600; font-size:13px; color:var(--ink-light);">Class Types for Playlist #${playlistNum}</div>
+      <div class="tag-editor-chips">${chips || '<span style="color:var(--secondary-text); font-size:13px;">No tags yet</span>'}</div>
+      <select class="tag-select select" style="margin-top:6px;">
+        <option value="" disabled selected>Add class type...</option>
+        ${options}
+      </select>
+    </div>`;
+  }
+  function wireTagEditor(playlistNum, editorTr) {
+    // Remove buttons
+    editorTr.querySelectorAll('.remove-tag').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const tag = btn.closest('.tag-chip-removable').dataset.tag;
+        removePlaylistTag(playlistNum, tag);
+      });
+    });
+
+    // Dropdown select
+    const select = editorTr.querySelector('.tag-select');
+    if (select) {
+      select.addEventListener('change', () => {
+        const value = select.value;
+        if (value) {
+          addPlaylistTag(playlistNum, value);
+        }
+      });
+    }
+  }
+  function refreshHistory() {
+    const tbody = $("#historyTbody");
+    const searchTerm = $("#history-search").value.toLowerCase();
+    
+    const byClass = new Map();
+    [...state.records, ...Array.from(state.weeklyPlan.values()).filter(c => c.status === 'finalized')]
+    .forEach(r => {
+        if (!r.playlist) return;
+        const normalizedTime = normalizeTime(r.time, '00:00');
+        const classNumber = normalizeClassNumber(r.classNumber);
+        const key = classNumber
+          ? `${r.date}T${normalizedTime}::${r.playlist}::${classNumber}`
+          : `${r.date}T${normalizedTime}::${r.playlist}`;
+        if (!byClass.has(key)) {
+            byClass.set(key, { date: r.date, time: normalizedTime, playlist: r.playlist, classType: r.classType || '', classNumber, guests: new Set(), status: 'finalized' });
+        }
+        const entry = byClass.get(key);
+        if (!entry.classType && r.classType) entry.classType = r.classType;
+        if (!entry.classNumber && classNumber) entry.classNumber = classNumber;
+        if (r.guest) {
+            entry.guests.add(r.guest);
+        } else if (r.attendees) {
+            r.attendees.forEach(g => entry.guests.add(g));
+        }
+    });
+
+    let rows = [...byClass.values()].filter(row => {
+        if (!searchTerm) return true;
+        const guestNames = [...row.guests].join(' ').toLowerCase();
+        const classType = (row.classType || '').toLowerCase();
+        const classNumber = (row.classNumber || '').toLowerCase();
+        return row.date.includes(searchTerm) || row.playlist.toString().includes(searchTerm) || classType.includes(searchTerm) || classNumber.includes(searchTerm) || guestNames.includes(searchTerm);
+    });
+    
+    const { column, ascending } = state.sortOrder;
+    rows.sort((a, b) => {
+        let aVal, bVal;
+        if (column === 'datetime') {
+            aVal = new Date(`${a.date}T${a.time}`);
+            bVal = new Date(`${b.date}T${b.time}`);
+        } else if (column === 'count') {
+            aVal = a.guests.size;
+            bVal = b.guests.size;
+        } else {
+            aVal = a[column];
+            bVal = b[column];
+        }
+        if (aVal < bVal) return ascending ? -1 : 1;
+        if (aVal > bVal) return ascending ? 1 : -1;
+        return 0;
+    });
+
+    // Update history summary stats
+    const histStats = $("#history-stats");
+    const totalClasses = rows.length;
+    const uniquePlaylists = new Set(rows.map(r => r.playlist)).size;
+    const uniqueGuests = new Set(rows.flatMap(r => [...r.guests])).size;
+    histStats.innerHTML = `
+      <div class="stat-item"><span class="stat-value">${totalClasses}</span> classes</div>
+      <div class="stat-item"><span class="stat-value">${uniquePlaylists}</span> playlists used</div>
+      <div class="stat-item"><span class="stat-value">${uniqueGuests}</span> unique guests</div>
+    `;
+
+    tbody.innerHTML = "";
+    if (rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:48px 20px; color:var(--secondary-text);"><div style="font-size:48px; opacity:.4; margin-bottom:12px;">&#128214;</div><div style="font-size:16px; color:var(--ink-light); margin-bottom:6px;">No class history yet</div><div style="font-size:13px;">Finalize classes from the Weekly Planner to build your history.</div></td></tr>`;
+      return;
+    }
+    rows.forEach(row => {
+      const guestArray = [...row.guests].sort();
+      const classTypeText = row.classType ? esc(row.classType) : '<span style="color:var(--secondary-text);">-</span>';
+      const moreCount = guestArray.length - 3;
+      const moreText = moreCount > 0
+        ? ` <span class="history-expand-guests" style="color:var(--primary); cursor:pointer;" data-guests="${guestArray.map(g => esc(g)).join('|||')}">+${moreCount} more</span>`
+        : '';
+      const tr = `
+        <tr data-date="${esc(row.date)}" data-time="${esc(row.time)}" data-playlist="${esc(row.playlist)}">
+          <td data-label="Date & Time">${formatDate(row.date)} ${formatTime(row.time)}</td>
+          <td data-label="Class Type">${classTypeText}</td>
+          <td data-label="Playlist"><strong>Playlist #${row.playlist}</strong></td>
+          <td data-label="Attendees"><span class="pill">${guestArray.length}</span></td>
+          <td data-label="Guest Names"><span class="guest-names-short">${guestArray.slice(0, 3).map(g => esc(g)).join(", ")}${moreText}</span><span class="guest-names-full" style="display:none;">${guestArray.map(g => esc(g)).join(", ")} <span class="history-collapse-guests" style="color:var(--primary); cursor:pointer;">show less</span></span></td>
+          <td data-label="Status"><span class="pill status-finalized">Completed</span></td>
+          <td data-label="Actions"><div class="history-actions"><button class="history-edit-btn" title="Edit class">&#9998;</button><button class="history-delete-btn" title="Delete class">&#128465;</button></div></td>
+        </tr>
+      `;
+      tbody.innerHTML += tr;
+    });
+    // Expandable guest names
+    tbody.querySelectorAll('.history-expand-guests').forEach(el => {
+      el.addEventListener('click', (e) => {
+        const td = e.target.closest('td');
+        td.querySelector('.guest-names-short').style.display = 'none';
+        td.querySelector('.guest-names-full').style.display = '';
+      });
+    });
+    tbody.querySelectorAll('.history-collapse-guests').forEach(el => {
+      el.addEventListener('click', (e) => {
+        const td = e.target.closest('td');
+        td.querySelector('.guest-names-short').style.display = '';
+        td.querySelector('.guest-names-full').style.display = 'none';
+      });
+    });
+    // Edit/Delete buttons
+    tbody.querySelectorAll('.history-edit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const tr = e.target.closest('tr');
+        openHistoryClassModal(tr.dataset.date, tr.dataset.time, tr.dataset.playlist);
+      });
+    });
+    tbody.querySelectorAll('.history-delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const tr = e.target.closest('tr');
+        deleteHistoryEntry(tr.dataset.date, tr.dataset.time, tr.dataset.playlist);
+      });
+    });
+  }
+  function refreshGuests() {
+    const container = $("#guests-grid");
+    const searchTerm = $("#guest-search-filter").value.toLowerCase();
+    
+    const guestsStatsBar = $("#guests-stats");
+    if (state.allGuests.size === 0) {
+      guestsStatsBar.innerHTML = '';
+      container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">&#128101;</div><h3>Your guest list is waiting</h3><p>Sign in and import attendance data to see guest profiles</p><button class="btn btn-primary" onclick="$$('.tab-btn').find(b=>b.dataset.tab==='settings')?.click()">Import Data</button></div>`;
+      return;
+    }
+    const guestStats = Array.from(state.allGuests)
+      .filter(guest => guest.toLowerCase().includes(searchTerm))
+      .map(guest => {
+        const guestRecords = state.records.filter(r => r.guest === guest);
+        const todayKey = formatDateKey(new Date());
+        const eligibleRecords = guestRecords.filter(r => r.date <= todayKey);
+        const totalClasses = eligibleRecords.length;
+        const playlistsHeard = new Set(eligibleRecords.map(r => r.playlist)).size;
+        const lastClassDate = eligibleRecords.length > 0 ? eligibleRecords.reduce((latest, r) => r.date > latest ? r.date : latest, '') : null;
+        const daysSince = lastClassDate ? daysBetween(formatDateKey(new Date()), lastClassDate) : null;
+        return { name: guest, totalClasses, playlistsHeard, daysSince, records: guestRecords };
+      })
+      .sort((a, b) => (a.daysSince ?? 9999) - (b.daysSince ?? 9999)); // Sort by most recent first
+    
+    // Update guest summary stats
+    const activeGuests = guestStats.filter(g => g.daysSince !== null && g.daysSince <= 90).length;
+    guestsStatsBar.innerHTML = `
+      <div class="stat-item"><span class="stat-value">${guestStats.length}</span> total guests</div>
+      <div class="stat-item"><span class="stat-value">${activeGuests}</span> active (last 90 days)</div>
+    `;
+
+    container.innerHTML = "";
+    guestStats.forEach(guest => {
+      const guestCard = document.createElement("div");
+      guestCard.className = "guest-card";
+      guestCard.dataset.guestName = guest.name;
+      guestCard.innerHTML = `
+        <div class="guest-card-header">
+          <div class="guest-avatar">${esc(guest.name.split(' ').map(n => n[0]).join('').toUpperCase())}</div>
+          <div class="guest-info">
+            <h4>${esc(guest.name)}</h4>
+            <p>${guest.daysSince !== null ? `Last seen: ${guest.daysSince} days ago` : 'No classes yet'}</p>
+          </div>
+        </div>
+        <div class="guest-stats">
+          <div class="guest-stat"><span class="value">${guest.totalClasses}</span><span class="label">Classes</span></div>
+          <div class="guest-stat"><span class="value">${guest.playlistsHeard}</span><span class="label">Playlists</span></div>
+        </div>`;
+      guestCard.addEventListener('click', () => showGuestDetailModal(guest.name));
+      container.appendChild(guestCard);
+    });
+  }
+  function showGuestDetailModal(guestName) {
+      const guestRecords = state.records
+          .filter(r => r.guest === guestName)
+          .sort((a, b) => new Date(`${b.date}T${b.time}`) - new Date(`${a.date}T${a.time}`));
+
+      $('#guest-modal-title').textContent = `${guestName}'s Profile`;
+
+      let contentHTML = `<div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button type="button" class="btn btn-xs" id="guest-modal-edit" style="flex:1;">&#9998; Rename</button>
+        <button type="button" class="btn btn-xs btn-danger" id="guest-modal-delete" style="flex:1;">&#128465; Delete</button>
+      </div>`;
+      contentHTML += `<div class="table-container"><table class="data-table"><thead><tr><th>Date</th><th>Playlist</th></tr></thead><tbody>`;
+      if (guestRecords.length > 0) {
+          guestRecords.forEach(record => {
+              contentHTML += `<tr><td>${formatDateTime(record.date, record.time)}</td><td>Playlist #${record.playlist}</td></tr>`;
+          });
+      } else {
+          contentHTML += `<tr><td colspan="2" style="text-align:center;">No class history found.</td></tr>`;
+      }
+      contentHTML += `</tbody></table></div>`;
+
+      $('#guest-modal-content').innerHTML = contentHTML;
+      $('#guest-modal').classList.remove('hidden');
+
+      // Wire up edit button
+      $('#guest-modal-edit').addEventListener('click', () => {
+        const newName = prompt('Rename guest:', guestName);
+        if (newName !== null && newName.trim() !== '' && newName.trim() !== guestName) {
+          renameGuest(guestName, newName.trim());
+        }
+      });
+      // Wire up delete button
+      $('#guest-modal-delete').addEventListener('click', () => {
+        const recordCount = guestRecords.length;
+        const msg = recordCount > 0
+          ? `Delete "${guestName}" and their ${recordCount} attendance record(s)? This cannot be undone.`
+          : `Delete "${guestName}"? This cannot be undone.`;
+        if (confirm(msg)) {
+          deleteGuest(guestName);
+        }
+      });
+  }
+
+  function showAddGuestPrompt() {
+    const name = prompt('Enter new guest name:');
+    if (name === null) return;
+    const trimmed = name.trim();
+    if (!trimmed) {
+      showToast('Guest name cannot be empty.', 'error');
+      return;
+    }
+    if (state.allGuests.has(trimmed)) {
+      showToast(`"${trimmed}" already exists.`, 'error');
+      return;
+    }
+    state.allGuests.add(trimmed);
+    saveStateToLocalStorage();
+    refreshGuests();
+    showToast(`"${trimmed}" added.`, 'success');
+  }
+
+  async function renameGuest(oldName, newName) {
+    if (state.allGuests.has(newName)) {
+      showToast(`"${newName}" already exists. Choose a different name.`, 'error');
+      return;
+    }
+
+    // Update state.allGuests
+    state.allGuests.delete(oldName);
+    state.allGuests.add(newName);
+
+    // Update local records
+    state.records.forEach(r => {
+      if (r.guest === oldName) r.guest = newName;
+    });
+
+    // Update weeklyPlan attendees
+    state.weeklyPlan.forEach(cls => {
+      if (cls.attendees instanceof Set) {
+        if (cls.attendees.has(oldName)) {
+          cls.attendees.delete(oldName);
+          cls.attendees.add(newName);
+        }
+      }
+    });
+
+    saveStateToLocalStorage();
+    refreshGuests();
+    refreshAll();
+    $('#guest-modal').classList.add('hidden');
+    showToast(`Renamed to "${newName}".`, 'success');
+  }
+
+  async function deleteGuest(guestName) {
+    // Remove from state
+    state.allGuests.delete(guestName);
+    const removedRecords = state.records.filter(r => r.guest === guestName);
+    state.records = state.records.filter(r => r.guest !== guestName);
+
+    // Remove from weeklyPlan attendees
+    state.weeklyPlan.forEach(cls => {
+      if (cls.attendees instanceof Set) {
+        cls.attendees.delete(guestName);
+      }
+    });
+
+    saveStateToLocalStorage();
+    refreshGuests();
+    refreshAll();
+    refreshHistory();
+    $('#guest-modal').classList.add('hidden');
+    showToast(`"${guestName}" deleted.`, 'success');
+  }
+
+  // --- EVENT LISTENERS ---
+  function addEventListeners() {
+      // Tab navigation
+      $$('.tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+              const tab = btn.dataset.tab;
+              $$('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
+              btn.setAttribute('aria-selected', 'true');
+              $$('main > section').forEach(s => { s.classList.add('hidden'); s.classList.remove('section-enter'); });
+              const section = $(`#${tab}`);
+              section.classList.remove('hidden');
+              section.classList.add('section-enter');
+
+              // Refresh content on tab switch
+              if(tab === 'weekly') renderWeeklyCalendar();
+              if(tab === 'dashboard') refreshAll();
+              if(tab === 'history') refreshHistory();
+              if(tab === 'guests') refreshGuests();
+              if(tab === 'explorer') refreshAll();
+          });
+      });
+      // Dashboard controls — class picker
+      const selectAllDraftsBtn = $('#selectAllDraftsBtn');
+      if (selectAllDraftsBtn) {
+        selectAllDraftsBtn.addEventListener('click', () => {
+          const entries = getRecommenderClassEntries();
+          entries.forEach(e => {
+            if (e.cls.status !== 'finalized') state.selectedRecommendationClassKeys.add(e.key);
+          });
+          refreshAll();
+        });
+      }
+      const clearAllClassesBtn = $('#clearAllClassesBtn');
+      if (clearAllClassesBtn) {
+        clearAllClassesBtn.addEventListener('click', () => {
+          state.selectedRecommendationClassKeys.clear();
+          refreshAll();
+        });
+      }
+      const playlistWindow = $('#playlistWindow');
+      if (playlistWindow) {
+        playlistWindow.addEventListener('change', (e) => {
+          state.selectedWindow = parseInt(e.target.value, 10);
+          refreshAll();
+        });
+      }
+      const assignBestBtn = $('#assignBestPlaylistBtn');
+      if (assignBestBtn) {
+        assignBestBtn.addEventListener('click', async () => {
+          const playlistId = assignBestBtn.dataset.playlist || '';
+          if (!playlistId) {
+            showToast('No recommendation available to assign.', 'error');
+            return;
+          }
+          await assignPlaylistToSelectedClasses(playlistId);
+        });
+      }
+      const rankingsBody = $('#runnerUps');
+      if (rankingsBody) {
+        rankingsBody.addEventListener('click', async (e) => {
+          const btn = e.target.closest('[data-assign-playlist]');
+          if (!btn || btn.disabled) return;
+          await assignPlaylistToSelectedClasses(btn.dataset.assignPlaylist || '');
+        });
+      }
+      const previewRosterBtn = $('#previewRosterBtn');
+      if (previewRosterBtn) {
+        previewRosterBtn.addEventListener('click', () => {
+        const selectedEntries = getSelectedRecommenderClassEntries();
+        const metrics = getMetricsForSelectedClasses(selectedEntries);
+        const best = metrics[0];
+        if (selectedEntries.length === 0 || !best) {
+          showToast('Select planned classes with attendees to view details.', 'error');
+          return;
+        }
+        // Merge attendees from all selected classes
+        const mergedAttendees = new Set();
+        selectedEntries.forEach(entry => {
+          const cls = entry.cls || {};
+          const att = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+          att.forEach(g => mergedAttendees.add(g));
+        });
+        const roster = [...mergedAttendees].sort();
+        if (roster.length === 0) {
+          showToast('Add attendees to selected classes first.', 'error');
+          return;
+        }
+        const dates = selectedEntries.map(e => e.cls.date).filter(Boolean).sort();
+        const refDate = dates[0] || formatDateKey(new Date());
+        const lm = lastHeardMap(refDate);
+        const windowDays = state.selectedWindow;
+        const neverList = [];
+        const readyList = [];
+        const recentList = [];
+        roster.forEach(g => {
+          const last = lm.get(g)?.get(best.playlist);
+          if (!last) {
+            neverList.push(g);
+          } else {
+            const d = daysBetween(refDate, last);
+            if (d < 0) {
+              neverList.push(g);
+            } else if (d >= windowDays) {
+              readyList.push({ name: g, days: d });
+            } else {
+              recentList.push({ name: g, days: d });
+            }
+          }
+        });
+        readyList.sort((a, b) => b.days - a.days);
+        recentList.sort((a, b) => a.days - b.days);
+        const classCount = selectedEntries.length;
+        const classLabel = classCount === 1
+          ? esc(formatDateTime(selectedEntries[0].cls.date, selectedEntries[0].cls.time))
+          : `${classCount} classes selected`;
+        let html = `<h4 style="margin-bottom:12px;">Playlist #${best.playlist} — Roster Breakdown</h4>`;
+        html += `<p class="muted" style="margin-bottom:12px;">${classLabel} \u2022 ${roster.length} attendees \u2022 Replay-ready threshold: ${windowDays} days</p>`;
+        if (neverList.length > 0) {
+          html += `<div style="margin-bottom:12px;"><strong>Never Heard (${neverList.length})</strong><div style="margin-top:4px;">${neverList.map(g => `<span class="pill">${esc(g)}</span>`).join(' ')}</div></div>`;
+        }
+        if (readyList.length > 0) {
+          html += `<div style="margin-bottom:12px;"><strong>Replay-ready (${readyList.length})</strong><div style="margin-top:4px;">${readyList.map(g => `<span class="pill status-draft">${esc(g.name)} \u2014 ${g.days}d ago</span>`).join(' ')}</div></div>`;
+        }
+        if (recentList.length > 0) {
+          html += `<div style="margin-bottom:12px;"><strong>Recently heard (${recentList.length})</strong><div style="margin-top:4px;">${recentList.map(g => `<span class="pill status-finalized">${esc(g.name)} \u2014 ${g.days}d ago</span>`).join(' ')}</div></div>`;
+        }
+        $('#guest-modal-title').textContent = 'Playlist Detail';
+        $('#guest-modal-content').innerHTML = html;
+        $('#guest-modal').classList.remove('hidden');
+        });
+      }
+      
+      // Guest search
+      // Search with clear buttons
+      function setupSearchClear(inputId, clearId, onClear) {
+        const input = $(inputId);
+        const btn = $(clearId);
+        if (!input || !btn) return;
+        function syncBtn() { btn.classList.toggle('visible', input.value.length > 0); }
+        input.addEventListener('input', syncBtn);
+        btn.addEventListener('click', () => { input.value = ''; syncBtn(); if (onClear) onClear(); });
+      }
+      // Guests tab search & add
+      $('#guest-search-filter').addEventListener('input', refreshGuests);
+      setupSearchClear('#guest-search-filter', '#guest-filter-clear', refreshGuests);
+      $('#add-guest-btn').addEventListener('click', showAddGuestPrompt);
+      // Modal guest search
+      $('#modal-guest-search').addEventListener('input', () => {
+          filterModalGuestVisibility();
+      });
+      $('#modal-guest-search').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const visible = $$("#modal-guest-list .guest-list-item").filter(item => item.style.display !== 'none');
+          if (visible.length === 1) {
+            visible[0].click();
+          }
+        }
+      });
+      setupSearchClear('#modal-guest-search', '#modal-guest-search-clear', () => {
+        filterModalGuestVisibility();
+      });
+      // History search
+      $('#history-search').addEventListener('input', refreshHistory);
+      setupSearchClear('#history-search', '#history-search-clear', refreshHistory);
+
+      // Add Playlist form handlers
+      $('#addPlaylistBtn').addEventListener('click', () => {
+        const form = $('#addPlaylistForm');
+        form.style.display = form.style.display === 'none' ? '' : 'none';
+        if (form.style.display !== 'none') {
+          $('#newPlaylistId').value = '';
+          $('#addPlaylistError').style.display = 'none';
+          $('#newPlaylistId').focus();
+        }
+      });
+      $('#cancelAddPlaylist').addEventListener('click', () => {
+        $('#addPlaylistForm').style.display = 'none';
+      });
+      $('#confirmAddPlaylist').addEventListener('click', async () => {
+        const input = $('#newPlaylistId');
+        const result = await addNewPlaylist(input.value);
+        if (!result.ok) {
+          const errEl = $('#addPlaylistError');
+          errEl.textContent = result.error;
+          errEl.style.display = '';
+        } else {
+          $('#addPlaylistForm').style.display = 'none';
+        }
+      });
+      $('#newPlaylistId').addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          $('#confirmAddPlaylist').click();
+        } else if (e.key === 'Escape') {
+          $('#addPlaylistForm').style.display = 'none';
+        }
+      });
+
+      // Sorting table headers
+      $$('#history-table .sortable, #explorer thead .sortable').forEach(header => {
+          header.addEventListener('click', () => {
+              const sortKey = header.dataset.sort;
+              const isExplorer = header.closest('#explorer');
+              const sortState = isExplorer ? state.explorerSortOrder : state.sortOrder;
+
+              if (sortState.column === sortKey) {
+                  sortState.ascending = !sortState.ascending;
+              } else {
+                  sortState.column = sortKey;
+                  sortState.ascending = false;
+              }
+              
+              header.closest('table').querySelectorAll('.sortable').forEach(h => h.classList.remove('asc', 'desc'));
+              header.classList.add(sortState.ascending ? 'asc' : 'desc');
+              
+              if (isExplorer) refreshExplorer(); else refreshHistory();
+          });
+      });
+
+      // Finalize All Drafts (mock — local only)
+      $('#syncAllBtn').addEventListener('click', async () => {
+        const drafts = [];
+        const weekStart = state.currentWeekStart;
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
+        state.weeklyPlan.forEach((cls, key) => {
+          const clsDate = parseDateInput(cls.date);
+          if (clsDate >= weekStart && clsDate <= weekEnd && cls.status === 'draft') {
+            drafts.push({ key, cls });
+          }
+        });
+        if (drafts.length === 0) {
+          showToast('No drafts to finalize this week.', 'info');
+          return;
+        }
+        setLoading($('#syncAllBtn'), true);
+        let finalizedCount = 0;
+        let skippedCount = 0;
+        for (const { key, cls } of drafts) {
+          if (!cls.playlist || cls.attendees.size === 0) {
+            skippedCount++;
+            continue;
+          }
+          cls.status = 'finalized';
+          for (const guest of cls.attendees) {
+            addRecordIfNew({ date: cls.date, time: normalizeTime(cls.time), guest, playlist: cls.playlist, classType: cls.classType || '' });
+            state.allGuests.add(guest);
+          }
+          finalizedCount++;
+        }
+        if (finalizedCount === 0) {
+          showToast('No drafts were ready to finalize. Assign playlists and attendees first.', 'info');
+        } else {
+          const skippedMsg = skippedCount > 0 ? ` (${skippedCount} skipped)` : '';
+          showToast(`Finalized ${finalizedCount} class${finalizedCount !== 1 ? 'es' : ''}!${skippedMsg}`, 'success');
+        }
+        saveStateToLocalStorage();
+        refreshAll();
+        renderWeeklyCalendar();
+        refreshHistory();
+        refreshGuests();
+        setLoading($('#syncAllBtn'), false);
+      });
+
+      // Weekly Planner Navigation
+      $('#prevWeekBtn').addEventListener('click', () => navigateWeek(-1));
+      $('#currentWeekBtn').addEventListener('click', () => navigateWeek(0));
+      $('#nextWeekBtn').addEventListener('click', () => navigateWeek(1));
+
+      // Auth Buttons (mock)
+      $('#settingsSignInBtn').addEventListener('click', () => showToast('Mock mode: already signed in as Test User', 'info'));
+      $('#settingsSignOutBtn').addEventListener('click', () => showToast('Mock mode: sign out disabled', 'info'));
+
+      // Settings Buttons
+      $('#clearDataBtn').addEventListener('click', async () => {
+          if (confirm('Are you sure you want to delete ALL data? This will reload with fresh mock data.')) {
+              localStorage.removeItem('hiloPlaylistData');
+              state.records = [];
+              state.allGuests.clear();
+              state.weeklyPlan.clear();
+              state.playlistTags = new Map();
+              state.playlistStatus = new Map();
+              window.location.reload();
+          }
+      });
+      $('#importCsvBtn').addEventListener('click', () => $('#fileInput').click());
+      $('#exportCsvBtn').addEventListener('click', exportToCsv);
+      $('#fileInput').addEventListener('change', handleCsvImport);
+
+      // Modals
+      $$('#close-class-modal, #cancel-modal').forEach(btn => btn.addEventListener('click', () => $('#class-modal').classList.add('hidden')));
+      $('#close-guest-modal').addEventListener('click', () => $('#guest-modal').classList.add('hidden'));
+      $('#save-draft-modal').addEventListener('click', handleModalSave);
+      $('#delete-class-modal').addEventListener('click', handleModalDelete);
+      // Modal Clear All
+      $('#modalClearAllBtn').addEventListener('click', () => {
+        state.modalAttendees = [];
+        renderModalSelectedGuests();
+        updateModalGuestListSelection();
+      });
+  }
+
+  // --- Modal Handlers ---
+  async function handleModalSave() {
+      const cls = state.selectedClass;
+      if (!cls) return;
+      if (cls.status === 'finalized') {
+          showToast('This class is finalized. Use Finalize to apply changes.', 'info');
+          return;
+      }
+      const preservedPlaylist = normalizePlaylistId($('#modal-class-playlist').value || cls.playlist);
+
+      const oldKey = createDateTimeKey(cls.date, cls.time);
+      const newDate = ($('#modal-class-date').value || '').trim();
+      const rawTime = ($('#modal-class-time').value || '').trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
+          showToast('Please choose a valid class date.', 'error');
+          return;
+      }
+      const newTime = normalizeTime(rawTime, '');
+      if (!newTime) {
+          showToast('Please choose a valid class time.', 'error');
+          return;
+      }
+      const newKey = createDateTimeKey(newDate, newTime);
+      const collision = state.weeklyPlan.get(newKey);
+      if (oldKey !== newKey && collision && collision !== cls) {
+          showToast('A class already exists at that date and time.', 'error');
+          return;
+      }
+
+      const classData = {
+        date: newDate,
+        time: newTime,
+        playlist: preservedPlaylist,
+        attendees: [...state.modalAttendees],
+        status: 'draft',
+        notes: $('#modal-class-notes').value || '',
+        classType: $('#modal-class-type').value || ''
+      };
+      if (state.selectedRecommendationClassKeys.has(oldKey)) {
+        state.selectedRecommendationClassKeys.delete(oldKey);
+        state.selectedRecommendationClassKeys.add(newKey);
+      }
+
+      try {
+        if (oldKey !== newKey) state.weeklyPlan.delete(oldKey);
+        classData.attendees = new Set(classData.attendees);
+        state.weeklyPlan.set(newKey, classData);
+        saveStateToLocalStorage();
+        renderWeeklyCalendar();
+        refreshAll();
+        showToast('Draft saved!', 'success');
+        $('#class-modal').classList.add('hidden');
+      } catch (error) {
+        showToast('Save failed: ' + error.message, 'error');
+      }
+  }
+
+  async function handleModalFinalize() {
+      const cls = state.selectedClass;
+      if (!cls || state.modalAttendees.length === 0) {
+          showToast('Please select attendees.', 'error');
+          return;
+      }
+
+      const oldKey = createDateTimeKey(cls.date, cls.time);
+      const targetDate = ($('#modal-class-date').value || '').trim();
+      const rawTargetTime = ($('#modal-class-time').value || '').trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
+          showToast('Please choose a valid class date.', 'error');
+          return;
+      }
+      const targetTime = normalizeTime(rawTargetTime, '');
+      if (!targetTime) {
+          showToast('Please choose a valid class time.', 'error');
+          return;
+      }
+      const newKey = createDateTimeKey(targetDate, targetTime);
+      const collision = state.weeklyPlan.get(newKey);
+      if (oldKey !== newKey && collision && collision !== cls) {
+          showToast('A class already exists at that date and time.', 'error');
+          return;
+      }
+
+      const latestClass = state.weeklyPlan.get(oldKey) || cls;
+      const playlist = normalizePlaylistId($('#modal-class-playlist').value || latestClass.playlist || cls.playlist);
+      if (!playlist) {
+        showToast('Assign a playlist in Recommender before finalizing.', 'error');
+        return;
+      }
+      const attendees = [...state.modalAttendees];
+      const notes = $('#modal-class-notes').value || '';
+      const classType = $('#modal-class-type').value || '';
+      const wasFinalized = cls.status === 'finalized';
+      if (state.selectedRecommendationClassKeys.has(oldKey)) {
+        state.selectedRecommendationClassKeys.delete(oldKey);
+        state.selectedRecommendationClassKeys.add(newKey);
+      }
+
+      // Update local state
+      if (oldKey !== newKey) state.weeklyPlan.delete(oldKey);
+      state.weeklyPlan.set(newKey, {
+        date: targetDate, time: targetTime, playlist,
+        attendees: new Set(attendees), status: 'finalized',
+        notes, classType, dateTimeKey: newKey
+      });
+      // Write attendance records locally
+      for (const guest of attendees) {
+        addRecordIfNew({ date: targetDate, time: normalizeTime(targetTime), guest, playlist, classType });
+        state.allGuests.add(guest);
+      }
+      saveStateToLocalStorage();
+      showToast(wasFinalized ? 'Finalized class updated!' : 'Class finalized!', 'success');
+      refreshAll();
+      renderWeeklyCalendar();
+      refreshHistory();
+      refreshGuests();
+      $('#class-modal').classList.add('hidden');
+  }
+  async function finalizeDayDrafts(dayKey) {
+    const drafts = Array.from(state.weeklyPlan.entries())
+      .filter(([key, cls]) => key.startsWith(dayKey) && cls.status === 'draft');
+    if (drafts.length === 0) return;
+
+    const missing = drafts.filter(([, cls]) => !normalizePlaylistId(cls.playlist) || cls.attendees.size === 0);
+    if (missing.length > 0) {
+      const reasons = missing.map(([, cls]) => {
+        const problems = [];
+        if (!normalizePlaylistId(cls.playlist)) problems.push('no playlist');
+        if (cls.attendees.size === 0) problems.push('no attendees');
+        return `${formatTime(cls.time)}: ${problems.join(', ')}`;
+      });
+      showToast('Cannot finalize — ' + reasons.join('; '), 'error');
+      return;
+    }
+    if (!confirm(`Finalize ${drafts.length} draft${drafts.length !== 1 ? 's' : ''} for this day?`)) return;
+
+    for (const [key, cls] of drafts) {
+      const playlist = normalizePlaylistId(cls.playlist);
+      const attendees = cls.attendees instanceof Set ? [...cls.attendees] : [...(cls.attendees || [])];
+      cls.status = 'finalized';
+      for (const guest of attendees) {
+        addRecordIfNew({ date: cls.date, time: normalizeTime(cls.time), guest, playlist, classType: cls.classType || '' });
+        state.allGuests.add(guest);
+      }
+    }
+    saveStateToLocalStorage();
+    showToast(`${drafts.length} class${drafts.length !== 1 ? 'es' : ''} finalized!`, 'success');
+    refreshAll();
+    renderWeeklyCalendar();
+    refreshHistory();
+    refreshGuests();
+  }
+  window.finalizeDayDrafts = finalizeDayDrafts;
+  async function handleModalDelete() {
+    const cls = state.selectedClass;
+    if (!cls) return;
+    if (confirm('Are you sure you want to delete this class?')) {
+        const key = createDateTimeKey(cls.date, cls.time);
+        state.selectedRecommendationClassKeys.delete(key);
+        state.weeklyPlan.delete(key);
+        // Remove associated records if finalized
+        if (cls.status === 'finalized') {
+          const oldPlaylist = normalizePlaylistId(cls.playlist);
+          const oldTime = normalizeTime(cls.time);
+          if (oldPlaylist) {
+            const oldAttendees = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+            state.records = state.records.filter(r => {
+              if (r.date === cls.date && normalizeTime(r.time) === oldTime && normalizePlaylistId(r.playlist) === oldPlaylist && oldAttendees.has(r.guest)) return false;
+              return true;
+            });
+          }
+        }
+        saveStateToLocalStorage();
+        renderWeeklyCalendar();
+        refreshAll();
+        refreshHistory();
+        refreshGuests();
+        showToast('Class deleted.', 'info');
+        $('#class-modal').classList.add('hidden');
+    }
+  }
+  async function deleteHistoryEntry(date, time, playlist) {
+    const normalizedTime = normalizeTime(time, '00:00');
+    const normalizedPlaylist = normalizePlaylistId(playlist);
+    if (!confirm('Delete this class and all its attendance records? This cannot be undone.')) return;
+
+    const dateTimeKey = createDateTimeKey(date, normalizedTime);
+    state.weeklyPlan.delete(dateTimeKey);
+    state.records = state.records.filter(r =>
+      !(r.date === date &&
+        normalizeTime(r.time) === normalizedTime &&
+        normalizePlaylistId(r.playlist) === normalizedPlaylist)
+    );
+    saveStateToLocalStorage();
+    refreshAll();
+    refreshHistory();
+    refreshGuests();
+    showToast('Class and records deleted.', 'info');
+  }
+  // --- CSV Import/Export ---
+  function exportToCsv() {
+      if (state.records.length === 0) {
+          showToast('No data to export.', 'info');
+          return;
+      }
+      const headers = ['Date', 'Time', 'Guest', 'Playlist', 'Class Type', 'Class Number'];
+      const csvRows = [headers.join(',')];
+      state.records.forEach(r => {
+          csvRows.push([r.date, r.time, `"${r.guest.replace(/"/g, '""')}"`, r.playlist, `"${(r.classType || '').replace(/"/g, '""')}"`, `"${(r.classNumber || '').replace(/"/g, '""')}"`].join(','));
+      });
+      const csvString = csvRows.join('\r\n');
+      const blob = new Blob([csvString], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hilo_playlist_export_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV export complete.', 'success');
+  }
+
+  function parseCsvRow(row) {
+      const fields = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < row.length; i++) {
+          const ch = row[i];
+          if (inQuotes) {
+              if (ch === '"' && row[i + 1] === '"') {
+                  current += '"';
+                  i++; // skip escaped quote
+              } else if (ch === '"') {
+                  inQuotes = false;
+              } else {
+                  current += ch;
+              }
+          } else {
+              if (ch === '"') {
+                  inQuotes = true;
+              } else if (ch === ',') {
+                  fields.push(current);
+                  current = '';
+              } else {
+                  current += ch;
+              }
+          }
+      }
+      fields.push(current);
+      return fields;
+  }
+  function parseCsvText(text) {
+      const rows = [];
+      let currentRow = [];
+      let currentField = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+          const ch = text[i];
+          if (inQuotes) {
+              if (ch === '"' && text[i + 1] === '"') {
+                  currentField += '"';
+                  i++;
+              } else if (ch === '"') {
+                  inQuotes = false;
+              } else {
+                  currentField += ch;
+              }
+              continue;
+          }
+          if (ch === '"') {
+              inQuotes = true;
+          } else if (ch === ',') {
+              currentRow.push(currentField);
+              currentField = '';
+          } else if (ch === '\n') {
+              currentRow.push(currentField);
+              currentField = '';
+              if (currentRow.some(col => (col || '').trim().length > 0)) {
+                  rows.push(currentRow);
+              }
+              currentRow = [];
+          } else if (ch === '\r') {
+              if (text[i + 1] !== '\n') {
+                  currentRow.push(currentField);
+                  currentField = '';
+                  if (currentRow.some(col => (col || '').trim().length > 0)) {
+                      rows.push(currentRow);
+                  }
+                  currentRow = [];
+              }
+          } else {
+              currentField += ch;
+          }
+      }
+
+      if (currentField.length > 0 || currentRow.length > 0) {
+          currentRow.push(currentField);
+          if (currentRow.some(col => (col || '').trim().length > 0)) {
+              rows.push(currentRow);
+          }
+      }
+      return rows;
+  }
+  function normalizeCsvHeader(header) {
+      return (header || '').toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+  function buildCsvHeaderLookup(headers) {
+      const map = new Map();
+      headers.forEach((header, index) => {
+          const normalized = normalizeCsvHeader(header);
+          if (normalized && !map.has(normalized)) map.set(normalized, index);
+      });
+      return map;
+  }
+  function getCsvValue(cols, headerLookup, aliases, fallbackIndex = -1) {
+      for (const alias of aliases) {
+          const idx = headerLookup.get(alias);
+          if (idx !== undefined && idx < cols.length) return (cols[idx] || '').trim();
+      }
+      if (fallbackIndex >= 0 && fallbackIndex < cols.length) return (cols[fallbackIndex] || '').trim();
+      return '';
+  }
+  function normalizeImportedDate(rawDate) {
+      const parsed = parseDateInput((rawDate || '').toString().trim());
+      return parsed ? formatDateKey(parsed) : '';
+  }
+
+  function handleCsvImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+          const text = (e.target.result || '').toString();
+          const rows = parseCsvText(text);
+          if (rows.length === 0) {
+              showToast('CSV appears empty.', 'error');
+              return;
+          }
+
+          const headerCols = rows[0];
+          const headerLookup = buildCsvHeaderLookup(headerCols);
+          const knownHeaders = new Set([
+            'date', 'time', 'guest', 'playlist',
+            'date of class', 'class time', 'guest name', 'playlist number', 'class type',
+            'class level', 'level', 'status', 'playlist status',
+            'class number', 'class id', 'class', 'class no'
+          ]);
+          const hasKnownHeaders = headerCols.some(h => knownHeaders.has(normalizeCsvHeader(h)));
+          const dataRows = hasKnownHeaders ? rows.slice(1) : rows;
+
+          let importedCount = 0;
+          const importedRecords = [];
+          const taggedPlaylists = new Set();
+          const statusPlaylists = new Set();
+          dataRows.forEach(cols => {
+              if (!Array.isArray(cols) || cols.every(col => !(col || '').trim())) return;
+              const rawPlaylistValue = getCsvValue(cols, headerLookup, ['playlist', 'playlist number', 'playlist id'], 3);
+              const parsedPlaylist = parseImportedPlaylist(rawPlaylistValue);
+              const playlistId = parsedPlaylist.playlistId;
+              const explicitStatus = normalizePlaylistStatus(getCsvValue(cols, headerLookup, ['status', 'playlist status']));
+              const playlistStatus = explicitStatus || parsedPlaylist.inferredStatus;
+              if (playlistId && playlistStatus) {
+                if (state.playlistStatus.get(playlistId) !== playlistStatus) {
+                  state.playlistStatus.set(playlistId, playlistStatus);
+                }
+                statusPlaylists.add(playlistId);
+                ensurePlaylistInState(playlistId);
+              }
+              const date = normalizeImportedDate(getCsvValue(cols, headerLookup, ['date', 'date of class', 'class date'], 0));
+              const time = normalizeTime(getCsvValue(cols, headerLookup, ['time', 'class time'], 1), '09:00');
+              const guest = getCsvValue(cols, headerLookup, ['guest', 'guest name', 'name'], 2);
+              const classType = getCsvValue(cols, headerLookup, ['class type', 'type', 'class level', 'level'], 4).replace(/\s+/g, ' ').trim();
+              const classNumber = normalizeClassNumber(getCsvValue(cols, headerLookup, ['class number', 'class id', 'class no', 'class'], -1));
+              const normalized = normalizeRecord({ date, time, guest, playlist: playlistId, classType, classNumber });
+              if (!normalized) return;
+              if (addRecordIfNew(normalized)) {
+                  importedCount++;
+                  importedRecords.push(normalized);
+              }
+              state.allGuests.add(normalized.guest);
+              if (classType) {
+                  const existingTags = state.playlistTags.get(normalized.playlist) || [];
+                  if (!existingTags.includes(classType)) {
+                    state.playlistTags.set(normalized.playlist, [...existingTags, classType]);
+                    taggedPlaylists.add(normalized.playlist);
+                  }
+              }
+          });
+          rebuildPlaylistsFromData();
+          saveStateToLocalStorage();
+          updateRecordsPill();
+          refreshAll();
+
+          const details = [];
+          if (taggedPlaylists.size > 0) details.push(`${taggedPlaylists.size} class-type tag set${taggedPlaylists.size !== 1 ? 's' : ''}`);
+          if (statusPlaylists.size > 0) details.push(`${statusPlaylists.size} playlist status${statusPlaylists.size !== 1 ? 'es' : ''}`);
+          const detailMsg = details.length > 0 ? ` and ${details.join(' and ')}` : '';
+          showToast(`Imported ${importedCount} records${detailMsg} (mock mode).`, 'success');
+      };
+      reader.readAsText(file);
+      $('#fileInput').value = ''; // Reset for next import
+  }
+  // --- Mock Data Generation ---
+  function initializeMockData() {
+    const MOCK_GUESTS = ['Sarah Johnson', 'Mike Chen', 'Jessica Williams', 'David Park', 'Emma Rodriguez',
+      'Tyler Smith', 'Amanda Lee', 'Ryan Foster', 'Nicole Brown', 'Chris Taylor', 'Katie Morgan', 'James Wilson'];
+    const CLASS_TYPES = ['Yoga', 'Pilates', 'Spin', 'HIIT', 'Strength', 'Stretch', 'Dance', 'Barre'];
+
+    // Set up playlist tags
+    const tagMap = {
+      '1': ['Spin', 'HIIT'], '2': ['Yoga', 'Stretch'], '3': ['Yoga', 'Pilates'],
+      '4': ['HIIT', 'Strength'], '5': ['Dance', 'Barre'], '6': ['Pilates', 'Stretch'],
+      '7': ['Pilates', 'Barre'], '8': ['Spin', 'HIIT'], '9': ['Yoga', 'Dance'],
+      '10': ['Strength'], '11': ['Stretch', 'Barre'], '12': ['Spin', 'Dance']
+    };
+    for (const [pl, tags] of Object.entries(tagMap)) {
+      state.playlistTags.set(pl, tags);
+    }
+
+    // Set up playlist statuses
+    for (let i = 1; i <= 12; i++) {
+      state.playlistStatus.set(String(i), i === 11 ? 'Retired' : 'Active');
+    }
+
+    // Generate mock records spanning past 90 days
+    const today = new Date();
+    const seededRandom = (function() { let s = 42; return function() { s = (s * 16807 + 0) % 2147483647; return (s - 1) / 2147483646; }; })();
+    for (let daysAgo = 90; daysAgo >= 1; daysAgo -= 2) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - daysAgo);
+      if (d.getDay() === 0) continue; // skip Sundays
+      const dateKey = formatDateKey(d);
+      const numClasses = seededRandom() > 0.5 ? 2 : 1;
+      for (let c = 0; c < numClasses; c++) {
+        const hour = c === 0 ? '09:00' : '18:00';
+        const playlist = String(Math.floor(seededRandom() * 12) + 1);
+        const classType = CLASS_TYPES[Math.floor(seededRandom() * CLASS_TYPES.length)];
+        const numGuests = Math.floor(seededRandom() * 6) + 4;
+        const shuffled = [...MOCK_GUESTS].sort(() => seededRandom() - 0.5);
+        const guests = shuffled.slice(0, numGuests);
+        guests.forEach(guest => {
+          addRecordIfNew({ date: dateKey, time: hour, guest, playlist, classType });
+          state.allGuests.add(guest);
+        });
+      }
+    }
+
+    // Create weekly plan entries for current week
+    const weekStart = getWeekStart(today);
+    const weekDays = getWeekDays(weekStart);
+    const planEntries = [
+      { dayIdx: 1, time: '09:00', classType: 'Yoga', playlist: '3', guestCount: 6, status: 'draft' },
+      { dayIdx: 2, time: '10:00', classType: 'Pilates', playlist: '7', guestCount: 5, status: 'draft' },
+      { dayIdx: 3, time: '09:00', classType: 'HIIT', playlist: '', guestCount: 8, status: 'draft' },
+      { dayIdx: 4, time: '18:00', classType: 'Spin', playlist: '1', guestCount: 4, status: 'finalized' },
+      { dayIdx: 5, time: '09:00', classType: 'Yoga', playlist: '', guestCount: 7, status: 'draft' }
+    ];
+    planEntries.forEach(entry => {
+      const day = weekDays[entry.dayIdx];
+      const dateKey = formatDateKey(day);
+      const key = createDateTimeKey(dateKey, entry.time);
+      const shuffled = [...MOCK_GUESTS].sort(() => seededRandom() - 0.5);
+      const attendees = new Set(shuffled.slice(0, entry.guestCount));
+      attendees.forEach(g => state.allGuests.add(g));
+      const cls = createClass(dateKey, entry.time, entry.playlist, attendees, '', entry.status, entry.classType);
+      state.weeklyPlan.set(key, cls);
+      // If finalized, also create records
+      if (entry.status === 'finalized' && entry.playlist) {
+        attendees.forEach(guest => {
+          addRecordIfNew({ date: dateKey, time: entry.time, guest, playlist: entry.playlist, classType: entry.classType });
+        });
+      }
+    });
+
+    // Set mock user
+    state.firebaseUser = { uid: 'mock-user-123', displayName: 'Test User', email: 'test@example.com' };
+    state.firestoreConnected = true;
+    rebuildPlaylistsFromData();
+  }
+
+  // --- Start the App ---
+  document.addEventListener('DOMContentLoaded', initializeApp);
+</script>
+<!-- Service worker disabled in mock mode -->
+</body>
+</html>
