@@ -1,0 +1,112 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──────────────────────────────────────────────
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function isValidDate(v) {
+      return v is string && v.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
+    function isValidTime(v) {
+      return v is string && v.matches('^[0-9]{2}:[0-9]{2}$');
+    }
+
+    // ── User data ───────────────────────────────────────────
+
+    match /users/{uid} {
+      // App never writes a parent /users/{uid} document
+      allow read, write: if false;
+
+      // ── Attendance records ──────────────────────────────
+      //  Written by: writeRecordsToFirestore, finalize, CSV import
+      //  Fields: date, time, guest, playlist, recordKey,
+      //          classType (optional), classNumber (optional)
+      match /records/{docId} {
+        allow read: if isOwner(uid);
+
+        allow create, update: if isOwner(uid)
+          // Only allowed fields
+          && request.resource.data.keys().hasOnly(
+               ['date', 'time', 'guest', 'playlist', 'recordKey',
+                'classType', 'classNumber'])
+          // Required fields — type + non-empty
+          && isValidDate(request.resource.data.date)
+          && isValidTime(request.resource.data.time)
+          && request.resource.data.guest is string
+          && request.resource.data.guest.size() > 0
+          && request.resource.data.playlist is string
+          && request.resource.data.playlist.size() > 0
+          && request.resource.data.recordKey is string
+          && request.resource.data.recordKey.size() > 0
+          // Optional fields — must be strings if present
+          && (!('classType' in request.resource.data)
+              || request.resource.data.classType is string)
+          && (!('classNumber' in request.resource.data)
+              || request.resource.data.classNumber is string);
+
+        allow delete: if isOwner(uid);
+      }
+
+      // ── Planned / finalized classes ─────────────────────
+      //  Written by: saveClassToFirestore, finalize, finalize-all
+      //  Fields: date, time, playlist, attendees[], status,
+      //          notes (optional), classType (optional), dateTimeKey
+      match /classes/{docId} {
+        allow read: if isOwner(uid);
+
+        allow create, update: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(
+               ['date', 'time', 'playlist', 'attendees', 'status',
+                'notes', 'classType', 'dateTimeKey'])
+          // Required fields
+          && isValidDate(request.resource.data.date)
+          && isValidTime(request.resource.data.time)
+          && request.resource.data.playlist is string
+          && request.resource.data.playlist.size() > 0
+          && request.resource.data.attendees is list
+          && request.resource.data.attendees.size() <= 200
+          && request.resource.data.status in ['draft', 'finalized']
+          && request.resource.data.dateTimeKey is string
+          && request.resource.data.dateTimeKey.size() > 0
+          // Optional fields
+          && (!('notes' in request.resource.data)
+              || request.resource.data.notes is string)
+          && (!('classType' in request.resource.data)
+              || request.resource.data.classType is string);
+
+        allow delete: if isOwner(uid);
+      }
+
+      // ── Playlist metadata ──────────────────────────────
+      //  Written by: upsertPlaylistMetadata (set with merge)
+      //  Fields: classTypes[] (optional), status (optional)
+      //  Doc IDs: numeric strings like "1", "12", "2.5"
+      match /playlists/{playlistId} {
+        allow read: if isOwner(uid);
+
+        allow create, update: if isOwner(uid)
+          && playlistId.matches('^[0-9]+(\\.[0-9]+)?$')
+          && request.resource.data.keys().hasOnly(['classTypes', 'status'])
+          // classTypes — list of strings if present
+          && (!('classTypes' in request.resource.data)
+              || request.resource.data.classTypes is list)
+          // status — enum if present
+          && (!('status' in request.resource.data)
+              || request.resource.data.status in
+                   ['Active', 'Retired', 'Removed']);
+
+        allow delete: if isOwner(uid);
+      }
+    }
+
+    // ── Default deny ────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,4 +1,7 @@
 .DS_Store
 .claude/
+.playwright-mcp/
 reconciled-output/
 scripts/
+output/
+*.png
