@@ -6633,9 +6633,7 @@
         <div class="a-rec-card__why">${esc(whyText)}</div>
       </div>
       <span class="a-rec-card__swap">Swap</span>`;
-    recCard.addEventListener('click', () => openPlaylistPickerSheet(key, (newPlaylistId) => {
-      // onSelect callback (Phase 3).
-    }));
+    recCard.addEventListener('click', () => openPlaylistPickerSheet(key));
     wrap.appendChild(recCard);
 
     // Type / Time fields.
