@@ -1742,6 +1742,381 @@
     }
 
     /* ═══════════════════════════════════════════════════
+       6d. GUESTS SCREEN (.g-*) + GUEST DETAIL (.gd-*)
+       ═══════════════════════════════════════════════════ */
+    /* List screen — search bar reuses .h-search-* pattern */
+    .g-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px 8px;
+      background: var(--page-bg);
+      flex-shrink: 0;
+    }
+    .g-search-input {
+      flex: 1;
+      padding: 10px 14px;
+      background: var(--surface-sunken);
+      border: 1.5px solid transparent;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .g-search-input:focus {
+      border-color: var(--primary);
+      background: var(--surface);
+    }
+    .g-add-row {
+      padding: 4px 16px 12px;
+      display: flex;
+    }
+    .g-add-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border: 1px dashed var(--border-default);
+      background: var(--surface);
+      border-radius: 999px;
+      color: var(--primary);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .g-add-button:active {
+      background: var(--violet-2);
+      border-color: var(--primary);
+    }
+    .g-list { padding: 0 16px 80px; }
+    .g-guest-card {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      box-shadow: var(--shadow-xs);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .g-guest-card:active { transform: scale(0.99); }
+    .g-guest-card__av {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet-9), var(--violet-6));
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .g-guest-card__main {
+      flex: 1;
+      min-width: 0;
+    }
+    .g-guest-card__name {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .g-guest-card__sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .g-guest-card__sub .sep {
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: var(--text-quaternary);
+      flex-shrink: 0;
+    }
+    .g-guest-card__badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--success-light);
+      color: var(--success);
+      margin-top: 6px;
+    }
+    .g-guest-card__chev {
+      color: var(--text-quaternary);
+      flex-shrink: 0;
+    }
+    .g-empty {
+      text-align: center;
+      padding: 40px 16px;
+      color: var(--text-tertiary);
+      font-size: 14px;
+    }
+
+    /* Guest Detail (pushed screen) */
+    .gd-screen {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      background: var(--page-bg);
+    }
+    .gd-navbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: calc(var(--safe-top) + 10px) 12px 10px;
+      flex-shrink: 0;
+      background: var(--page-bg);
+    }
+    .gd-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 14px;
+      padding: 6px 4px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .gd-back svg {
+      transform: rotate(180deg);
+      display: block;
+    }
+    .gd-title {
+      flex: 1;
+      text-align: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gd-actions {
+      display: inline-flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .gd-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: none;
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.12s, color 0.12s;
+    }
+    .gd-icon-btn:active { transform: scale(0.94); }
+    .gd-icon-btn--danger { color: var(--danger); }
+    .gd-icon-btn--danger:active { background: var(--danger-light); }
+
+    .gd-hero {
+      text-align: center;
+      padding: 20px 16px 8px;
+    }
+    .gd-hero__av {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet-9), var(--violet-6));
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      box-shadow: 0 8px 24px rgba(110,86,207,0.22);
+    }
+    .gd-hero__name {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+    .gd-hero__sub {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+    .gd-hero__badges {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .gd-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 16px;
+    }
+    .gd-stat {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 14px 8px;
+      text-align: center;
+      box-shadow: var(--shadow-xs);
+    }
+    .gd-stat__val {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.02em;
+    }
+    .gd-stat__lbl {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .gd-section-head {
+      padding: 16px 20px 6px;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-quaternary);
+      text-transform: uppercase;
+    }
+    .gd-last-card {
+      margin: 0 16px;
+      padding: 14px;
+      background: var(--surface);
+      border-radius: 14px;
+      box-shadow: var(--shadow-xs);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.1s;
+    }
+    .gd-last-card:active { transform: scale(0.99); }
+    .gd-last-card__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--violet-3);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .gd-last-card__main { flex: 1; min-width: 0; }
+    .gd-last-card__lbl {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .gd-last-card__val {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 2px;
+    }
+    .gd-last-card__sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+    .gd-history-list {
+      margin: 0 16px 80px;
+      background: var(--surface);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-xs);
+    }
+    .gd-history-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 0.5px solid var(--border-subtle);
+    }
+    .gd-history-row:last-child { border-bottom: none; }
+    .gd-history-row__num {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--violet-3);
+      color: var(--primary);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .gd-history-row__main { flex: 1; min-width: 0; }
+    .gd-history-row__title {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .gd-history-row__sub {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+    .gd-history-row__age {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+      font-weight: 600;
+    }
+    .gd-empty {
+      padding: 24px 16px;
+      text-align: center;
+      color: var(--text-tertiary);
+      font-size: 13px;
+    }
+
+    /* ═══════════════════════════════════════════════════
        6.X RECOMMENDER SCREEN (.r-*)
        ═══════════════════════════════════════════════════ */
     .r-screen {
@@ -5114,7 +5489,10 @@
     plus: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
     plus14: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
     check: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
-    close: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+    close: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    pencil: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>',
+    trash: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
+    calendar: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>'
   };
 
   // ── Schedule render ──────────────────────────────────────
@@ -5727,8 +6105,181 @@
     return wrap;
   }
 
+  // ── Guests screen ──────────────────────────────────────
   function renderGuestsScreen(container, params) {
-    container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">Guests (placeholder)</div>';
+    if (typeof state.guestsSearchQuery !== 'string') state.guestsSearchQuery = '';
+
+    // Build screen scaffold.
+    const screen = document.createElement('div');
+    screen.className = 'hilo-screen';
+
+    const scroller = document.createElement('div');
+    scroller.className = 'hilo-scroll';
+    screen.appendChild(scroller);
+
+    // Header — eyebrow shows guest count.
+    const header = document.createElement('div');
+    header.className = 'hilo-header';
+    const headerLeft = document.createElement('div');
+    headerLeft.innerHTML = `
+      <div class="hilo-header__date" data-guests-eyebrow></div>
+      <div class="hilo-header__title">Guests</div>`;
+    header.appendChild(headerLeft);
+    const avatar = document.createElement('div');
+    avatar.className = 'hilo-header__avatar';
+    avatar.textContent = userInitials(state.firebaseUser);
+    avatar.addEventListener('click', () => navSwitch('more'));
+    header.appendChild(avatar);
+    scroller.appendChild(header);
+
+    // Search bar.
+    const searchBar = document.createElement('div');
+    searchBar.className = 'g-search-bar';
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'g-search-input';
+    searchInput.placeholder = 'Search guests…';
+    searchInput.value = state.guestsSearchQuery;
+    searchInput.addEventListener('input', (e) => {
+      state.guestsSearchQuery = e.target.value;
+      refreshList();
+    });
+    searchBar.appendChild(searchInput);
+    scroller.appendChild(searchBar);
+
+    // Add Guest CTA row.
+    const addRow = document.createElement('div');
+    addRow.className = 'g-add-row';
+    const addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.className = 'g-add-button';
+    addBtn.innerHTML = `${ICONS.plus14}<span>Add Guest</span>`;
+    addBtn.addEventListener('click', () => {
+      openAddGuestSheet({ onAdd: () => renderApp() });
+    });
+    addRow.appendChild(addBtn);
+    scroller.appendChild(addRow);
+
+    // Guest list container.
+    const listEl = document.createElement('div');
+    listEl.className = 'g-list';
+    scroller.appendChild(listEl);
+
+    container.appendChild(screen);
+
+    // Pre-compute per-guest stats once (last seen + class count).
+    function buildGuestStats() {
+      const stats = new Map();
+      // Initialise an entry for every guest so the count is right
+      // even for guests with no records yet.
+      state.allGuests.forEach(name => {
+        stats.set(name, { count: 0, lastDate: '' });
+      });
+      state.records.forEach(r => {
+        if (!r.guest) return;
+        let s = stats.get(r.guest);
+        if (!s) {
+          s = { count: 0, lastDate: '' };
+          stats.set(r.guest, s);
+        }
+        s.count += 1;
+        if (!s.lastDate || (r.date && r.date > s.lastDate)) {
+          s.lastDate = r.date || s.lastDate;
+        }
+      });
+      return stats;
+    }
+
+    function refreshList() {
+      const stats = buildGuestStats();
+      const q = (state.guestsSearchQuery || '').trim().toLowerCase();
+      const allNames = Array.from(state.allGuests).sort((a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: 'base' })
+      );
+      const filtered = q
+        ? allNames.filter(n => n.toLowerCase().includes(q))
+        : allNames;
+
+      // Update eyebrow count — total across allGuests, not the filtered set.
+      const eyebrow = header.querySelector('[data-guests-eyebrow]');
+      if (eyebrow) {
+        eyebrow.textContent = `${allNames.length} ${allNames.length === 1 ? 'GUEST' : 'GUESTS'}`;
+      }
+
+      // Render list.
+      listEl.innerHTML = '';
+      if (allNames.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'g-empty';
+        empty.textContent = 'No guests yet. Add your first guest above.';
+        listEl.appendChild(empty);
+        return;
+      }
+      if (filtered.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'g-empty';
+        empty.textContent = 'No guests match your search.';
+        listEl.appendChild(empty);
+        return;
+      }
+
+      filtered.forEach(name => {
+        listEl.appendChild(buildGuestCard(name, stats.get(name) || { count: 0, lastDate: '' }));
+      });
+    }
+
+    function buildGuestCard(name, s) {
+      const card = document.createElement('div');
+      card.className = 'g-guest-card';
+
+      const av = document.createElement('div');
+      av.className = 'g-guest-card__av';
+      av.textContent = (name && name[0] || '?').toUpperCase();
+      card.appendChild(av);
+
+      const main = document.createElement('div');
+      main.className = 'g-guest-card__main';
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'g-guest-card__name';
+      nameEl.textContent = name;
+      main.appendChild(nameEl);
+
+      const sub = document.createElement('div');
+      sub.className = 'g-guest-card__sub';
+      const classCount = s.count;
+      const lastLabel = s.lastDate ? formatGuestDateShort(s.lastDate) : '—';
+      sub.innerHTML = `
+        <span>${classCount} ${classCount === 1 ? 'class' : 'classes'}</span>
+        <span class="sep"></span>
+        <span>Last: ${esc(lastLabel)}</span>`;
+      main.appendChild(sub);
+
+      // Static "Active" badge — cosmetic stub per locked-in user decision.
+      const badge = document.createElement('span');
+      badge.className = 'g-guest-card__badge';
+      badge.textContent = 'Active';
+      main.appendChild(badge);
+
+      card.appendChild(main);
+
+      const chev = document.createElement('div');
+      chev.className = 'g-guest-card__chev';
+      chev.innerHTML = ICONS.chevR16;
+      card.appendChild(chev);
+
+      card.addEventListener('click', () => navPush('guestDetail', { name }));
+      return card;
+    }
+
+    refreshList();
+  }
+
+  // Short date helper for guest sub-line: "May 7" / "Apr 30" / fallback.
+  function formatGuestDateShort(iso) {
+    const d = parseDateInput(iso);
+    if (!d) return iso || '—';
+    return `${MONTH_SHORT[d.getMonth()]} ${d.getDate()}`;
   }
   // ── History screen ──────────────────────────────────────
   function renderHistoryScreen(container, params) {
@@ -6079,8 +6630,513 @@
   function renderMoreScreen(container, params) {
     container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">More (placeholder)</div>';
   }
+  // ── Guest Detail screen (pushed) ───────────────────────
   function renderGuestDetailScreen(container, params) {
-    container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">Guest Detail (placeholder)</div>';
+    const name = (params && params.name) || '';
+    if (!name || !state.allGuests.has(name)) {
+      // Guest no longer exists (e.g. just deleted) — pop back.
+      navPop();
+      return;
+    }
+
+    // Build screen scaffold.
+    const screen = document.createElement('div');
+    screen.className = 'gd-screen';
+
+    // Top nav bar.
+    const navBar = document.createElement('div');
+    navBar.className = 'gd-navbar';
+
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'gd-back';
+    back.setAttribute('aria-label', 'Back');
+    back.innerHTML = `${ICONS.chevR16}<span>Guests</span>`;
+    back.addEventListener('click', () => navPop());
+    navBar.appendChild(back);
+
+    const title = document.createElement('div');
+    title.className = 'gd-title';
+    title.textContent = name;
+    navBar.appendChild(title);
+
+    const actions = document.createElement('div');
+    actions.className = 'gd-actions';
+
+    const renameBtn = document.createElement('button');
+    renameBtn.type = 'button';
+    renameBtn.className = 'gd-icon-btn';
+    renameBtn.setAttribute('aria-label', 'Rename guest');
+    renameBtn.innerHTML = ICONS.pencil;
+    renameBtn.addEventListener('click', () => openRenameGuestSheet(name));
+    actions.appendChild(renameBtn);
+
+    const trashBtn = document.createElement('button');
+    trashBtn.type = 'button';
+    trashBtn.className = 'gd-icon-btn gd-icon-btn--danger';
+    trashBtn.setAttribute('aria-label', 'Delete guest');
+    trashBtn.innerHTML = ICONS.trash;
+    trashBtn.addEventListener('click', () => openDeleteGuestSheet(name));
+    actions.appendChild(trashBtn);
+
+    navBar.appendChild(actions);
+    screen.appendChild(navBar);
+
+    // Scroll body.
+    const scroller = document.createElement('div');
+    scroller.className = 'hilo-scroll';
+    screen.appendChild(scroller);
+
+    // Hero card.
+    const hero = document.createElement('div');
+    hero.className = 'gd-hero';
+    const heroAv = document.createElement('div');
+    heroAv.className = 'gd-hero__av';
+    heroAv.textContent = (name[0] || '?').toUpperCase();
+    hero.appendChild(heroAv);
+    const heroName = document.createElement('div');
+    heroName.className = 'gd-hero__name';
+    heroName.textContent = name;
+    hero.appendChild(heroName);
+    const heroSub = document.createElement('div');
+    heroSub.className = 'gd-hero__sub';
+    heroSub.textContent = 'Member since —';
+    hero.appendChild(heroSub);
+    const heroBadges = document.createElement('div');
+    heroBadges.className = 'gd-hero__badges';
+    const heroBadge = document.createElement('span');
+    heroBadge.className = 'g-guest-card__badge';
+    heroBadge.textContent = 'Active';
+    heroBadges.appendChild(heroBadge);
+    hero.appendChild(heroBadges);
+    scroller.appendChild(hero);
+
+    // Compute records for this guest.
+    const guestRecords = state.records.filter(r => r.guest === name);
+
+    // Sort by date desc (most recent first), then by time desc.
+    const sortedRecords = guestRecords.slice().sort((a, b) => {
+      const da = a.date || '';
+      const db = b.date || '';
+      if (da !== db) return db.localeCompare(da);
+      const ta = normalizeTime(a.time || '00:00');
+      const tb = normalizeTime(b.time || '00:00');
+      return tb.localeCompare(ta);
+    });
+
+    const totalClasses = guestRecords.length;
+    const uniquePlaylists = new Set(guestRecords.map(r => r.playlist).filter(Boolean)).size;
+
+    // Last seen across any class — use lastHeardMap to find the max date.
+    const lhm = lastHeardMap();
+    const guestPlaylists = lhm.get(name);
+    let lastSeenDate = '';
+    if (guestPlaylists) {
+      guestPlaylists.forEach(d => {
+        if (!lastSeenDate || (d && d > lastSeenDate)) lastSeenDate = d;
+      });
+    }
+
+    let lastSeenLabel = '—';
+    if (lastSeenDate) {
+      const days = daysBetween(formatDateKey(new Date()), lastSeenDate);
+      if (days <= 0) lastSeenLabel = 'Today';
+      else if (days === 1) lastSeenLabel = '1d';
+      else lastSeenLabel = `${days}d`;
+    }
+
+    // Stats row.
+    const stats = document.createElement('div');
+    stats.className = 'gd-stats';
+    [
+      { val: String(totalClasses), lbl: 'Classes' },
+      { val: String(uniquePlaylists), lbl: 'Playlists' },
+      { val: lastSeenLabel, lbl: 'Last seen' }
+    ].forEach(s => {
+      const cell = document.createElement('div');
+      cell.className = 'gd-stat';
+      cell.innerHTML = `
+        <div class="gd-stat__val">${esc(s.val)}</div>
+        <div class="gd-stat__lbl">${esc(s.lbl)}</div>`;
+      stats.appendChild(cell);
+    });
+    scroller.appendChild(stats);
+
+    // Last class card — most recent record.
+    if (sortedRecords.length > 0) {
+      const last = sortedRecords[0];
+      const lastKey = createDateTimeKey(last.date, last.time);
+      const lastCls = state.weeklyPlan.get(lastKey);
+      const lastClassType = lastCls && lastCls.classType ? lastCls.classType : '';
+
+      const sectionHead = document.createElement('div');
+      sectionHead.className = 'gd-section-head';
+      sectionHead.textContent = 'Last Class';
+      scroller.appendChild(sectionHead);
+
+      const lastCard = document.createElement('div');
+      lastCard.className = 'gd-last-card';
+      const iconEl = document.createElement('div');
+      iconEl.className = 'gd-last-card__icon';
+      iconEl.innerHTML = ICONS.calendar;
+      lastCard.appendChild(iconEl);
+
+      const mainBlock = document.createElement('div');
+      mainBlock.className = 'gd-last-card__main';
+      const lblEl = document.createElement('div');
+      lblEl.className = 'gd-last-card__lbl';
+      lblEl.textContent = formatGuestDateShort(last.date) + (last.time ? ' · ' + formatTime(last.time) : '');
+      mainBlock.appendChild(lblEl);
+      const valEl = document.createElement('div');
+      valEl.className = 'gd-last-card__val';
+      valEl.textContent = lastClassType ? `${lastClassType} · Playlist #${last.playlist || '—'}` : `Playlist #${last.playlist || '—'}`;
+      mainBlock.appendChild(valEl);
+      if (lastCls && Array.isArray(lastCls.attendees)) {
+        const subEl = document.createElement('div');
+        subEl.className = 'gd-last-card__sub';
+        const cnt = lastCls.attendees.length;
+        subEl.textContent = `${cnt} ${cnt === 1 ? 'guest' : 'guests'}`;
+        mainBlock.appendChild(subEl);
+      }
+      lastCard.appendChild(mainBlock);
+
+      // Tap → open class edit sheet for that class (only if class still exists in weeklyPlan).
+      lastCard.addEventListener('click', () => {
+        if (state.weeklyPlan.has(lastKey)) {
+          openClassEditSheet(lastKey);
+        } else {
+          showToast('That class is no longer scheduled', 'info');
+        }
+      });
+      scroller.appendChild(lastCard);
+    }
+
+    // Playlist history section.
+    const histHead = document.createElement('div');
+    histHead.className = 'gd-section-head';
+    histHead.textContent = 'Playlist History';
+    scroller.appendChild(histHead);
+
+    if (sortedRecords.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'gd-empty';
+      empty.textContent = 'No history yet.';
+      scroller.appendChild(empty);
+    } else {
+      // Group by playlist: count + most recent date.
+      const byPlaylist = new Map();
+      sortedRecords.forEach(r => {
+        const pid = r.playlist || '—';
+        let entry = byPlaylist.get(pid);
+        if (!entry) {
+          entry = { playlist: pid, count: 0, lastDate: '', lastTime: '' };
+          byPlaylist.set(pid, entry);
+        }
+        entry.count += 1;
+        // sortedRecords are already date-desc; the first one we see per pid is the most recent.
+        if (!entry.lastDate) {
+          entry.lastDate = r.date || '';
+          entry.lastTime = r.time || '';
+        }
+      });
+      const rows = Array.from(byPlaylist.values()).sort((a, b) => {
+        // Sort by most recent last-heard date desc.
+        if (a.lastDate !== b.lastDate) return (b.lastDate || '').localeCompare(a.lastDate || '');
+        return comparePlaylistIds(a.playlist, b.playlist);
+      });
+
+      const list = document.createElement('div');
+      list.className = 'gd-history-list';
+      const todayISO = formatDateKey(new Date());
+      rows.forEach(row => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'gd-history-row';
+
+        const num = document.createElement('div');
+        num.className = 'gd-history-row__num';
+        num.textContent = row.playlist ? String(row.playlist) : '—';
+        rowEl.appendChild(num);
+
+        const m = document.createElement('div');
+        m.className = 'gd-history-row__main';
+        const ttl = document.createElement('div');
+        ttl.className = 'gd-history-row__title';
+        ttl.textContent = `Playlist #${row.playlist}`;
+        m.appendChild(ttl);
+        const sub = document.createElement('div');
+        sub.className = 'gd-history-row__sub';
+        const lastLabel = row.lastDate ? formatGuestDateShort(row.lastDate) : '—';
+        sub.textContent = `Heard ${row.count} ${row.count === 1 ? 'time' : 'times'} · last ${lastLabel}`;
+        m.appendChild(sub);
+        rowEl.appendChild(m);
+
+        const age = document.createElement('div');
+        age.className = 'gd-history-row__age';
+        if (row.lastDate) {
+          const d = daysBetween(todayISO, row.lastDate);
+          age.textContent = d <= 0 ? 'Today' : (d === 1 ? '1d ago' : `${d}d ago`);
+        } else {
+          age.textContent = '—';
+        }
+        rowEl.appendChild(age);
+
+        list.appendChild(rowEl);
+      });
+      scroller.appendChild(list);
+    }
+
+    container.appendChild(screen);
+  }
+
+  // ── Rename Guest sheet ─────────────────────────────────
+  function openRenameGuestSheet(currentName) {
+    const body = document.createElement('div');
+
+    const field = document.createElement('div');
+    field.className = 'sheet-field';
+    field.appendChild(sheetLabel('New name'));
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'sheet-input';
+    input.value = currentName;
+    input.autocomplete = 'off';
+    field.appendChild(input);
+    const errorEl = document.createElement('div');
+    errorEl.className = 'sheet-error';
+    errorEl.style.display = 'none';
+    field.appendChild(errorEl);
+    body.appendChild(field);
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.className = 'hilo-btn hilo-btn--ghost';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.addEventListener('click', () => closeSheet());
+
+    const saveBtn = document.createElement('button');
+    saveBtn.type = 'button';
+    saveBtn.className = 'hilo-btn hilo-btn--primary';
+    saveBtn.innerHTML = `${ICONS.check}<span>Save</span>`;
+    saveBtn.addEventListener('click', async () => {
+      const fresh = (input.value || '').trim();
+      if (!fresh) {
+        errorEl.textContent = 'Name cannot be empty.';
+        errorEl.style.display = 'block';
+        return;
+      }
+      if (fresh === currentName) {
+        closeSheet();
+        return;
+      }
+      // Collision check (case-insensitive, but exclude self).
+      const lower = fresh.toLowerCase();
+      const exists = Array.from(state.allGuests).some(g =>
+        g !== currentName && g.toLowerCase() === lower
+      );
+      if (exists) {
+        errorEl.textContent = `A guest named "${fresh}" already exists.`;
+        errorEl.style.display = 'block';
+        return;
+      }
+      const ok = await renameGuest(currentName, fresh);
+      if (ok) {
+        // Update top of nav stack so Detail screen still resolves to a valid guest.
+        const tab = state.nav.activeTab;
+        const stack = state.nav.stacks[tab];
+        if (stack.length > 0) {
+          const top = stack[stack.length - 1];
+          if (top.name === 'guestDetail') {
+            top.params = { ...(top.params || {}), name: fresh };
+          }
+        }
+        closeSheet();
+        renderApp();
+      }
+    });
+
+    body.appendChild(buildSheetActions([cancelBtn, saveBtn]));
+    openSheet({ title: 'Rename Guest', body, height: 'short' });
+    setTimeout(() => { input.focus(); input.select(); }, 250);
+  }
+
+  // ── Delete Guest confirm sheet ─────────────────────────
+  function openDeleteGuestSheet(targetName) {
+    const body = document.createElement('div');
+
+    const msg = document.createElement('div');
+    msg.style.cssText = 'padding:8px 4px 16px;font-size:14px;color:var(--text-secondary);line-height:1.5;';
+    msg.textContent = `Delete "${targetName}"? Their history will be preserved but they won't appear in your active guest list.`;
+    body.appendChild(msg);
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.className = 'hilo-btn hilo-btn--ghost';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.addEventListener('click', () => closeSheet());
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'hilo-btn hilo-btn--danger';
+    deleteBtn.innerHTML = `${ICONS.trash}<span>Delete</span>`;
+    deleteBtn.addEventListener('click', async () => {
+      const ok = await deleteGuest(targetName);
+      if (ok) {
+        closeSheet();
+        navPop();
+      }
+    });
+
+    body.appendChild(buildSheetActions([cancelBtn, deleteBtn]));
+    openSheet({ title: 'Delete Guest', body, height: 'short' });
+  }
+
+  // ── Guest data mutations (re-introduced from Phase 1) ──
+  async function renameGuest(oldName, newName) {
+    const old = (oldName || '').trim();
+    const fresh = (newName || '').trim();
+    if (!old || !fresh || old === fresh) return false;
+
+    // Collision check (case-insensitive, ignoring self).
+    if (Array.from(state.allGuests).some(g => g !== old && g.toLowerCase() === fresh.toLowerCase())) {
+      showToast(`A guest named "${fresh}" already exists`, 'error');
+      return false;
+    }
+
+    try {
+      // 1. Update in-memory records and remember the affected ones for Firestore.
+      const updated = [];
+      state.records.forEach(r => {
+        if (r.guest === old) {
+          const oldKey = r.recordKey || buildRecordKey(r);
+          r.guest = fresh;
+          r.recordKey = buildRecordKey(r);
+          updated.push({ oldKey, newRec: { ...r } });
+        }
+      });
+
+      // 2. Update weekly plan attendees (handles both Set and Array shapes).
+      const affectedClassKeys = [];
+      state.weeklyPlan.forEach((cls, key) => {
+        if (cls.attendees instanceof Set) {
+          if (cls.attendees.has(old)) {
+            cls.attendees.delete(old);
+            cls.attendees.add(fresh);
+            affectedClassKeys.push(key);
+          }
+        } else if (Array.isArray(cls.attendees)) {
+          const idx = cls.attendees.indexOf(old);
+          if (idx > -1) {
+            cls.attendees[idx] = fresh;
+            affectedClassKeys.push(key);
+          }
+        }
+      });
+
+      // 3. Update active guest set.
+      state.allGuests.delete(old);
+      state.allGuests.add(fresh);
+
+      // 4. Persist.
+      saveStateToLocalStorage();
+
+      if (state.firebaseUser) {
+        const recordsRef = getUserCollectionRef('records');
+        const classesRef = getUserCollectionRef('classes');
+        const ops = [];
+        updated.forEach(({ oldKey, newRec }) => {
+          ops.push({ action: 'delete', ref: recordsRef.doc(safeDocId(oldKey)) });
+          ops.push({ action: 'set', ref: recordsRef.doc(safeDocId(newRec.recordKey)), data: newRec });
+        });
+        affectedClassKeys.forEach(key => {
+          const cls = state.weeklyPlan.get(key);
+          if (!cls) return;
+          const attArr = cls.attendees instanceof Set ? Array.from(cls.attendees) : (cls.attendees || []);
+          ops.push({
+            action: 'set',
+            ref: classesRef.doc(safeDocId(key)),
+            data: {
+              date: cls.date,
+              time: cls.time,
+              playlist: cls.playlist || '',
+              attendees: attArr,
+              status: cls.status || 'draft',
+              notes: cls.notes || '',
+              classType: cls.classType || '',
+              dateTimeKey: key
+            }
+          });
+        });
+        if (ops.length > 0) await runFirestoreBatch(ops);
+      }
+
+      showToast(`Renamed to "${fresh}"`, 'success');
+      return true;
+    } catch (e) {
+      console.error('renameGuest failed', e);
+      showToast('Rename failed: ' + (e.message || 'unknown'), 'error');
+      return false;
+    }
+  }
+
+  async function deleteGuest(name) {
+    const target = (name || '').trim();
+    if (!target) return false;
+
+    try {
+      // Remove from active guest list. PRESERVE history records so existing
+      // History entries still show this guest's name in their attendee lists.
+      state.allGuests.delete(target);
+
+      // Remove from any current class attendee lists.
+      const affectedClassKeys = [];
+      state.weeklyPlan.forEach((cls, key) => {
+        if (cls.attendees instanceof Set) {
+          if (cls.attendees.has(target)) {
+            cls.attendees.delete(target);
+            affectedClassKeys.push(key);
+          }
+        } else if (Array.isArray(cls.attendees)) {
+          const idx = cls.attendees.indexOf(target);
+          if (idx > -1) {
+            cls.attendees.splice(idx, 1);
+            affectedClassKeys.push(key);
+          }
+        }
+      });
+
+      saveStateToLocalStorage();
+
+      if (state.firebaseUser && affectedClassKeys.length > 0) {
+        const classesRef = getUserCollectionRef('classes');
+        const ops = affectedClassKeys.map(key => {
+          const cls = state.weeklyPlan.get(key);
+          const attArr = cls.attendees instanceof Set ? Array.from(cls.attendees) : (cls.attendees || []);
+          return {
+            action: 'set',
+            ref: classesRef.doc(safeDocId(key)),
+            data: {
+              date: cls.date,
+              time: cls.time,
+              playlist: cls.playlist || '',
+              attendees: attArr,
+              status: cls.status || 'draft',
+              notes: cls.notes || '',
+              classType: cls.classType || '',
+              dateTimeKey: key
+            }
+          };
+        });
+        await runFirestoreBatch(ops);
+      }
+
+      showToast(`Removed "${target}"`, 'success');
+      renderApp();
+      return true;
+    } catch (e) {
+      console.error('deleteGuest failed', e);
+      showToast('Delete failed: ' + (e.message || 'unknown'), 'error');
+      return false;
+    }
   }
   // ── Recommender screen ───────────────────────────────────
   function renderRecommenderScreen(container, params) {
