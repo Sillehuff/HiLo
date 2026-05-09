@@ -46,12 +46,38 @@ state.unsubRecords/Classes/Playlists — Firestore listener teardown functions
 
 ## UI Tabs
 
-1. **Dashboard** — select date/time/guests, get best playlist recommendation via freshness scoring
-2. **Weekly Planner** — 7-day calendar grid, create/edit/finalize classes
-3. **Playlist Explorer** — sortable table of all playlists with staleness metrics, inline tag editor
-4. **History** — finalized class log grouped by date, sortable
-5. **Guests** — profile cards with per-guest attendance stats
-6. **Settings** — account info, CSV import/export, clear data
+Mobile-first 4-tab IA:
+
+1. **Schedule** — continuous-scroll agenda (past 7 days through next 5 weeks), sticky week strip with day-letter cells and IntersectionObserver-driven week label, inline-expand class panel (rec card + type/time/notes fields → openClassEditSheet, real per-guest last-heard via `lastHeardMap`, save-draft/finalize/delete). Header has a sparkle button that pushes the Recommender onto Schedule's nav stack. FAB opens openAddClassSheet.
+2. **Guests** — searchable list, "+ Add Guest" sheet, tap a card → Guest Detail (pushed) with hero, stats, last class, playlist history, and pencil/trash in nav bar for `renameGuest` / `deleteGuest`.
+3. **History** — search + class-type filter chips + sort menu (Date/Type/Playlist/Attendees, asc/desc). Only finalized classes. Week-grouped when sort key is date, flat list otherwise. Tap entry → openClassEditSheet (same sheet as Schedule). Stats footer (Total Classes / Unique Guests / Playlists Used).
+4. **More** — profile card, Tools (Recommender, Playlists), Account (Settings).
+
+**Recommender** (pushed): multi-select class pills + "Select All Drafts" + "Clear" + Replay window control + best card with reasons + collapsible "All attendees (N)" + ranked list + sticky assign-to-all action bar. Preserves the multi-class same-type same-day flow via `getMetricsForSelectedClasses` over merged attendees.
+
+**Playlists** (pushed under More): Active/Retired summary, list with inline status toggle, tap row → openTagEditorSheet (predefined + custom + remove confirm). "Removed" is a third hidden status reachable only via tag editor.
+
+**Settings** (pushed under More): account card, sync pill, cosmetic Notifications + Auto-finalize toggles (persist to localStorage, no functional behavior), Replay window selector, Import/Export CSV, Clear All Data with in-sheet confirm.
+
+## Navigation
+
+Per-tab navigation stack: `state.nav.stacks = { schedule:[], guests:[], history:[], more:[] }`. `navPush(screen, params)` / `navPop()` / `navSwitch(tab)`. Tab bar hidden when current tab's stack depth > 0.
+
+## Bottom Sheet Portal
+
+A single `#sheet-layer` div sits at the body root (avoids `.hilo-scroll` clipping). Sheets stack via `state.sheetStack` with z-index per depth. Six builders: `openPlaylistPickerSheet`, `openAddClassSheet`, `openClassEditSheet`, `openAddGuestSheet`, `openTagEditorSheet`, `openSortMenuSheet`. Destructive actions (delete class, remove playlist, clear data, delete guest) use in-sheet confirm views — never native `confirm()`.
+
+## DOM Coupling
+
+The old `addEventListeners()` / `wireXxxEvents()` pattern with `$('#id')` references was dropped during the redesign. Per-screen wiring is now done inside `renderXxxScreen()` functions via closure capture on freshly-rendered nodes. Data-layer functions (`saveClassToFirestore`, `computeMetrics`, etc.) don't touch DOM and are reused verbatim.
+
+## Cosmetic Stubs
+
+Some UI elements render but have no functional logic — placeholders for future work:
+- Notifications toggle (Settings) — persists to localStorage; no Web Push wiring
+- Auto-finalize toggle (Settings) — persists to localStorage; no scheduler
+- Guest "Active" badge (Guests list) — always shows "Active"
+- "Member since —" (Guest Detail hero) — placeholder text
 
 ## Data Flow
 
@@ -94,4 +120,4 @@ GitHub Actions will deploy to Pages automatically.
 
 ## Service Worker
 
-Cache version is `hilo-playlist-v3`. Bump this constant in `sw.js` when making changes to force cache refresh. Firebase/Google API requests are excluded from caching.
+Cache version is `hilo-playlist-v15`. Bump this constant in `sw.js` when making changes to force cache refresh. The activate handler evicts old caches whose name doesn't match the current `CACHE_NAME`. Firebase/Google API requests are excluded from caching.
