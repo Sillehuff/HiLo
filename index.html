@@ -484,6 +484,389 @@
       padding: 12px 20px calc(20px + var(--safe-bottom));
       border-top: 0.5px solid var(--border-light);
       flex-shrink: 0;
+      background: var(--surface);
+    }
+
+    /* Sheet form / field helpers (Phase 3) */
+    .sheet-field { margin-bottom: 16px; }
+    .sheet-field__label {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .sheet-input,
+    .sheet-textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .sheet-input:focus,
+    .sheet-textarea:focus { border-color: var(--primary); }
+    .sheet-textarea { min-height: 80px; resize: vertical; line-height: 1.45; }
+    .sheet-search {
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .sheet-search input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border-medium);
+      border-radius: var(--radius-pill);
+      background: var(--surface-sunken);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+    }
+    .sheet-search input:focus { border-color: var(--primary); background: var(--surface); }
+    .sheet-error {
+      color: var(--danger);
+      font-size: 12.5px;
+      margin-top: 6px;
+    }
+    .sheet-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .sheet-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 13px;
+      border-radius: var(--radius-pill);
+      background: var(--surface-sunken);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      font-family: var(--font-body);
+    }
+    .sheet-pill--active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+    .sheet-checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 0.5px solid var(--border-light);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sheet-checkbox-row:last-child { border-bottom: none; }
+    .sheet-checkbox-row__av {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .sheet-checkbox-row__name {
+      flex: 1;
+      min-width: 0;
+      font-size: 14.5px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .sheet-checkbox-row__check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: transparent;
+    }
+    .sheet-checkbox-row--checked .sheet-checkbox-row__check {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .sheet-actions {
+      display: flex;
+      gap: 8px;
+      padding: 12px 20px calc(20px + var(--safe-bottom));
+      border-top: 0.5px solid var(--border-light);
+      flex-shrink: 0;
+      background: var(--surface);
+      position: sticky;
+      bottom: 0;
+    }
+    .sheet-actions .hilo-btn--primary { flex: 1; }
+    .sheet-actions .hilo-btn--ghost { flex: 0 0 auto; }
+    .sheet-tag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px 6px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 12.5px;
+      font-weight: 600;
+      border: none;
+      cursor: default;
+    }
+    .sheet-tag-chip__remove {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+    .sheet-tag-chip__remove:hover { background: rgba(110, 86, 207, 0.15); }
+
+    /* Date strip (Add Class) */
+    .sheet-date-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .sheet-date-strip::-webkit-scrollbar { display: none; }
+    .sheet-date-cell {
+      flex-shrink: 0;
+      width: 56px;
+      padding: 8px 0;
+      border-radius: var(--radius-md);
+      background: var(--surface-sunken);
+      border: 1.5px solid transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      font-family: var(--font-body);
+    }
+    .sheet-date-cell__name {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .sheet-date-cell__num {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: var(--font-display);
+    }
+    .sheet-date-cell--active {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+    }
+    .sheet-date-cell--active .sheet-date-cell__name { color: var(--primary); }
+    .sheet-date-cell--active .sheet-date-cell__num { color: var(--primary); }
+
+    /* Time grid (used in add/edit class) */
+    .sheet-time-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .sheet-time-grid .sheet-pill {
+      justify-content: center;
+      padding: 8px 4px;
+    }
+    .sheet-time-more-link {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 0;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    /* Picker rows (Playlist Picker) */
+    .sheet-picker-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 0.5px solid var(--border-light);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      background: transparent;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      width: 100%;
+      text-align: left;
+    }
+    .sheet-picker-row:last-child { border-bottom: none; }
+    .sheet-picker-row__num {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .sheet-picker-row__meta { flex: 1; min-width: 0; }
+    .sheet-picker-row__title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      margin-bottom: 2px;
+    }
+    .sheet-picker-row__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .sheet-picker-row__tag {
+      font-size: 10.5px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--surface-sunken);
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .sheet-picker-row__sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+    .sheet-picker-row__score {
+      flex-shrink: 0;
+      text-align: right;
+      font-family: var(--font-display);
+    }
+    .sheet-picker-row__score-num {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .sheet-picker-row__score-label {
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .sheet-picker-row__check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--success);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-left: 6px;
+    }
+    .sheet-picker-row--current { background: var(--primary-soft); border-radius: 12px; padding-left: 8px; padding-right: 8px; }
+    .sheet-picker-empty {
+      padding: 32px 0;
+      text-align: center;
+      color: var(--text-tertiary);
+      font-size: 14px;
+    }
+
+    /* Sort menu radio rows */
+    .sheet-sort-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 0.5px solid var(--border-light);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      background: transparent;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      width: 100%;
+      text-align: left;
+      font-family: var(--font-body);
+      font-size: 14.5px;
+      color: var(--text-primary);
+    }
+    .sheet-sort-row:last-child { border-bottom: none; }
+    .sheet-sort-row__radio {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-medium);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sheet-sort-row--active .sheet-sort-row__radio {
+      border-color: var(--primary);
+    }
+    .sheet-sort-row--active .sheet-sort-row__radio::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .sheet-sort-row--active { color: var(--primary); font-weight: 600; }
+
+    /* Confirm view (delete) */
+    .sheet-confirm {
+      padding: 24px 20px 12px;
+      text-align: center;
+    }
+    .sheet-confirm__title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .sheet-confirm__sub {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
     }
 
     /* ═══════════════════════════════════════════════════
@@ -1333,7 +1716,10 @@
     // Which class is inline-expanded on the Schedule screen.
     openClassKey: null,
     // Persisted to localStorage key 'hilo:signin-banner-dismissed'.
-    signinBannerDismissed: false
+    signinBannerDismissed: false,
+    // ── Phase 3: bottom sheet stack ─────────────────────
+    // Each entry: { id, root, overlay, sheet, onClose, popstateMarker }
+    sheetStack: []
   };
 
   const $ = (sel) => document.querySelector(sel);
@@ -2694,15 +3080,1220 @@
     return { label: `${days}d ago`, sub: 'fresh again', mod: 'fresh' };
   }
 
-  // ── Sheet stubs (Phase 3 will replace) ───────────────────
+  // ═══════════════════════════════════════════════════════
+  // BLOCK 7: BOTTOM SHEET CONTROLLER + BUILDERS (Phase 3)
+  // ═══════════════════════════════════════════════════════
+
+  // Generic sheet controller. Sheets render inside #sheet-layer
+  // (a body-root portal) so they aren't clipped by hilo-scroll.
+  // Multiple sheets stack via z-index 500 + (10 * stack depth).
+  function openSheet({ title = '', body, height = 'tall', onClose, hideClose = false } = {}) {
+    const layer = document.getElementById('sheet-layer');
+    if (!layer) return null;
+
+    // Build DOM.
+    const root = document.createElement('div');
+    root.className = 'hilo-sheet-portal';
+    root.style.cssText = 'position:absolute;inset:0;pointer-events:none;';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'hilo-sheet-overlay';
+
+    const sheet = document.createElement('div');
+    sheet.className = 'hilo-sheet hilo-sheet--' + (height === 'short' ? 'short' : 'tall');
+
+    const handle = document.createElement('div');
+    handle.className = 'hilo-sheet__handle';
+    sheet.appendChild(handle);
+
+    const header = document.createElement('div');
+    header.className = 'hilo-sheet__header';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'hilo-sheet__title';
+    titleEl.textContent = title;
+    header.appendChild(titleEl);
+
+    if (!hideClose) {
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'hilo-sheet__close';
+      closeBtn.setAttribute('aria-label', 'Close');
+      closeBtn.innerHTML = ICONS.close;
+      closeBtn.addEventListener('click', () => closeSheet());
+      header.appendChild(closeBtn);
+    }
+    sheet.appendChild(header);
+
+    // Body content area.
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'hilo-sheet__body';
+    if (body instanceof HTMLElement) {
+      bodyEl.appendChild(body);
+    } else if (typeof body === 'string') {
+      bodyEl.innerHTML = body;
+    }
+    sheet.appendChild(bodyEl);
+
+    root.appendChild(overlay);
+    root.appendChild(sheet);
+
+    // z-index: stack the second sheet above the first.
+    const depth = state.sheetStack.length;
+    root.style.zIndex = String(500 + depth * 10);
+    root.style.pointerEvents = 'auto';
+
+    layer.appendChild(root);
+
+    // Tap on overlay → close topmost sheet only.
+    overlay.addEventListener('click', () => {
+      const top = state.sheetStack[state.sheetStack.length - 1];
+      if (top && top.id === id) closeSheet();
+    });
+
+    // Animate open on next frame so transition takes effect.
+    requestAnimationFrame(() => {
+      overlay.classList.add('is-open');
+      sheet.classList.add('is-open');
+    });
+
+    // Push history state so Android back gesture closes the sheet.
+    let popstateMarker = null;
+    try {
+      popstateMarker = 'sheet-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+      history.pushState({ sheet: popstateMarker }, '');
+    } catch (e) { /* history disabled — fine */ }
+
+    const id = 'sheet-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+    const entry = { id, root, overlay, sheet, body: bodyEl, onClose, popstateMarker };
+    state.sheetStack.push(entry);
+
+    return {
+      close: () => closeSheet(id),
+      setBody: (newBody) => {
+        bodyEl.innerHTML = '';
+        if (newBody instanceof HTMLElement) bodyEl.appendChild(newBody);
+        else if (typeof newBody === 'string') bodyEl.innerHTML = newBody;
+      },
+      setTitle: (newTitle) => { titleEl.textContent = newTitle; },
+      bodyEl
+    };
+  }
+
+  function closeSheet(targetId) {
+    if (state.sheetStack.length === 0) return;
+    let entry;
+    if (targetId) {
+      const idx = state.sheetStack.findIndex(e => e.id === targetId);
+      if (idx === -1) return;
+      entry = state.sheetStack.splice(idx, 1)[0];
+    } else {
+      entry = state.sheetStack.pop();
+    }
+    if (!entry) return;
+
+    entry.overlay.classList.remove('is-open');
+    entry.sheet.classList.remove('is-open');
+
+    // Wait for transition then remove DOM.
+    let removed = false;
+    const remove = () => {
+      if (removed) return;
+      removed = true;
+      if (entry.root && entry.root.parentNode) entry.root.parentNode.removeChild(entry.root);
+      if (typeof entry.onClose === 'function') {
+        try { entry.onClose(); } catch (e) { console.warn('Sheet onClose error:', e); }
+      }
+    };
+    entry.sheet.addEventListener('transitionend', remove, { once: true });
+    setTimeout(remove, 360);
+
+    // Pop the popstate marker if we pushed one and it's still on top.
+    if (entry.popstateMarker) {
+      try {
+        if (history.state && history.state.sheet === entry.popstateMarker) {
+          // Use replaceState to avoid creating an extra back step
+          history.back();
+        }
+      } catch (e) { /* fine */ }
+    }
+  }
+
+  function closeAllSheets() {
+    while (state.sheetStack.length > 0) closeSheet();
+  }
+
+  // Global handlers — attach once.
+  if (!window.__hiloSheetHandlersAttached) {
+    window.__hiloSheetHandlersAttached = true;
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && state.sheetStack.length > 0) {
+        e.preventDefault();
+        closeSheet();
+      }
+    });
+    window.addEventListener('popstate', () => {
+      // If a sheet is open, close it (history.back already happened).
+      if (state.sheetStack.length > 0) {
+        // Mark the entry's marker as null so closeSheet doesn't re-back().
+        const top = state.sheetStack[state.sheetStack.length - 1];
+        if (top) top.popstateMarker = null;
+        closeSheet();
+      }
+    });
+  }
+
+  // ── Helper: build a sticky footer button row ───────────
+  function buildSheetActions(buttons) {
+    const row = document.createElement('div');
+    row.className = 'sheet-actions';
+    buttons.forEach(b => row.appendChild(b));
+    return row;
+  }
+
+  // ── Helper: section label inside a sheet body ──────────
+  function sheetLabel(text) {
+    const el = document.createElement('div');
+    el.className = 'sheet-field__label';
+    el.textContent = text;
+    return el;
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // SHEET BUILDERS
+  // ═══════════════════════════════════════════════════════
+
+  // ── Playlist Picker ─────────────────────────────────────
   function openPlaylistPickerSheet(dateTimeKey, onSelect) {
-    showToast('Playlist picker — coming in Phase 3', 'info');
+    const cls = state.weeklyPlan.get(dateTimeKey);
+    if (!cls) {
+      showToast('Class not found', 'error');
+      return;
+    }
+    const rosterSet = cls.attendees instanceof Set
+      ? cls.attendees
+      : new Set(cls.attendees || []);
+
+    const body = document.createElement('div');
+
+    // Empty state if no attendees.
+    if (rosterSet.size === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'sheet-picker-empty';
+      empty.innerHTML = `
+        <div style="font-size:15px;color:var(--text-secondary);margin-bottom:6px;font-weight:600;">No guests yet</div>
+        <div>Add guests to get a recommendation.</div>`;
+      body.appendChild(empty);
+      openSheet({ title: 'Select Playlist', body, height: 'short' });
+      return;
+    }
+
+    const sub = document.createElement('div');
+    sub.style.cssText = 'font-size:12.5px;color:var(--text-tertiary);margin-bottom:14px;';
+    sub.textContent = 'Ranked by freshness for this group';
+    body.appendChild(sub);
+
+    const metrics = computeMetrics({
+      attendees: rosterSet,
+      classType: cls.classType || '',
+      window: state.selectedWindow,
+      date: cls.date || formatDateKey(new Date())
+    });
+
+    if (!metrics.length) {
+      const empty = document.createElement('div');
+      empty.className = 'sheet-picker-empty';
+      empty.textContent = 'No matching playlists. Add tags or choose a different class type.';
+      body.appendChild(empty);
+      openSheet({ title: 'Select Playlist', body, height: 'short' });
+      return;
+    }
+
+    const list = document.createElement('div');
+    list.className = 'sheet-picker-list';
+
+    metrics.forEach((m) => {
+      const isCurrent = String(m.playlist) === String(cls.playlist || '');
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'sheet-picker-row' + (isCurrent ? ' sheet-picker-row--current' : '');
+
+      const num = document.createElement('div');
+      num.className = 'sheet-picker-row__num';
+      num.textContent = m.playlist;
+
+      const meta = document.createElement('div');
+      meta.className = 'sheet-picker-row__meta';
+      const title = document.createElement('div');
+      title.className = 'sheet-picker-row__title';
+      title.textContent = 'Playlist #' + m.playlist;
+      meta.appendChild(title);
+      const tags = state.playlistTags.get(m.playlist) || [];
+      if (tags.length > 0) {
+        const tagWrap = document.createElement('div');
+        tagWrap.className = 'sheet-picker-row__tags';
+        tags.forEach(t => {
+          const c = document.createElement('span');
+          c.className = 'sheet-picker-row__tag';
+          c.textContent = t;
+          tagWrap.appendChild(c);
+        });
+        meta.appendChild(tagWrap);
+      }
+      const sub2 = document.createElement('div');
+      sub2.className = 'sheet-picker-row__sub';
+      const medianStr = m.heardCount ? `median ${m.median}d ago` : 'no history';
+      sub2.textContent = `${medianStr} · ${m.neverPct}% never heard`;
+      meta.appendChild(sub2);
+      row.appendChild(num);
+      row.appendChild(meta);
+
+      const score = document.createElement('div');
+      score.className = 'sheet-picker-row__score';
+      const sNum = document.createElement('div');
+      sNum.className = 'sheet-picker-row__score-num';
+      sNum.textContent = String(Math.round(m.score));
+      const sLab = document.createElement('div');
+      sLab.className = 'sheet-picker-row__score-label';
+      sLab.textContent = 'Score';
+      score.appendChild(sNum);
+      score.appendChild(sLab);
+      row.appendChild(score);
+
+      if (isCurrent) {
+        const check = document.createElement('div');
+        check.className = 'sheet-picker-row__check';
+        check.innerHTML = ICONS.check;
+        row.appendChild(check);
+      }
+
+      row.addEventListener('click', async () => {
+        const newPlaylistId = String(m.playlist);
+        if (typeof onSelect === 'function') {
+          try { onSelect(newPlaylistId); } catch (e) { console.warn(e); }
+        } else {
+          // Default: persist directly.
+          await saveClassToFirestore(dateTimeKey, {
+            date: cls.date,
+            time: cls.time,
+            playlist: newPlaylistId,
+            attendees: rosterSet,
+            status: cls.status || 'draft',
+            notes: cls.notes || '',
+            classType: cls.classType || ''
+          });
+          // Mirror locally too in case Firebase isn't signed in.
+          cls.playlist = newPlaylistId;
+          state.weeklyPlan.set(dateTimeKey, cls);
+          saveStateToLocalStorage();
+          renderApp();
+        }
+        closeSheet();
+      });
+
+      list.appendChild(row);
+    });
+
+    body.appendChild(list);
+
+    openSheet({ title: 'Select Playlist', body, height: 'tall' });
   }
+
+  // ── Helper: build a guest checkbox list with search ─────
+  function buildGuestPicker({ initialSelected = new Set(), onChange = null } = {}) {
+    const wrap = document.createElement('div');
+    const selected = new Set([...initialSelected]);
+
+    const headerRow = document.createElement('div');
+    headerRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px;';
+    const search = document.createElement('div');
+    search.className = 'sheet-search';
+    search.style.flex = '1';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Search guests…';
+    search.appendChild(input);
+    headerRow.appendChild(search);
+
+    const addNewBtn = document.createElement('button');
+    addNewBtn.type = 'button';
+    addNewBtn.className = 'hilo-pill hilo-pill--accent';
+    addNewBtn.style.flexShrink = '0';
+    addNewBtn.innerHTML = `${ICONS.plus14}<span>New</span>`;
+    headerRow.appendChild(addNewBtn);
+
+    wrap.appendChild(headerRow);
+
+    const countEl = document.createElement('div');
+    countEl.style.cssText = 'font-size:12px;color:var(--text-tertiary);margin-bottom:6px;';
+    wrap.appendChild(countEl);
+
+    const list = document.createElement('div');
+    list.className = 'sheet-checkbox-list';
+    wrap.appendChild(list);
+
+    function renderList() {
+      const q = input.value.trim().toLowerCase();
+      const all = Array.from(state.allGuests).sort((a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      const filtered = q ? all.filter(g => g.toLowerCase().includes(q)) : all;
+      list.innerHTML = '';
+      if (filtered.length === 0) {
+        const empty = document.createElement('div');
+        empty.style.cssText = 'padding:18px 0;color:var(--text-tertiary);text-align:center;font-size:13.5px;';
+        empty.textContent = q ? 'No guests match' : 'No guests yet — tap "New" to add one.';
+        list.appendChild(empty);
+      } else {
+        filtered.forEach(name => {
+          const row = document.createElement('div');
+          const isSel = selected.has(name);
+          row.className = 'sheet-checkbox-row' + (isSel ? ' sheet-checkbox-row--checked' : '');
+          row.innerHTML = `
+            <div class="sheet-checkbox-row__av">${esc((name[0] || '?').toUpperCase())}</div>
+            <div class="sheet-checkbox-row__name">${esc(name)}</div>
+            <div class="sheet-checkbox-row__check">${ICONS.check}</div>`;
+          row.addEventListener('click', () => {
+            if (selected.has(name)) selected.delete(name);
+            else selected.add(name);
+            renderList();
+            if (typeof onChange === 'function') onChange(new Set(selected));
+          });
+          list.appendChild(row);
+        });
+      }
+      countEl.textContent = selected.size === 0
+        ? 'No guests selected'
+        : `${selected.size} selected`;
+    }
+
+    input.addEventListener('input', renderList);
+    addNewBtn.addEventListener('click', () => {
+      openAddGuestSheet({ onAdd: (name) => {
+        selected.add(name);
+        renderList();
+        if (typeof onChange === 'function') onChange(new Set(selected));
+      }});
+    });
+
+    renderList();
+
+    return {
+      element: wrap,
+      getSelected: () => new Set(selected),
+      setSelected: (s) => { selected.clear(); s.forEach(g => selected.add(g)); renderList(); }
+    };
+  }
+
+  // ── Helper: build a date strip selector (14 days from today or prefill) ──
+  function buildDateStrip({ value, onChange }) {
+    const wrap = document.createElement('div');
+    wrap.className = 'sheet-date-strip';
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let selectedIso = value || formatDateKey(today);
+
+    function render() {
+      wrap.innerHTML = '';
+      // 14 days starting today
+      for (let i = 0; i < 14; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        const iso = formatDateKey(d);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sheet-date-cell' + (iso === selectedIso ? ' sheet-date-cell--active' : '');
+        const dayName = d.toLocaleDateString('en-US', { weekday: 'short' }).slice(0, 3);
+        btn.innerHTML = `
+          <span class="sheet-date-cell__name">${esc(dayName)}</span>
+          <span class="sheet-date-cell__num">${d.getDate()}</span>`;
+        btn.addEventListener('click', () => {
+          selectedIso = iso;
+          render();
+          if (typeof onChange === 'function') onChange(selectedIso);
+        });
+        wrap.appendChild(btn);
+      }
+    }
+    render();
+    return {
+      element: wrap,
+      getValue: () => selectedIso,
+      setValue: (iso) => { selectedIso = iso; render(); }
+    };
+  }
+
+  // ── Helper: build a time picker (common pills + "More times…" select) ──
+  function buildTimePicker({ value, onChange }) {
+    const wrap = document.createElement('div');
+    const COMMON_TIMES = [
+      '06:00', '07:00', '08:00', '09:00',
+      '10:00', '11:00', '12:00', '13:00',
+      '17:00', '18:00', '19:00', '20:00'
+    ];
+    let selected = normalizeTime(value || '18:00');
+
+    const grid = document.createElement('div');
+    grid.className = 'sheet-time-grid';
+    wrap.appendChild(grid);
+
+    const moreLink = document.createElement('button');
+    moreLink.type = 'button';
+    moreLink.className = 'sheet-time-more-link';
+    moreLink.textContent = 'More times…';
+    wrap.appendChild(moreLink);
+
+    const moreSelect = document.createElement('select');
+    moreSelect.className = 'sheet-input';
+    moreSelect.style.display = 'none';
+    moreSelect.style.marginTop = '6px';
+    // 15-min increments from 05:00 to 21:00
+    for (let h = 5; h <= 21; h++) {
+      for (let m = 0; m < 60; m += 15) {
+        const ts = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        const opt = document.createElement('option');
+        opt.value = ts;
+        opt.textContent = formatTime(ts);
+        moreSelect.appendChild(opt);
+      }
+    }
+    moreSelect.value = selected;
+    wrap.appendChild(moreSelect);
+
+    function render() {
+      grid.innerHTML = '';
+      COMMON_TIMES.forEach(t => {
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = 'sheet-pill' + (t === selected ? ' sheet-pill--active' : '');
+        pill.textContent = formatTime(t);
+        pill.addEventListener('click', () => {
+          selected = t;
+          moreSelect.value = t;
+          render();
+          if (typeof onChange === 'function') onChange(selected);
+        });
+        grid.appendChild(pill);
+      });
+    }
+    moreLink.addEventListener('click', () => {
+      moreSelect.style.display = moreSelect.style.display === 'none' ? 'block' : 'none';
+    });
+    moreSelect.addEventListener('change', () => {
+      selected = moreSelect.value;
+      render();
+      if (typeof onChange === 'function') onChange(selected);
+    });
+    render();
+    return {
+      element: wrap,
+      getValue: () => selected,
+      setValue: (v) => { selected = normalizeTime(v); moreSelect.value = selected; render(); }
+    };
+  }
+
+  // ── Helper: class type pills (built-in + history-derived + custom) ──
+  function buildClassTypePicker({ value, onChange }) {
+    const wrap = document.createElement('div');
+    let selected = value || '';
+    let customMode = false;
+
+    const pillsRow = document.createElement('div');
+    pillsRow.className = 'sheet-pills';
+    wrap.appendChild(pillsRow);
+
+    const customRow = document.createElement('div');
+    customRow.style.cssText = 'margin-top:10px;display:none;';
+    const customInput = document.createElement('input');
+    customInput.type = 'text';
+    customInput.className = 'sheet-input';
+    customInput.placeholder = 'Custom type…';
+    customRow.appendChild(customInput);
+    wrap.appendChild(customRow);
+
+    function render() {
+      pillsRow.innerHTML = '';
+      const types = getAllClassTypes();
+      // Ensure we include selected if it's not in built-in list
+      if (selected && !types.includes(selected)) types.push(selected);
+
+      types.forEach(t => {
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = 'sheet-pill' + (t === selected && !customMode ? ' sheet-pill--active' : '');
+        pill.textContent = t;
+        pill.addEventListener('click', () => {
+          selected = t;
+          customMode = false;
+          customRow.style.display = 'none';
+          render();
+          if (typeof onChange === 'function') onChange(selected);
+        });
+        pillsRow.appendChild(pill);
+      });
+
+      const customPill = document.createElement('button');
+      customPill.type = 'button';
+      customPill.className = 'sheet-pill' + (customMode ? ' sheet-pill--active' : '');
+      customPill.innerHTML = `${ICONS.plus14}<span>Custom</span>`;
+      customPill.addEventListener('click', () => {
+        customMode = true;
+        customRow.style.display = 'block';
+        customInput.focus();
+        render();
+      });
+      pillsRow.appendChild(customPill);
+    }
+    customInput.addEventListener('input', () => {
+      selected = customInput.value.trim();
+      if (typeof onChange === 'function') onChange(selected);
+    });
+    render();
+    return {
+      element: wrap,
+      getValue: () => selected,
+      setValue: (v) => { selected = v || ''; customMode = false; customRow.style.display = 'none'; render(); }
+    };
+  }
+
+  // ── Add Class Sheet ─────────────────────────────────────
   function openAddClassSheet(prefillIso) {
-    showToast('Add class — coming in Phase 3', 'info');
+    const todayIso = formatDateKey(new Date());
+    const initialIso = prefillIso || todayIso;
+
+    const body = document.createElement('div');
+
+    // Date
+    const dateField = document.createElement('div');
+    dateField.className = 'sheet-field';
+    dateField.appendChild(sheetLabel('Date'));
+    const dateStrip = buildDateStrip({ value: initialIso });
+    dateField.appendChild(dateStrip.element);
+    body.appendChild(dateField);
+
+    // Time
+    const timeField = document.createElement('div');
+    timeField.className = 'sheet-field';
+    timeField.appendChild(sheetLabel('Time'));
+    const timePicker = buildTimePicker({ value: '18:00' });
+    timeField.appendChild(timePicker.element);
+    body.appendChild(timeField);
+
+    // Class type
+    const typeField = document.createElement('div');
+    typeField.className = 'sheet-field';
+    typeField.appendChild(sheetLabel('Class type'));
+    const typePicker = buildClassTypePicker({ value: '' });
+    typeField.appendChild(typePicker.element);
+    body.appendChild(typeField);
+
+    // Guests
+    const guestField = document.createElement('div');
+    guestField.className = 'sheet-field';
+    guestField.appendChild(sheetLabel('Guests'));
+    const guestPicker = buildGuestPicker({ initialSelected: new Set() });
+    guestField.appendChild(guestPicker.element);
+    body.appendChild(guestField);
+
+    // Error region
+    const errorEl = document.createElement('div');
+    errorEl.className = 'sheet-error';
+    errorEl.style.display = 'none';
+    body.appendChild(errorEl);
+
+    // Footer
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.className = 'hilo-btn hilo-btn--ghost';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.addEventListener('click', () => closeSheet());
+
+    const createBtn = document.createElement('button');
+    createBtn.type = 'button';
+    createBtn.className = 'hilo-btn hilo-btn--primary';
+    createBtn.innerHTML = `${ICONS.check}<span>Create class</span>`;
+    createBtn.addEventListener('click', async () => {
+      const date = dateStrip.getValue();
+      const time = timePicker.getValue();
+      const type = typePicker.getValue();
+      const attendees = guestPicker.getSelected();
+
+      const errors = [];
+      if (!date) errors.push('Pick a date.');
+      if (!time) errors.push('Pick a time.');
+      if (!type) errors.push('Pick a class type.');
+      if (attendees.size === 0) errors.push('Add at least one guest.');
+
+      if (errors.length > 0) {
+        errorEl.textContent = errors[0];
+        errorEl.style.display = 'block';
+        return;
+      }
+      errorEl.style.display = 'none';
+      setLoading(createBtn, true);
+
+      const dateTimeKey = createDateTimeKey(date, time);
+      const classData = {
+        date,
+        time: normalizeTime(time),
+        playlist: '',
+        attendees,
+        status: 'draft',
+        notes: '',
+        classType: type,
+        dateTimeKey
+      };
+
+      // Always persist locally; Firestore only if signed in.
+      state.weeklyPlan.set(dateTimeKey, classData);
+      saveStateToLocalStorage();
+
+      let saved = true;
+      if (state.firebaseUser) {
+        saved = await saveClassToFirestore(dateTimeKey, classData);
+      }
+
+      setLoading(createBtn, false);
+      if (saved) {
+        showToast('Class added', 'success');
+        renderApp();
+        closeSheet();
+      }
+    });
+
+    body.appendChild(buildSheetActions([cancelBtn, createBtn]));
+
+    openSheet({ title: 'New Class', body, height: 'tall' });
   }
+
+  // ── Class Edit Sheet (full editor) ──────────────────────
   function openClassEditSheet(dateTimeKey) {
-    showToast('Class editor — coming in Phase 3', 'info');
+    const cls = state.weeklyPlan.get(dateTimeKey);
+    if (!cls) {
+      showToast('Class not found', 'error');
+      return;
+    }
+    // Working copy state
+    let workingDate = cls.date;
+    let workingTime = normalizeTime(cls.time || '');
+    let workingType = cls.classType || '';
+    let workingNotes = cls.notes || '';
+    let workingPlaylist = cls.playlist || '';
+    let workingAttendees = new Set(cls.attendees instanceof Set
+      ? cls.attendees
+      : (cls.attendees || []));
+
+    const body = document.createElement('div');
+
+    // Date
+    const dateField = document.createElement('div');
+    dateField.className = 'sheet-field';
+    dateField.appendChild(sheetLabel('Date'));
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.className = 'sheet-input';
+    dateInput.value = workingDate;
+    dateInput.addEventListener('change', () => { workingDate = dateInput.value; });
+    dateField.appendChild(dateInput);
+    body.appendChild(dateField);
+
+    // Time
+    const timeField = document.createElement('div');
+    timeField.className = 'sheet-field';
+    timeField.appendChild(sheetLabel('Time'));
+    const timePicker = buildTimePicker({ value: workingTime, onChange: (v) => { workingTime = v; } });
+    timeField.appendChild(timePicker.element);
+    body.appendChild(timeField);
+
+    // Type
+    const typeField = document.createElement('div');
+    typeField.className = 'sheet-field';
+    typeField.appendChild(sheetLabel('Class type'));
+    const typePicker = buildClassTypePicker({ value: workingType, onChange: (v) => { workingType = v; } });
+    typeField.appendChild(typePicker.element);
+    body.appendChild(typeField);
+
+    // Notes
+    const notesField = document.createElement('div');
+    notesField.className = 'sheet-field';
+    notesField.appendChild(sheetLabel('Notes'));
+    const notesTa = document.createElement('textarea');
+    notesTa.className = 'sheet-textarea';
+    notesTa.rows = 3;
+    notesTa.placeholder = 'Add a note…';
+    notesTa.value = workingNotes;
+    notesTa.addEventListener('input', () => { workingNotes = notesTa.value; });
+    notesField.appendChild(notesTa);
+    body.appendChild(notesField);
+
+    // Playlist (readonly, opens picker)
+    const playlistField = document.createElement('div');
+    playlistField.className = 'sheet-field';
+    playlistField.appendChild(sheetLabel('Playlist'));
+    const playlistRow = document.createElement('button');
+    playlistRow.type = 'button';
+    playlistRow.className = 'a-field-row';
+    playlistRow.style.cssText = 'border-radius:14px;border:1.5px solid var(--border-medium);padding:12px 14px;background:var(--surface);width:100%;';
+    function renderPlaylistRow() {
+      playlistRow.innerHTML = `
+        <div class="a-field-row__label">Playlist</div>
+        <div class="a-field-row__value${workingPlaylist ? '' : ' a-field-row__value--placeholder'}">
+          ${workingPlaylist ? '#' + esc(workingPlaylist) : 'Tap to choose'}
+          <span class="chev">${ICONS.chevR}</span>
+        </div>`;
+    }
+    renderPlaylistRow();
+    playlistRow.addEventListener('click', () => {
+      // Make sure the temp class state mirrors what's working
+      const tempCls = { ...cls, attendees: workingAttendees, classType: workingType, playlist: workingPlaylist, date: workingDate, time: workingTime };
+      // Use a temp put so the picker reads the working roster.
+      state.weeklyPlan.set(dateTimeKey, tempCls);
+      openPlaylistPickerSheet(dateTimeKey, (newPl) => {
+        workingPlaylist = newPl;
+        renderPlaylistRow();
+        // Don't persist yet — wait for Save Draft / Finalize.
+      });
+    });
+    playlistField.appendChild(playlistRow);
+    body.appendChild(playlistField);
+
+    // Attendees
+    const guestField = document.createElement('div');
+    guestField.className = 'sheet-field';
+    guestField.appendChild(sheetLabel('Attendees'));
+    const guestPicker = buildGuestPicker({
+      initialSelected: workingAttendees,
+      onChange: (s) => { workingAttendees = s; }
+    });
+    guestField.appendChild(guestPicker.element);
+    body.appendChild(guestField);
+
+    // Delete link
+    const delLink = document.createElement('button');
+    delLink.type = 'button';
+    delLink.className = 'a-delete-link';
+    delLink.style.marginTop = '12px';
+    delLink.textContent = 'Delete class';
+    body.appendChild(delLink);
+
+    // Persist helper
+    async function persist({ status, alsoFinalize = false }) {
+      // Handle date/time change (key change): if dateTimeKey changes,
+      // delete the old and write the new.
+      const newKey = createDateTimeKey(workingDate, workingTime);
+      const newCls = {
+        date: workingDate,
+        time: normalizeTime(workingTime),
+        playlist: workingPlaylist || '',
+        attendees: workingAttendees,
+        status,
+        notes: workingNotes || '',
+        classType: workingType || '',
+        dateTimeKey: newKey
+      };
+      // Update local state.
+      if (newKey !== dateTimeKey) {
+        state.weeklyPlan.delete(dateTimeKey);
+      }
+      state.weeklyPlan.set(newKey, newCls);
+      saveStateToLocalStorage();
+
+      let ok = true;
+      if (state.firebaseUser) {
+        if (newKey !== dateTimeKey) {
+          try { await deleteClassFromFirestore(dateTimeKey); } catch (e) {}
+        }
+        ok = await saveClassToFirestore(newKey, newCls);
+        if (ok && alsoFinalize) {
+          await writeRecordsToFirestore({
+            date: newCls.date,
+            time: newCls.time,
+            playlist: newCls.playlist,
+            attendees: newCls.attendees
+          });
+        }
+      }
+      return ok;
+    }
+
+    // Footer (sticky)
+    const draftBtn = document.createElement('button');
+    draftBtn.type = 'button';
+    draftBtn.className = 'hilo-btn hilo-btn--ghost';
+    draftBtn.textContent = 'Save draft';
+    draftBtn.addEventListener('click', async () => {
+      setLoading(draftBtn, true);
+      try {
+        const ok = await persist({ status: 'draft' });
+        if (ok) {
+          showToast('Draft saved', 'success');
+          renderApp();
+          closeSheet();
+        }
+      } finally { setLoading(draftBtn, false); }
+    });
+
+    const finalizeBtn = document.createElement('button');
+    finalizeBtn.type = 'button';
+    finalizeBtn.className = 'hilo-btn hilo-btn--primary';
+    finalizeBtn.innerHTML = `${ICONS.check}<span>Finalize</span>`;
+    finalizeBtn.addEventListener('click', async () => {
+      if (!workingPlaylist) { showToast('Pick a playlist first', 'error'); return; }
+      if (workingAttendees.size === 0) { showToast('Add guests first', 'error'); return; }
+      setLoading(finalizeBtn, true);
+      try {
+        const ok = await persist({ status: 'finalized', alsoFinalize: true });
+        if (ok) {
+          state.openClassKey = null;
+          showToast('Class finalized', 'success');
+          renderApp();
+          closeSheet();
+        }
+      } finally { setLoading(finalizeBtn, false); }
+    });
+
+    body.appendChild(buildSheetActions([draftBtn, finalizeBtn]));
+
+    const handle = openSheet({ title: 'Edit Class', body, height: 'tall' });
+
+    // Delete link → swap body to confirm view (per plan: no native confirm()).
+    delLink.addEventListener('click', () => {
+      const confirmBody = document.createElement('div');
+      const confirmEl = document.createElement('div');
+      confirmEl.className = 'sheet-confirm';
+      confirmEl.innerHTML = `
+        <div class="sheet-confirm__title">Delete this class?</div>
+        <div class="sheet-confirm__sub">This can't be undone.</div>`;
+      confirmBody.appendChild(confirmEl);
+
+      const cancelBtn2 = document.createElement('button');
+      cancelBtn2.type = 'button';
+      cancelBtn2.className = 'hilo-btn hilo-btn--ghost';
+      cancelBtn2.textContent = 'Cancel';
+      cancelBtn2.addEventListener('click', () => {
+        // Restore original body — easiest path is to reopen the edit sheet.
+        closeSheet();
+        openClassEditSheet(dateTimeKey);
+      });
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'hilo-btn hilo-btn--danger';
+      deleteBtn.style.flex = '1';
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.addEventListener('click', async () => {
+        setLoading(deleteBtn, true);
+        try {
+          state.weeklyPlan.delete(dateTimeKey);
+          if (state.openClassKey === dateTimeKey) state.openClassKey = null;
+          saveStateToLocalStorage();
+          if (state.firebaseUser) {
+            try { await deleteClassFromFirestore(dateTimeKey); } catch (e) {
+              showToast('Delete failed: ' + (e.message || 'unknown'), 'error');
+              setLoading(deleteBtn, false);
+              return;
+            }
+          }
+          showToast('Class deleted', 'success');
+          renderApp();
+          closeSheet();
+        } catch (e) {
+          showToast('Delete failed: ' + (e.message || 'unknown'), 'error');
+          setLoading(deleteBtn, false);
+        }
+      });
+
+      confirmBody.appendChild(buildSheetActions([cancelBtn2, deleteBtn]));
+      handle.setBody(confirmBody);
+      handle.setTitle('Confirm delete');
+    });
+  }
+
+  // ── Add Guest Sheet ─────────────────────────────────────
+  function openAddGuestSheet({ onAdd } = {}) {
+    const body = document.createElement('div');
+    const field = document.createElement('div');
+    field.className = 'sheet-field';
+    field.appendChild(sheetLabel('Guest name'));
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'sheet-input';
+    input.placeholder = 'Enter name…';
+    input.autocomplete = 'off';
+    field.appendChild(input);
+    const errorEl = document.createElement('div');
+    errorEl.className = 'sheet-error';
+    errorEl.style.display = 'none';
+    field.appendChild(errorEl);
+    body.appendChild(field);
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.className = 'hilo-btn hilo-btn--ghost';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.addEventListener('click', () => closeSheet());
+
+    const addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.className = 'hilo-btn hilo-btn--primary';
+    addBtn.innerHTML = `${ICONS.check}<span>Add guest</span>`;
+    addBtn.addEventListener('click', () => {
+      const name = (input.value || '').trim();
+      if (!name) {
+        errorEl.textContent = 'Name cannot be empty.';
+        errorEl.style.display = 'block';
+        return;
+      }
+      // Case-insensitive duplicate check.
+      const lower = name.toLowerCase();
+      const exists = Array.from(state.allGuests).some(g => g.toLowerCase() === lower);
+      if (exists) {
+        errorEl.textContent = 'A guest with that name already exists.';
+        errorEl.style.display = 'block';
+        return;
+      }
+      state.allGuests.add(name);
+      saveStateToLocalStorage();
+      if (typeof onAdd === 'function') onAdd(name);
+      closeSheet();
+      showToast('Guest added', 'success');
+    });
+
+    body.appendChild(buildSheetActions([cancelBtn, addBtn]));
+
+    openSheet({ title: 'Add Guest', body, height: 'short' });
+    setTimeout(() => input.focus(), 250);
+  }
+
+  // ── Tag Editor Sheet ────────────────────────────────────
+  function openTagEditorSheet(playlistNum) {
+    const playlistId = String(playlistNum);
+
+    const body = document.createElement('div');
+
+    const tagsField = document.createElement('div');
+    tagsField.className = 'sheet-field';
+    tagsField.appendChild(sheetLabel('Tags'));
+    const chipsWrap = document.createElement('div');
+    chipsWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;';
+    tagsField.appendChild(chipsWrap);
+    const emptyMsg = document.createElement('div');
+    emptyMsg.style.cssText = 'font-size:12.5px;color:var(--text-tertiary);margin-top:6px;';
+    emptyMsg.textContent = 'No tags yet — add one below.';
+    tagsField.appendChild(emptyMsg);
+    body.appendChild(tagsField);
+
+    function renderChips() {
+      const tags = state.playlistTags.get(playlistId) || [];
+      chipsWrap.innerHTML = '';
+      emptyMsg.style.display = tags.length === 0 ? 'block' : 'none';
+      tags.forEach(t => {
+        const chip = document.createElement('span');
+        chip.className = 'sheet-tag-chip';
+        chip.innerHTML = `<span>${esc(t)}</span>`;
+        const x = document.createElement('button');
+        x.type = 'button';
+        x.className = 'sheet-tag-chip__remove';
+        x.setAttribute('aria-label', 'Remove tag');
+        x.innerHTML = ICONS.close;
+        x.addEventListener('click', async () => {
+          await updatePlaylistMetadata(playlistId, { removeTag: t });
+          renderChips();
+        });
+        chip.appendChild(x);
+        chipsWrap.appendChild(chip);
+      });
+    }
+    renderChips();
+
+    // Add tag section
+    const addField = document.createElement('div');
+    addField.className = 'sheet-field';
+    addField.appendChild(sheetLabel('Add tag'));
+
+    const predefinedRow = document.createElement('div');
+    predefinedRow.style.cssText = 'display:flex;gap:6px;align-items:center;margin-bottom:8px;';
+    const predefinedSelect = document.createElement('select');
+    predefinedSelect.className = 'sheet-input';
+    predefinedSelect.style.flex = '1';
+    const placeholderOpt = document.createElement('option');
+    placeholderOpt.value = '';
+    placeholderOpt.textContent = 'Predefined…';
+    predefinedSelect.appendChild(placeholderOpt);
+    const builtIns = ['Yoga', 'Pilates', 'Spin', 'HIIT', 'Strength', 'Stretch', 'Dance', 'Barre'];
+    const merged = Array.from(new Set([...PREDEFINED_CLASS_TYPES, ...builtIns])).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    merged.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = t;
+      predefinedSelect.appendChild(opt);
+    });
+    const predefinedAddBtn = document.createElement('button');
+    predefinedAddBtn.type = 'button';
+    predefinedAddBtn.className = 'hilo-btn hilo-btn--ghost hilo-btn--sm';
+    predefinedAddBtn.textContent = 'Add';
+    predefinedAddBtn.addEventListener('click', async () => {
+      const v = predefinedSelect.value;
+      if (!v) return;
+      await updatePlaylistMetadata(playlistId, { addTag: v });
+      predefinedSelect.value = '';
+      renderChips();
+    });
+    predefinedRow.appendChild(predefinedSelect);
+    predefinedRow.appendChild(predefinedAddBtn);
+    addField.appendChild(predefinedRow);
+
+    const customRow = document.createElement('div');
+    customRow.style.cssText = 'display:flex;gap:6px;align-items:center;';
+    const customInput = document.createElement('input');
+    customInput.type = 'text';
+    customInput.className = 'sheet-input';
+    customInput.style.flex = '1';
+    customInput.placeholder = 'Custom tag…';
+    const customAddBtn = document.createElement('button');
+    customAddBtn.type = 'button';
+    customAddBtn.className = 'hilo-btn hilo-btn--primary hilo-btn--sm';
+    customAddBtn.innerHTML = `${ICONS.plus14}`;
+    customAddBtn.addEventListener('click', async () => {
+      const v = (customInput.value || '').trim();
+      if (!v) return;
+      await updatePlaylistMetadata(playlistId, { addTag: v });
+      customInput.value = '';
+      renderChips();
+    });
+    customInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        customAddBtn.click();
+      }
+    });
+    customRow.appendChild(customInput);
+    customRow.appendChild(customAddBtn);
+    addField.appendChild(customRow);
+    body.appendChild(addField);
+
+    // Status section
+    const statusField = document.createElement('div');
+    statusField.className = 'sheet-field';
+    statusField.appendChild(sheetLabel('Status'));
+    const statusRow = document.createElement('div');
+    statusRow.className = 'sheet-pills';
+    const activeBtn = document.createElement('button');
+    activeBtn.type = 'button';
+    const retiredBtn = document.createElement('button');
+    retiredBtn.type = 'button';
+    function renderStatus() {
+      const cur = normalizePlaylistStatus(state.playlistStatus.get(playlistId) || 'Active');
+      activeBtn.className = 'sheet-pill' + (cur === 'Active' ? ' sheet-pill--active' : '');
+      activeBtn.textContent = 'Active';
+      retiredBtn.className = 'sheet-pill' + (cur === 'Retired' ? ' sheet-pill--active' : '');
+      retiredBtn.textContent = 'Retired';
+    }
+    activeBtn.addEventListener('click', async () => {
+      await updatePlaylistMetadata(playlistId, { status: 'Active' });
+      renderStatus();
+    });
+    retiredBtn.addEventListener('click', async () => {
+      await updatePlaylistMetadata(playlistId, { status: 'Retired' });
+      renderStatus();
+    });
+    statusRow.appendChild(activeBtn);
+    statusRow.appendChild(retiredBtn);
+    statusField.appendChild(statusRow);
+    body.appendChild(statusField);
+    renderStatus();
+
+    // Remove playlist
+    const removeLink = document.createElement('button');
+    removeLink.type = 'button';
+    removeLink.className = 'a-delete-link';
+    removeLink.style.marginTop = '20px';
+    removeLink.textContent = 'Remove playlist';
+    removeLink.addEventListener('click', () => {
+      // Inline confirm view (no native confirm() per plan).
+      const confirmBody = document.createElement('div');
+      const confirmEl = document.createElement('div');
+      confirmEl.className = 'sheet-confirm';
+      confirmEl.innerHTML = `
+        <div class="sheet-confirm__title">Remove Playlist #${esc(playlistId)}?</div>
+        <div class="sheet-confirm__sub">It will be hidden from the picker. Historical records remain.</div>`;
+      confirmBody.appendChild(confirmEl);
+      const cancelBtn2 = document.createElement('button');
+      cancelBtn2.type = 'button';
+      cancelBtn2.className = 'hilo-btn hilo-btn--ghost';
+      cancelBtn2.textContent = 'Cancel';
+      cancelBtn2.addEventListener('click', () => {
+        closeSheet();
+        openTagEditorSheet(playlistId);
+      });
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'hilo-btn hilo-btn--danger';
+      removeBtn.style.flex = '1';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', async () => {
+        // Mirror removePlaylist's effect without its confirm() prompt.
+        setLoading(removeBtn, true);
+        try {
+          state.playlists = state.playlists.filter(p => p !== playlistId);
+          state.playlistTags.delete(playlistId);
+          state.playlistStatus.set(playlistId, 'Removed');
+          if (state.expandedPlaylist === playlistId) state.expandedPlaylist = null;
+          rebuildPlaylistsFromData();
+          saveStateToLocalStorage();
+          if (state.firebaseUser) {
+            try { await upsertPlaylistMetadata(playlistId, { status: 'Removed', classTypes: [] }); }
+            catch (e) {}
+          }
+          showToast(`Playlist #${playlistId} removed`, 'success');
+          renderApp();
+          closeSheet();
+        } finally { setLoading(removeBtn, false); }
+      });
+      confirmBody.appendChild(buildSheetActions([cancelBtn2, removeBtn]));
+      handle.setBody(confirmBody);
+      handle.setTitle('Remove playlist');
+    });
+    body.appendChild(removeLink);
+
+    const handle = openSheet({
+      title: `Tags for Playlist #${playlistId}`,
+      body,
+      height: 'tall'
+    });
+  }
+
+  // ── Sort Menu Sheet ─────────────────────────────────────
+  function openSortMenuSheet({ current, onChange } = {}) {
+    const SORT_OPTIONS = [
+      { key: 'date',      dir: 'desc', label: 'Date ↓' },
+      { key: 'date',      dir: 'asc',  label: 'Date ↑' },
+      { key: 'type',      dir: 'asc',  label: 'Type A→Z' },
+      { key: 'type',      dir: 'desc', label: 'Type Z→A' },
+      { key: 'playlist',  dir: 'asc',  label: 'Playlist ↑' },
+      { key: 'playlist',  dir: 'desc', label: 'Playlist ↓' },
+      { key: 'attendees', dir: 'asc',  label: 'Attendees ↑' },
+      { key: 'attendees', dir: 'desc', label: 'Attendees ↓' }
+    ];
+    const cur = current || { key: 'date', dir: 'desc' };
+
+    const body = document.createElement('div');
+    SORT_OPTIONS.forEach(opt => {
+      const isActive = opt.key === cur.key && opt.dir === cur.dir;
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'sheet-sort-row' + (isActive ? ' sheet-sort-row--active' : '');
+      row.innerHTML = `
+        <div class="sheet-sort-row__radio"></div>
+        <div>${esc(opt.label)}</div>`;
+      row.addEventListener('click', () => {
+        if (typeof onChange === 'function') onChange({ key: opt.key, dir: opt.dir });
+        closeSheet();
+      });
+      body.appendChild(row);
+    });
+
+    openSheet({ title: 'Sort by', body, height: 'short' });
   }
 
   // ── Sign-in actions ──────────────────────────────────────
