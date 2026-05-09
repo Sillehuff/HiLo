@@ -2782,6 +2782,677 @@
       }
     }
 
+    /* ═══════════════════════════════════════════════════
+       7.X MORE / PLAYLISTS / SETTINGS (.m-*, .pl-*, .s-*)
+       ═══════════════════════════════════════════════════ */
+
+    /* ───── More tab ───── */
+    .m-screen {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      background: var(--page-bg);
+    }
+    .m-profile-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 4px 16px 22px;
+      padding: 16px;
+      background: var(--surface);
+      border-radius: 18px;
+      box-shadow: var(--shadow-xs);
+    }
+    .m-profile-card__av {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet-9), var(--violet-6));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .m-profile-card__av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .m-profile-card__info {
+      flex: 1;
+      min-width: 0;
+    }
+    .m-profile-card__name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .m-profile-card__email {
+      font-size: 12.5px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .m-profile-card__pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--success-light);
+      color: var(--success);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .m-profile-card__cta {
+      flex-shrink: 0;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .m-profile-card__cta:active { transform: scale(0.97); }
+
+    .m-section {
+      margin: 0 0 18px;
+    }
+    .m-section__title {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      padding: 0 16px 8px 20px;
+    }
+    .m-section__card {
+      margin: 0 16px;
+      background: var(--surface);
+      border-radius: 18px;
+      box-shadow: var(--shadow-xs);
+      overflow: hidden;
+    }
+    .m-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      border-bottom: 0.5px solid var(--border-subtle);
+      background: var(--surface);
+      width: 100%;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      text-align: left;
+      font-family: var(--font-body);
+      color: var(--text-primary);
+    }
+    .m-row:last-child { border-bottom: none; }
+    .m-row:active { background: var(--violet-2); }
+    .m-row__icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .m-row__icon--violet {
+      background: linear-gradient(135deg, var(--violet-9), var(--violet-7));
+    }
+    .m-row__icon--blue {
+      background: linear-gradient(135deg, #3B82C9, #60a5fa);
+    }
+    .m-row__icon--gray {
+      background: var(--violet-3);
+      color: var(--primary);
+    }
+    .m-row__main {
+      flex: 1;
+      min-width: 0;
+    }
+    .m-row__label {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 14.5px;
+      color: var(--text-primary);
+    }
+    .m-row__sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+    }
+    .m-row__chev {
+      color: var(--text-quaternary);
+      flex-shrink: 0;
+    }
+    .m-version {
+      text-align: center;
+      padding: 18px 0 100px;
+      color: var(--text-quaternary);
+    }
+    .m-version__app {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .m-version__sub {
+      font-size: 11px;
+      margin-top: 3px;
+    }
+
+    /* ───── Pushed-screen navbar shared ───── */
+    .pl-screen,
+    .s-screen {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      background: var(--page-bg);
+    }
+    .pl-navbar,
+    .s-navbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: calc(var(--safe-top) + 10px) 12px 10px;
+      flex-shrink: 0;
+      background: var(--page-bg);
+    }
+    .pl-back,
+    .s-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 14px;
+      padding: 6px 4px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pl-back svg,
+    .s-back svg {
+      transform: rotate(180deg);
+      display: block;
+    }
+    .pl-title,
+    .s-title {
+      flex: 1;
+      text-align: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+    .pl-add-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 6px 8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ───── Playlists ───── */
+    .pl-summary {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px 4px;
+    }
+    .pl-summary-pill {
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .pl-summary-pill--active {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    .pl-summary-pill--retired {
+      background: var(--surface-sunken);
+      color: var(--text-tertiary);
+    }
+
+    .pl-add-form {
+      margin: 10px 16px;
+      padding: 14px 16px;
+      background: var(--violet-2);
+      border-radius: 14px;
+      border: 1.5px solid var(--violet-5);
+    }
+    .pl-add-form__label {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+    }
+    .pl-add-form__row {
+      display: flex;
+      gap: 8px;
+    }
+    .pl-add-form__input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-default);
+      font-family: var(--font-body);
+      font-size: 15px;
+      background: var(--surface);
+      outline: none;
+      color: var(--text-primary);
+    }
+    .pl-add-form__input:focus {
+      border-color: var(--primary);
+    }
+
+    .pl-list {
+      margin: 12px 16px 100px;
+      background: var(--surface);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow-xs);
+    }
+    .pl-empty {
+      padding: 28px 18px;
+      text-align: center;
+      color: var(--text-tertiary);
+      font-size: 13px;
+    }
+    .pl-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 0.5px solid var(--border-subtle);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      background: var(--surface);
+    }
+    .pl-row:last-child { border-bottom: none; }
+    .pl-row:active { background: var(--violet-2); }
+    .pl-row--retired { opacity: 0.7; }
+    .pl-row__num {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--violet-3);
+      color: var(--primary);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .pl-row__main {
+      flex: 1;
+      min-width: 0;
+    }
+    .pl-row__name {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .pl-row__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 5px;
+    }
+    .pl-row__tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--violet-2);
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .pl-row__tag--empty {
+      color: var(--text-quaternary);
+      background: transparent;
+      padding-left: 0;
+      font-style: italic;
+      font-weight: 500;
+    }
+    .pl-row__toggle {
+      flex-shrink: 0;
+      border: none;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 11.5px;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pl-status-pill--active {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    .pl-status-pill--retired {
+      background: #FFF1D6;
+      color: #B47900;
+    }
+    .pl-status-pill--removed {
+      background: var(--surface-sunken);
+      color: var(--text-quaternary);
+    }
+
+    /* ───── Settings ───── */
+    .s-account-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 4px 16px 14px;
+      padding: 14px 16px;
+      background: var(--surface);
+      border-radius: 16px;
+      box-shadow: var(--shadow-xs);
+    }
+    .s-account-card__av {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet-9), var(--violet-6));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .s-account-card__av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .s-account-card__info {
+      flex: 1;
+      min-width: 0;
+    }
+    .s-account-card__name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+    .s-account-card__email {
+      font-size: 12.5px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .s-account-card__signout {
+      flex-shrink: 0;
+      background: transparent;
+      border: 1.5px solid var(--danger-light);
+      color: var(--danger);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 12.5px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .s-account-card__signout:active { background: var(--danger-light); }
+    .s-account-card__signin {
+      flex-shrink: 0;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .s-account-card__signin:active { transform: scale(0.97); }
+
+    .s-sync-row {
+      margin: 0 16px 14px;
+    }
+    .s-sync-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+    }
+    .s-sync-pill__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .s-sync-pill__main {
+      flex: 1;
+      min-width: 0;
+    }
+    .s-sync-pill__label {
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: -0.005em;
+    }
+    .s-sync-pill__sub {
+      font-size: 11.5px;
+      opacity: 0.75;
+      margin-top: 1px;
+    }
+    .s-sync-pill--green {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    .s-sync-pill--green .s-sync-pill__dot { background: var(--success); }
+    .s-sync-pill--amber {
+      background: #FFF1D6;
+      color: #B47900;
+    }
+    .s-sync-pill--amber .s-sync-pill__dot { background: #B47900; }
+    .s-sync-pill--gray {
+      background: var(--surface-sunken);
+      color: var(--text-secondary);
+    }
+    .s-sync-pill--gray .s-sync-pill__dot { background: var(--text-quaternary); }
+
+    .s-section {
+      margin: 0 0 14px;
+    }
+    .s-section__title {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      padding: 0 16px 8px 20px;
+    }
+    .s-section__card {
+      margin: 0 16px;
+      background: var(--surface);
+      border-radius: 16px;
+      box-shadow: var(--shadow-xs);
+      overflow: hidden;
+    }
+    .s-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      border-bottom: 0.5px solid var(--border-subtle);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      background: var(--surface);
+      width: 100%;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      text-align: left;
+      font-family: var(--font-body);
+      color: var(--text-primary);
+    }
+    .s-row:last-child { border-bottom: none; }
+    .s-row--readonly { cursor: default; }
+    .s-row__icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--violet-3);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+    .s-row__main {
+      flex: 1;
+      min-width: 0;
+    }
+    .s-row__label {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    .s-row__sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+    }
+    .s-row__select {
+      background: var(--surface-sunken);
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    /* Toggle component */
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+      width: 36px;
+      height: 20px;
+      border-radius: 999px;
+      background: var(--gray-5, #cbcad0);
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      border: none;
+      padding: 0;
+    }
+    .toggle--checked {
+      background: var(--primary);
+    }
+    .toggle__thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: left 0.2s ease;
+    }
+    .toggle--checked .toggle__thumb {
+      left: 18px;
+    }
+
+    .s-danger-card {
+      margin: 0 16px 100px;
+      padding: 14px;
+      background: rgba(229, 72, 77, 0.06);
+      border: 1px solid var(--danger-light);
+      border-radius: 14px;
+    }
+    .s-danger-card__title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--danger);
+      margin-bottom: 4px;
+      letter-spacing: -0.005em;
+    }
+    .s-danger-card__sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .s-danger-card__cta {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--danger-light);
+      border: none;
+      border-radius: 12px;
+      color: var(--danger);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .s-danger-card__cta:active { transform: scale(0.99); }
+
     /* hidden helper */
     .hidden { display: none !important; }
   </style>
@@ -5492,7 +6163,11 @@
     close: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
     pencil: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>',
     trash: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
-    calendar: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>'
+    calendar: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>',
+    music: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+    gear: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+    download: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+    upload: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'
   };
 
   // ── Schedule render ──────────────────────────────────────
@@ -6627,9 +7302,196 @@
     card.appendChild(grid);
     return card;
   }
+  // ── More tab (root) ────────────────────────────────────
   function renderMoreScreen(container, params) {
-    container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">More (placeholder)</div>';
+    const screen = document.createElement('div');
+    screen.className = 'm-screen hilo-screen';
+
+    const scroller = document.createElement('div');
+    scroller.className = 'hilo-scroll';
+    screen.appendChild(scroller);
+
+    // Header.
+    const header = document.createElement('div');
+    header.className = 'hilo-header';
+    const headerLeft = document.createElement('div');
+    headerLeft.innerHTML = `
+      <div class="hilo-header__date">ACCOUNT</div>
+      <div class="hilo-header__title">More</div>`;
+    header.appendChild(headerLeft);
+    const headerAvatar = document.createElement('div');
+    headerAvatar.className = 'hilo-header__avatar';
+    setAvatarContent(headerAvatar, state.firebaseUser);
+    header.appendChild(headerAvatar);
+    scroller.appendChild(header);
+
+    // Profile card.
+    scroller.appendChild(buildMoreProfileCard());
+
+    // Section: Tools.
+    scroller.appendChild(buildMoreSection('Tools', [
+      {
+        iconHtml: ICONS.sparkle,
+        iconClass: 'm-row__icon m-row__icon--violet',
+        label: 'Recommender',
+        sub: 'Find the freshest playlist',
+        onClick: () => navPush('recommender')
+      },
+      {
+        iconHtml: ICONS.music,
+        iconClass: 'm-row__icon m-row__icon--blue',
+        label: 'Playlists',
+        sub: buildPlaylistsSubLabel(),
+        onClick: () => navPush('playlists')
+      }
+    ]));
+
+    // Section: Account.
+    scroller.appendChild(buildMoreSection('Account', [
+      {
+        iconHtml: ICONS.gear,
+        iconClass: 'm-row__icon m-row__icon--gray',
+        label: 'Settings',
+        sub: 'Sync, data, danger zone',
+        onClick: () => navPush('settings')
+      }
+    ]));
+
+    // Version footer.
+    const version = document.createElement('div');
+    version.className = 'm-version';
+    version.innerHTML = `
+      <div class="m-version__app">HiLo · v2.0</div>
+      <div class="m-version__sub">Instructor edition</div>`;
+    scroller.appendChild(version);
+
+    container.appendChild(screen);
   }
+
+  // Helper: paint avatar content (photo or initials).
+  function setAvatarContent(el, user) {
+    el.innerHTML = '';
+    if (user && user.photoURL) {
+      const img = document.createElement('img');
+      img.src = user.photoURL;
+      img.alt = '';
+      img.referrerPolicy = 'no-referrer';
+      img.onerror = () => { el.innerHTML = ''; el.textContent = userInitials(user); };
+      el.appendChild(img);
+    } else {
+      el.textContent = userInitials(user);
+    }
+  }
+
+  function buildMoreProfileCard() {
+    const wrap = document.createElement('div');
+    wrap.className = 'm-profile-card';
+
+    const av = document.createElement('div');
+    av.className = 'm-profile-card__av';
+    setAvatarContent(av, state.firebaseUser);
+    wrap.appendChild(av);
+
+    const info = document.createElement('div');
+    info.className = 'm-profile-card__info';
+
+    const name = document.createElement('div');
+    name.className = 'm-profile-card__name';
+    const email = document.createElement('div');
+    email.className = 'm-profile-card__email';
+
+    if (state.firebaseUser) {
+      name.textContent = state.firebaseUser.displayName || 'Signed in';
+      email.textContent = state.firebaseUser.email || '';
+      info.appendChild(name);
+      info.appendChild(email);
+      const pill = document.createElement('span');
+      pill.className = 'm-profile-card__pill';
+      pill.textContent = '● Signed in';
+      info.appendChild(pill);
+      wrap.appendChild(info);
+    } else {
+      name.textContent = 'Sign in to sync';
+      email.textContent = 'Not signed in';
+      info.appendChild(name);
+      info.appendChild(email);
+      wrap.appendChild(info);
+
+      const cta = document.createElement('button');
+      cta.type = 'button';
+      cta.className = 'm-profile-card__cta';
+      cta.textContent = 'Sign in';
+      cta.addEventListener('click', startGoogleSignIn);
+      wrap.appendChild(cta);
+    }
+
+    return wrap;
+  }
+
+  function buildMoreSection(title, items) {
+    const sec = document.createElement('div');
+    sec.className = 'm-section';
+
+    const head = document.createElement('div');
+    head.className = 'm-section__title';
+    head.textContent = title;
+    sec.appendChild(head);
+
+    const card = document.createElement('div');
+    card.className = 'm-section__card';
+    items.forEach(it => {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'm-row';
+
+      const icon = document.createElement('div');
+      icon.className = it.iconClass || 'm-row__icon';
+      icon.innerHTML = it.iconHtml;
+      row.appendChild(icon);
+
+      const main = document.createElement('div');
+      main.className = 'm-row__main';
+      const lbl = document.createElement('div');
+      lbl.className = 'm-row__label';
+      lbl.textContent = it.label;
+      main.appendChild(lbl);
+      const sub = document.createElement('div');
+      sub.className = 'm-row__sub';
+      sub.textContent = it.sub || '';
+      main.appendChild(sub);
+      row.appendChild(main);
+
+      const chev = document.createElement('div');
+      chev.className = 'm-row__chev';
+      chev.innerHTML = ICONS.chevR16;
+      row.appendChild(chev);
+
+      if (it.onClick) row.addEventListener('click', it.onClick);
+      card.appendChild(row);
+    });
+    sec.appendChild(card);
+    return sec;
+  }
+
+  function buildPlaylistsSubLabel() {
+    const all = Array.from(state.playlistStatus.entries())
+      .filter(([id, st]) => normalizePlaylistStatus(st) !== 'Removed')
+      .map(([id]) => id);
+    // Include playlists that have tags but no status yet (default Active).
+    state.playlistTags.forEach((_, id) => {
+      if (!state.playlistStatus.has(id)) all.push(id);
+    });
+    state.playlists.forEach(id => { if (!all.includes(id)) all.push(id); });
+    const total = new Set(all).size;
+    let active = 0;
+    new Set(all).forEach(id => {
+      const st = normalizePlaylistStatus(state.playlistStatus.get(id) || 'Active');
+      if (st === 'Active') active++;
+    });
+    if (total === 0) return 'No playlists yet';
+    return `${total} playlist${total === 1 ? '' : 's'} · ${active} active`;
+  }
+
   // ── Guest Detail screen (pushed) ───────────────────────
   function renderGuestDetailScreen(container, params) {
     const name = (params && params.name) || '';
@@ -7761,11 +8623,631 @@
     state.nav.stacks[tab] = [];
     navSwitch('schedule');
   }
+  // ── Playlists screen (pushed) ──────────────────────────
   function renderPlaylistsScreen(container, params) {
-    container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">Playlists (placeholder)</div>';
+    if (typeof state.playlistsAddOpen !== 'boolean') state.playlistsAddOpen = false;
+
+    const screen = document.createElement('div');
+    screen.className = 'pl-screen';
+
+    // Top nav bar.
+    const navBar = document.createElement('div');
+    navBar.className = 'pl-navbar';
+
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'pl-back';
+    back.setAttribute('aria-label', 'Back');
+    back.innerHTML = `${ICONS.chevR16}<span>More</span>`;
+    back.addEventListener('click', () => navPop());
+    navBar.appendChild(back);
+
+    const title = document.createElement('div');
+    title.className = 'pl-title';
+    title.textContent = 'Playlists';
+    navBar.appendChild(title);
+
+    const addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.className = 'pl-add-btn';
+    addBtn.textContent = state.playlistsAddOpen ? 'Cancel' : '+ Add';
+    addBtn.addEventListener('click', () => {
+      state.playlistsAddOpen = !state.playlistsAddOpen;
+      renderApp();
+    });
+    navBar.appendChild(addBtn);
+    screen.appendChild(navBar);
+
+    // Scroll container.
+    const scroller = document.createElement('div');
+    scroller.className = 'hilo-scroll';
+    screen.appendChild(scroller);
+
+    // Compute playlist set: all playlists from state.playlists + state.playlistTags
+    // that are not in 'Removed' status.
+    const playlistSet = new Set();
+    state.playlists.forEach(id => playlistSet.add(id));
+    state.playlistTags.forEach((_, id) => playlistSet.add(id));
+    state.playlistStatus.forEach((st, id) => {
+      if (normalizePlaylistStatus(st) !== 'Removed') playlistSet.add(id);
+    });
+    // Filter out 'Removed'.
+    const visible = Array.from(playlistSet).filter(id => {
+      const st = normalizePlaylistStatus(state.playlistStatus.get(id) || 'Active');
+      return st !== 'Removed';
+    }).sort(comparePlaylistIds);
+
+    let activeCount = 0;
+    let retiredCount = 0;
+    visible.forEach(id => {
+      const st = normalizePlaylistStatus(state.playlistStatus.get(id) || 'Active');
+      if (st === 'Retired') retiredCount++;
+      else activeCount++;
+    });
+
+    // Summary pills.
+    const summary = document.createElement('div');
+    summary.className = 'pl-summary';
+    const activePill = document.createElement('div');
+    activePill.className = 'pl-summary-pill pl-summary-pill--active';
+    activePill.textContent = `${activeCount} Active`;
+    summary.appendChild(activePill);
+    const retiredPill = document.createElement('div');
+    retiredPill.className = 'pl-summary-pill pl-summary-pill--retired';
+    retiredPill.textContent = `${retiredCount} Retired`;
+    summary.appendChild(retiredPill);
+    scroller.appendChild(summary);
+
+    // Add-playlist inline form.
+    if (state.playlistsAddOpen) {
+      scroller.appendChild(buildPlaylistsAddForm());
+    }
+
+    // Playlist list.
+    const list = document.createElement('div');
+    list.className = 'pl-list';
+
+    if (visible.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'pl-empty';
+      empty.textContent = 'No playlists yet. Tap + to add one.';
+      list.appendChild(empty);
+    } else {
+      visible.forEach(id => list.appendChild(buildPlaylistRow(id)));
+    }
+    scroller.appendChild(list);
+
+    container.appendChild(screen);
   }
+
+  function buildPlaylistsAddForm() {
+    const form = document.createElement('div');
+    form.className = 'pl-add-form';
+
+    const lbl = document.createElement('div');
+    lbl.className = 'pl-add-form__label';
+    lbl.textContent = 'Playlist Number';
+    form.appendChild(lbl);
+
+    const row = document.createElement('div');
+    row.className = 'pl-add-form__row';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.inputMode = 'decimal';
+    input.className = 'pl-add-form__input';
+    input.placeholder = 'e.g. 13';
+    row.appendChild(input);
+
+    const submit = document.createElement('button');
+    submit.type = 'button';
+    submit.className = 'hilo-btn hilo-btn--primary hilo-btn--sm';
+    submit.textContent = 'Add';
+    const doSubmit = async () => {
+      const raw = (input.value || '').trim();
+      if (!raw) return;
+      setLoading(submit, true);
+      try {
+        const result = await addNewPlaylist(raw);
+        if (!result || result.ok === false) {
+          showToast((result && result.error) || 'Could not add playlist', 'error');
+        } else {
+          state.playlistsAddOpen = false;
+          // renderApp() is called inside addNewPlaylist().
+        }
+      } finally {
+        setLoading(submit, false);
+      }
+    };
+    submit.addEventListener('click', doSubmit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        doSubmit();
+      }
+    });
+    row.appendChild(submit);
+
+    const cancel = document.createElement('button');
+    cancel.type = 'button';
+    cancel.className = 'hilo-btn hilo-btn--ghost hilo-btn--sm';
+    cancel.textContent = 'Cancel';
+    cancel.addEventListener('click', () => {
+      state.playlistsAddOpen = false;
+      renderApp();
+    });
+    row.appendChild(cancel);
+
+    form.appendChild(row);
+
+    // Autofocus the input shortly after mount.
+    setTimeout(() => { try { input.focus(); } catch (e) {} }, 30);
+
+    return form;
+  }
+
+  function buildPlaylistRow(playlistId) {
+    const status = normalizePlaylistStatus(state.playlistStatus.get(playlistId) || 'Active');
+    const tags = state.playlistTags.get(playlistId) || [];
+
+    const row = document.createElement('div');
+    row.className = 'pl-row' + (status === 'Retired' ? ' pl-row--retired' : '');
+
+    const num = document.createElement('div');
+    num.className = 'pl-row__num';
+    num.textContent = playlistId;
+    row.appendChild(num);
+
+    const main = document.createElement('div');
+    main.className = 'pl-row__main';
+    const name = document.createElement('div');
+    name.className = 'pl-row__name';
+    name.textContent = `Playlist #${playlistId}`;
+    main.appendChild(name);
+    const tagWrap = document.createElement('div');
+    tagWrap.className = 'pl-row__tags';
+    if (tags.length === 0) {
+      const empty = document.createElement('span');
+      empty.className = 'pl-row__tag pl-row__tag--empty';
+      empty.textContent = 'No tags · Tap to add';
+      tagWrap.appendChild(empty);
+    } else {
+      tags.forEach(t => {
+        const chip = document.createElement('span');
+        chip.className = 'pl-row__tag';
+        chip.textContent = t;
+        tagWrap.appendChild(chip);
+      });
+    }
+    main.appendChild(tagWrap);
+    row.appendChild(main);
+
+    const toggleBtn = document.createElement('button');
+    toggleBtn.type = 'button';
+    toggleBtn.className = 'pl-row__toggle pl-status-pill--' + (status === 'Retired' ? 'retired' : 'active');
+    toggleBtn.textContent = status === 'Retired' ? 'Retired' : 'Active';
+    toggleBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const next = status === 'Retired' ? 'Active' : 'Retired';
+      await updatePlaylistMetadata(playlistId, { status: next });
+      // updatePlaylistMetadata calls renderApp().
+    });
+    row.appendChild(toggleBtn);
+
+    row.addEventListener('click', () => openTagEditorSheet(playlistId));
+    return row;
+  }
+
+  // ── Settings screen (pushed) ──────────────────────────
   function renderSettingsScreen(container, params) {
-    container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">Settings (placeholder)</div>';
+    if (!Number.isFinite(state.selectedWindow)) state.selectedWindow = 45;
+    // Hydrate cosmetic toggles.
+    const notificationsOn = localStorage.getItem('hilo:notifications') === '1';
+    const autoFinalizeOn = localStorage.getItem('hilo:auto-finalize') === '1';
+
+    const screen = document.createElement('div');
+    screen.className = 's-screen';
+
+    // Nav bar.
+    const navBar = document.createElement('div');
+    navBar.className = 's-navbar';
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 's-back';
+    back.setAttribute('aria-label', 'Back');
+    back.innerHTML = `${ICONS.chevR16}<span>More</span>`;
+    back.addEventListener('click', () => navPop());
+    navBar.appendChild(back);
+    const title = document.createElement('div');
+    title.className = 's-title';
+    title.textContent = 'Settings';
+    navBar.appendChild(title);
+    // Spacer to balance the back button.
+    const spacer = document.createElement('div');
+    spacer.style.cssText = 'width:62px;flex-shrink:0;';
+    navBar.appendChild(spacer);
+    screen.appendChild(navBar);
+
+    // Scroll body.
+    const scroller = document.createElement('div');
+    scroller.className = 'hilo-scroll';
+    screen.appendChild(scroller);
+
+    // Account section.
+    const accSec = document.createElement('div');
+    accSec.className = 's-section';
+    const accHead = document.createElement('div');
+    accHead.className = 's-section__title';
+    accHead.textContent = 'Account';
+    accSec.appendChild(accHead);
+    accSec.appendChild(buildSettingsAccountCard());
+    scroller.appendChild(accSec);
+
+    // Sync status pill.
+    scroller.appendChild(buildSettingsSyncRow());
+
+    // Preferences section.
+    const prefSec = document.createElement('div');
+    prefSec.className = 's-section';
+    const prefHead = document.createElement('div');
+    prefHead.className = 's-section__title';
+    prefHead.textContent = 'Preferences';
+    prefSec.appendChild(prefHead);
+
+    const prefCard = document.createElement('div');
+    prefCard.className = 's-section__card';
+
+    // Notifications toggle.
+    prefCard.appendChild(buildSettingsToggleRow({
+      label: 'Notifications',
+      sub: 'Draft class reminders',
+      checked: notificationsOn,
+      storageKey: 'hilo:notifications'
+    }));
+    // Auto-finalize toggle.
+    prefCard.appendChild(buildSettingsToggleRow({
+      label: 'Auto-finalize',
+      sub: 'Finalize drafts 1hr before class',
+      checked: autoFinalizeOn,
+      storageKey: 'hilo:auto-finalize'
+    }));
+    // Replay window dropdown.
+    prefCard.appendChild(buildSettingsReplayRow());
+
+    prefSec.appendChild(prefCard);
+    scroller.appendChild(prefSec);
+
+    // Data section.
+    const dataSec = document.createElement('div');
+    dataSec.className = 's-section';
+    const dataHead = document.createElement('div');
+    dataHead.className = 's-section__title';
+    dataHead.textContent = 'Data';
+    dataSec.appendChild(dataHead);
+
+    const dataCard = document.createElement('div');
+    dataCard.className = 's-section__card';
+
+    const importRow = buildSettingsActionRow({
+      iconHtml: ICONS.upload,
+      label: 'Import CSV',
+      sub: 'Load class history from file',
+      onClick: () => {
+        const fi = document.getElementById('fileInput');
+        if (fi) fi.click();
+      }
+    });
+    dataCard.appendChild(importRow);
+
+    const exportRow = buildSettingsActionRow({
+      iconHtml: ICONS.download,
+      label: 'Export CSV',
+      sub: 'Download all your data',
+      onClick: () => {
+        try { exportToCsv(); } catch (e) { showToast('Export failed: ' + (e.message || 'unknown'), 'error'); }
+      }
+    });
+    dataCard.appendChild(exportRow);
+
+    dataSec.appendChild(dataCard);
+    scroller.appendChild(dataSec);
+
+    // Danger zone.
+    const dangerHead = document.createElement('div');
+    dangerHead.className = 's-section__title';
+    dangerHead.textContent = 'Danger Zone';
+    scroller.appendChild(dangerHead);
+    scroller.appendChild(buildSettingsDangerCard());
+
+    container.appendChild(screen);
+  }
+
+  function buildSettingsAccountCard() {
+    const card = document.createElement('div');
+    card.className = 's-account-card';
+
+    const av = document.createElement('div');
+    av.className = 's-account-card__av';
+    setAvatarContent(av, state.firebaseUser);
+    card.appendChild(av);
+
+    const info = document.createElement('div');
+    info.className = 's-account-card__info';
+    const name = document.createElement('div');
+    name.className = 's-account-card__name';
+    const email = document.createElement('div');
+    email.className = 's-account-card__email';
+    if (state.firebaseUser) {
+      name.textContent = state.firebaseUser.displayName || 'Signed in';
+      email.textContent = state.firebaseUser.email || '';
+    } else {
+      name.textContent = 'Sign in to sync';
+      email.textContent = 'Not signed in';
+    }
+    info.appendChild(name);
+    info.appendChild(email);
+    card.appendChild(info);
+
+    if (state.firebaseUser) {
+      const out = document.createElement('button');
+      out.type = 'button';
+      out.className = 's-account-card__signout';
+      out.textContent = 'Sign Out';
+      out.addEventListener('click', async () => {
+        try {
+          await auth.signOut();
+          showToast('Signed out');
+          renderApp();
+        } catch (e) {
+          showToast('Sign-out failed: ' + (e.message || 'unknown'), 'error');
+        }
+      });
+      card.appendChild(out);
+    } else {
+      const inBtn = document.createElement('button');
+      inBtn.type = 'button';
+      inBtn.className = 's-account-card__signin';
+      inBtn.textContent = 'Sign in with Google';
+      inBtn.addEventListener('click', startGoogleSignIn);
+      card.appendChild(inBtn);
+    }
+
+    return card;
+  }
+
+  function buildSettingsSyncRow() {
+    const wrap = document.createElement('div');
+    wrap.className = 's-sync-row';
+    const pill = document.createElement('div');
+
+    let cls = 's-sync-pill s-sync-pill--gray';
+    let label = 'Not signed in';
+    let sub = 'Sign in to sync your data';
+
+    if (!state.firebaseUser) {
+      cls = 's-sync-pill s-sync-pill--gray';
+      label = 'Not signed in';
+      sub = 'Sign in to sync your data';
+    } else if (state.firestoreHasPendingWrites) {
+      cls = 's-sync-pill s-sync-pill--amber';
+      label = 'Pending writes…';
+      sub = 'Saving changes to the cloud';
+    } else if (state.firestoreConnected) {
+      cls = 's-sync-pill s-sync-pill--green';
+      label = 'Synced';
+      sub = 'All changes saved';
+    } else {
+      cls = 's-sync-pill s-sync-pill--gray';
+      label = 'Offline';
+      sub = 'Reconnect to sync';
+    }
+    pill.className = cls;
+    pill.innerHTML = `
+      <div class="s-sync-pill__dot"></div>
+      <div class="s-sync-pill__main">
+        <div class="s-sync-pill__label">${esc(label)}</div>
+        <div class="s-sync-pill__sub">${esc(sub)}</div>
+      </div>`;
+    wrap.appendChild(pill);
+    return wrap;
+  }
+
+  function buildSettingsToggleRow({ label, sub, checked, storageKey }) {
+    const row = document.createElement('div');
+    row.className = 's-row';
+
+    const main = document.createElement('div');
+    main.className = 's-row__main';
+    const lbl = document.createElement('div');
+    lbl.className = 's-row__label';
+    lbl.textContent = label;
+    main.appendChild(lbl);
+    if (sub) {
+      const subEl = document.createElement('div');
+      subEl.className = 's-row__sub';
+      subEl.textContent = sub;
+      main.appendChild(subEl);
+    }
+    row.appendChild(main);
+
+    const toggle = buildToggle({
+      checked,
+      onChange: (v) => {
+        try { localStorage.setItem(storageKey, v ? '1' : '0'); } catch (e) {}
+      }
+    });
+    row.appendChild(toggle);
+
+    // Tap anywhere on the row toggles.
+    row.addEventListener('click', (e) => {
+      if (e.target === toggle || toggle.contains(e.target)) return;
+      toggle.click();
+    });
+    return row;
+  }
+
+  function buildSettingsReplayRow() {
+    const row = document.createElement('div');
+    row.className = 's-row s-row--readonly';
+
+    const main = document.createElement('div');
+    main.className = 's-row__main';
+    const lbl = document.createElement('div');
+    lbl.className = 's-row__label';
+    lbl.textContent = 'Replay window';
+    main.appendChild(lbl);
+    const sub = document.createElement('div');
+    sub.className = 's-row__sub';
+    sub.textContent = 'How many days counts as “recently heard”';
+    main.appendChild(sub);
+    row.appendChild(main);
+
+    const select = document.createElement('select');
+    select.className = 's-row__select';
+    [30, 45, 60, 90].forEach(n => {
+      const opt = document.createElement('option');
+      opt.value = String(n);
+      opt.textContent = `≥ ${n} days`;
+      if (state.selectedWindow === n) opt.selected = true;
+      select.appendChild(opt);
+    });
+    select.addEventListener('change', (e) => {
+      const v = parseInt(e.target.value, 10);
+      if (Number.isFinite(v)) {
+        state.selectedWindow = v;
+        try { saveStateToLocalStorage(); } catch (err) {}
+        showToast(`Replay window set to ${v} days`);
+      }
+    });
+    row.appendChild(select);
+    return row;
+  }
+
+  function buildSettingsActionRow({ iconHtml, label, sub, onClick }) {
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 's-row';
+
+    const icon = document.createElement('div');
+    icon.className = 's-row__icon';
+    icon.innerHTML = iconHtml;
+    row.appendChild(icon);
+
+    const main = document.createElement('div');
+    main.className = 's-row__main';
+    const lbl = document.createElement('div');
+    lbl.className = 's-row__label';
+    lbl.textContent = label;
+    main.appendChild(lbl);
+    if (sub) {
+      const subEl = document.createElement('div');
+      subEl.className = 's-row__sub';
+      subEl.textContent = sub;
+      main.appendChild(subEl);
+    }
+    row.appendChild(main);
+
+    const chev = document.createElement('div');
+    chev.className = 'm-row__chev';
+    chev.innerHTML = ICONS.chevR16;
+    row.appendChild(chev);
+
+    if (onClick) row.addEventListener('click', onClick);
+    return row;
+  }
+
+  function buildSettingsDangerCard() {
+    const card = document.createElement('div');
+    card.className = 's-danger-card';
+
+    const t = document.createElement('div');
+    t.className = 's-danger-card__title';
+    t.textContent = 'Clear all data';
+    card.appendChild(t);
+
+    const sub = document.createElement('div');
+    sub.className = 's-danger-card__sub';
+    sub.textContent = 'Permanently deletes all classes, records, and playlists from your account. This cannot be undone.';
+    card.appendChild(sub);
+
+    const cta = document.createElement('button');
+    cta.type = 'button';
+    cta.className = 's-danger-card__cta';
+    cta.innerHTML = `${ICONS.trash}<span>Clear all data</span>`;
+    cta.addEventListener('click', () => openClearDataConfirmSheet());
+    card.appendChild(cta);
+
+    return card;
+  }
+
+  function openClearDataConfirmSheet() {
+    const body = document.createElement('div');
+
+    const msg = document.createElement('div');
+    msg.style.cssText = 'padding:8px 4px 16px;font-size:14px;color:var(--text-secondary);line-height:1.5;';
+    msg.textContent = 'This deletes all classes, records, and playlists from your account. Continue?';
+    body.appendChild(msg);
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.className = 'hilo-btn hilo-btn--ghost';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.addEventListener('click', () => closeSheet());
+
+    const confirmBtn = document.createElement('button');
+    confirmBtn.type = 'button';
+    confirmBtn.className = 'hilo-btn hilo-btn--danger';
+    confirmBtn.innerHTML = `${ICONS.trash}<span>Clear all</span>`;
+    confirmBtn.addEventListener('click', async () => {
+      setLoading(confirmBtn, true);
+      try {
+        if (state.firebaseUser) {
+          await clearAllFirestoreData();
+        }
+        // Local clear.
+        state.records = [];
+        state.weeklyPlan = new Map();
+        state.allGuests = new Set();
+        state.playlists = [];
+        state.playlistTags = new Map();
+        state.playlistStatus = new Map();
+        if (state.selectedRecommendationClassKeys instanceof Set) {
+          state.selectedRecommendationClassKeys.clear();
+        }
+        rebuildPlaylistsFromData();
+        try { localStorage.removeItem('hiloPlaylistData'); } catch (e) {}
+        try { saveStateToLocalStorage(); } catch (e) {}
+        closeSheet();
+        showToast('All data cleared', 'success');
+        renderApp();
+      } catch (e) {
+        setLoading(confirmBtn, false);
+        showToast('Clear failed: ' + (e.message || 'unknown'), 'error');
+      }
+    });
+
+    body.appendChild(buildSheetActions([cancelBtn, confirmBtn]));
+    openSheet({ title: 'Clear all data?', body, height: 'short' });
+  }
+
+  // ── Reusable Toggle component ──────────────────────────
+  function buildToggle({ checked, onChange }) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'toggle' + (checked ? ' toggle--checked' : '');
+    btn.setAttribute('role', 'switch');
+    btn.setAttribute('aria-checked', checked ? 'true' : 'false');
+    const thumb = document.createElement('span');
+    thumb.className = 'toggle__thumb';
+    btn.appendChild(thumb);
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const nowChecked = !btn.classList.contains('toggle--checked');
+      btn.classList.toggle('toggle--checked', nowChecked);
+      btn.setAttribute('aria-checked', nowChecked ? 'true' : 'false');
+      if (onChange) onChange(nowChecked);
+    });
+    return btn;
   }
 
   // Map of screen.name -> renderer.
@@ -7845,11 +9327,18 @@
     //    so iOS PWA redirect-flow completes correctly.
     setupAuthListener();
 
-    // 5. Initial render. Firestore listeners (started inside the auth handler
+    // 5. Wire CSV file input once (used by Settings → Import CSV).
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput && !fileInput.dataset.wired) {
+      fileInput.addEventListener('change', handleCsvImport);
+      fileInput.dataset.wired = '1';
+    }
+
+    // 6. Initial render. Firestore listeners (started inside the auth handler
     //    when a user is present) will trigger re-renders as data arrives.
     renderApp();
 
-    // 6. Register service worker.
+    // 7. Register service worker.
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').then(reg => {
         debugLog('Service worker registered:', reg.scope);
