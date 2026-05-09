@@ -5730,8 +5730,351 @@
   function renderGuestsScreen(container, params) {
     container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">Guests (placeholder)</div>';
   }
+  // ── History screen ──────────────────────────────────────
   function renderHistoryScreen(container, params) {
-    container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">History (placeholder)</div>';
+    // Initialize sort state on first render.
+    if (!state.historySort || typeof state.historySort !== 'object') {
+      state.historySort = { key: 'date', dir: 'desc' };
+    }
+    if (!state.historySearchQuery) state.historySearchQuery = '';
+    if (!state.historyFilterType) state.historyFilterType = 'All';
+
+    // Pull all finalized classes from weeklyPlan into a flat array.
+    const allFinalized = buildHistoryEntries();
+
+    // Build screen scaffold.
+    const screen = document.createElement('div');
+    screen.className = 'hilo-screen';
+
+    const scroller = document.createElement('div');
+    scroller.className = 'hilo-scroll';
+    screen.appendChild(scroller);
+
+    // Header — eyebrow shows filtered count, populated below after filtering.
+    const header = document.createElement('div');
+    header.className = 'hilo-header';
+    const headerLeft = document.createElement('div');
+    headerLeft.innerHTML = `
+      <div class="hilo-header__date" data-history-eyebrow></div>
+      <div class="hilo-header__title">History</div>`;
+    header.appendChild(headerLeft);
+    const avatar = document.createElement('div');
+    avatar.className = 'hilo-header__avatar';
+    avatar.textContent = userInitials(state.firebaseUser);
+    avatar.addEventListener('click', () => navSwitch('more'));
+    header.appendChild(avatar);
+    scroller.appendChild(header);
+
+    // Search bar.
+    const searchBar = document.createElement('div');
+    searchBar.className = 'h-search-bar';
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'h-search-input';
+    searchInput.placeholder = 'Search by type, guest, playlist…';
+    searchInput.value = state.historySearchQuery;
+    searchInput.addEventListener('input', (e) => {
+      state.historySearchQuery = e.target.value;
+      refreshHistoryEntries();
+    });
+    searchBar.appendChild(searchInput);
+    scroller.appendChild(searchBar);
+
+    // Filter row: class-type chips + sort pill.
+    const filterRow = document.createElement('div');
+    filterRow.className = 'h-filter-row';
+
+    const chipsWrap = document.createElement('div');
+    chipsWrap.className = 'h-filter-chips';
+    filterRow.appendChild(chipsWrap);
+
+    const sortPill = document.createElement('button');
+    sortPill.type = 'button';
+    sortPill.className = 'h-sort-pill';
+    sortPill.addEventListener('click', () => {
+      openSortMenuSheet({
+        current: state.historySort,
+        onChange: (next) => {
+          state.historySort = next;
+          renderHistoryScreen(container, params);
+        }
+      });
+    });
+    filterRow.appendChild(sortPill);
+    scroller.appendChild(filterRow);
+
+    // Entries list container.
+    const entriesEl = document.createElement('div');
+    entriesEl.className = 'h-entries';
+    scroller.appendChild(entriesEl);
+
+    container.appendChild(screen);
+
+    // Local helpers (closure-bound to the current render).
+    function renderChips() {
+      // Build chip set: 'All' plus types actually used in finalized classes.
+      const usedTypes = new Set();
+      allFinalized.forEach(e => {
+        if (e.classType) usedTypes.add(e.classType);
+      });
+      // Use getAllClassTypes() to keep ordering consistent, but filter to actually-used.
+      const ordered = ['All', ...getAllClassTypes().filter(t => usedTypes.has(t))];
+      // Fallback: if filterType isn't 'All' and not in list, reset.
+      if (state.historyFilterType !== 'All' && !usedTypes.has(state.historyFilterType)) {
+        state.historyFilterType = 'All';
+      }
+      chipsWrap.innerHTML = '';
+      ordered.forEach(t => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'h-filter-chip' + (state.historyFilterType === t ? ' h-filter-chip--active' : '');
+        chip.textContent = t;
+        chip.addEventListener('click', () => {
+          state.historyFilterType = t;
+          refreshHistoryEntries();
+        });
+        chipsWrap.appendChild(chip);
+      });
+    }
+
+    function renderSortPillLabel() {
+      sortPill.textContent = 'Sort: ' + describeHistorySort(state.historySort);
+    }
+
+    function refreshHistoryEntries() {
+      // Apply filter + search.
+      const q = (state.historySearchQuery || '').trim().toLowerCase();
+      const filterType = state.historyFilterType || 'All';
+
+      const filtered = allFinalized.filter(e => {
+        if (filterType !== 'All' && e.classType !== filterType) return false;
+        if (!q) return true;
+        if (e.classType && e.classType.toLowerCase().includes(q)) return true;
+        const playlistStr = e.playlist ? '#' + String(e.playlist) : '';
+        if (playlistStr && playlistStr.toLowerCase().includes(q)) return true;
+        if (e.attendeesArr.some(g => g.toLowerCase().includes(q))) return true;
+        return false;
+      });
+
+      // Sort.
+      const sorted = sortHistoryEntries(filtered, state.historySort);
+
+      // Update eyebrow count.
+      const eyebrow = header.querySelector('[data-history-eyebrow]');
+      if (eyebrow) {
+        eyebrow.textContent = `${sorted.length} ${sorted.length === 1 ? 'CLASS' : 'CLASSES'}`;
+      }
+
+      // Render chips + sort pill (chip active state can change).
+      renderChips();
+      renderSortPillLabel();
+
+      // Render entries.
+      entriesEl.innerHTML = '';
+
+      if (sorted.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'h-empty';
+        empty.textContent = 'No classes match your search';
+        entriesEl.appendChild(empty);
+      } else if (state.historySort.key === 'date') {
+        // Group by week label.
+        const groups = [];
+        const seen = new Map();
+        sorted.forEach(e => {
+          const label = e.weekLabel;
+          if (!seen.has(label)) {
+            const g = { label, items: [] };
+            seen.set(label, g);
+            groups.push(g);
+          }
+          seen.get(label).items.push(e);
+        });
+        groups.forEach(g => {
+          const lbl = document.createElement('div');
+          lbl.className = 'h-week-label';
+          lbl.appendChild(document.createTextNode(g.label));
+          entriesEl.appendChild(lbl);
+          g.items.forEach(e => entriesEl.appendChild(buildHistoryEntryRow(e)));
+        });
+      } else {
+        // Flat list — no week dividers when sorting by something other than date.
+        sorted.forEach(e => entriesEl.appendChild(buildHistoryEntryRow(e)));
+      }
+
+      // Stats footer (always visible, computed from the unfiltered list).
+      entriesEl.appendChild(buildHistoryStatsFooter(allFinalized));
+    }
+
+    refreshHistoryEntries();
+  }
+
+  function buildHistoryEntries() {
+    const today = new Date();
+    const todayWeekStart = getIsoWeekStart(today);
+    const lastWeekStart = addDays(todayWeekStart, -7);
+    const todayWeekKey = formatDateKey(todayWeekStart);
+    const lastWeekKey = formatDateKey(lastWeekStart);
+
+    const entries = [];
+    state.weeklyPlan.forEach((cls, key) => {
+      if (cls.status !== 'finalized') return;
+      const dateStr = cls.date || '';
+      const timeStr = normalizeTime(cls.time || '00:00');
+      const dt = parseDateInput(dateStr);
+      if (!dt) return;
+      const attendeesArr = cls.attendees instanceof Set
+        ? Array.from(cls.attendees)
+        : Array.isArray(cls.attendees) ? cls.attendees.slice() : [];
+      const wkStart = getIsoWeekStart(dt);
+      const wkKey = formatDateKey(wkStart);
+      let weekLabel;
+      if (wkKey === todayWeekKey) weekLabel = 'This week';
+      else if (wkKey === lastWeekKey) weekLabel = 'Last week';
+      else {
+        const wkEnd = addDays(wkStart, 6);
+        const startMo = MONTH_SHORT[wkStart.getMonth()];
+        const endMo = MONTH_SHORT[wkEnd.getMonth()];
+        if (startMo === endMo) {
+          weekLabel = `Week of ${startMo} ${wkStart.getDate()} – ${wkEnd.getDate()}`;
+        } else {
+          weekLabel = `Week of ${startMo} ${wkStart.getDate()} – ${endMo} ${wkEnd.getDate()}`;
+        }
+      }
+      entries.push({
+        key,
+        date: dateStr,
+        time: timeStr,
+        dateObj: combineDateTime(dt, timeStr),
+        classType: (cls.classType || '').toString().trim(),
+        playlist: cls.playlist || '',
+        attendeesArr,
+        attendeesCount: attendeesArr.length,
+        mo: MONTH_SHORT[dt.getMonth()],
+        day: dt.getDate(),
+        weekLabel
+      });
+    });
+    return entries;
+  }
+
+  function combineDateTime(dateObj, timeStr) {
+    const d = new Date(dateObj.getTime());
+    const [h, m] = (timeStr || '00:00').split(':').map(n => parseInt(n, 10) || 0);
+    d.setHours(h, m, 0, 0);
+    return d;
+  }
+
+  function describeHistorySort(sort) {
+    const key = sort && sort.key || 'date';
+    const dir = sort && sort.dir || 'desc';
+    const arrow = dir === 'asc' ? '↑' : '↓';
+    if (key === 'date') return 'Date ' + arrow;
+    if (key === 'type') return dir === 'asc' ? 'Type A→Z' : 'Type Z→A';
+    if (key === 'playlist') return 'Playlist ' + arrow;
+    if (key === 'attendees') return 'Attendees ' + arrow;
+    return key + ' ' + arrow;
+  }
+
+  function sortHistoryEntries(entries, sort) {
+    const key = sort && sort.key || 'date';
+    const dir = sort && sort.dir || 'desc';
+    const factor = dir === 'asc' ? 1 : -1;
+    const out = entries.slice();
+    out.sort((a, b) => {
+      let cmp = 0;
+      if (key === 'date') {
+        cmp = a.dateObj.getTime() - b.dateObj.getTime();
+      } else if (key === 'type') {
+        cmp = (a.classType || '').localeCompare(b.classType || '', undefined, { sensitivity: 'base' });
+      } else if (key === 'playlist') {
+        cmp = comparePlaylistIds(a.playlist, b.playlist);
+      } else if (key === 'attendees') {
+        cmp = a.attendeesCount - b.attendeesCount;
+      }
+      if (cmp === 0) {
+        // Tie-breaker: most recent date first regardless of dir.
+        cmp = b.dateObj.getTime() - a.dateObj.getTime();
+        return cmp;
+      }
+      return cmp * factor;
+    });
+    return out;
+  }
+
+  function buildHistoryEntryRow(e) {
+    const row = document.createElement('div');
+    row.className = 'h-entry';
+
+    const dateBlock = document.createElement('div');
+    dateBlock.className = 'h-entry__date';
+    dateBlock.innerHTML = `
+      <div class="h-entry__date-mo">${esc(e.mo)}</div>
+      <div class="h-entry__date-d">${e.day}</div>`;
+    row.appendChild(dateBlock);
+
+    const main = document.createElement('div');
+    main.className = 'h-entry__main';
+
+    const type = document.createElement('div');
+    type.className = 'h-entry__type';
+    type.textContent = e.classType || 'Class';
+    main.appendChild(type);
+
+    const sub = document.createElement('div');
+    sub.className = 'h-entry__sub';
+    const timeText = formatTime(e.time);
+    const guestCount = e.attendeesCount;
+    const firstTwo = e.attendeesArr.slice(0, 2).join(', ');
+    const moreCount = guestCount > 2 ? guestCount - 2 : 0;
+    const namesPart = firstTwo
+      ? (moreCount > 0 ? `${firstTwo} +${moreCount} more` : firstTwo)
+      : '';
+    const parts = [];
+    if (timeText) parts.push(timeText);
+    parts.push(`${guestCount} ${guestCount === 1 ? 'guest' : 'guests'}`);
+    if (namesPart) parts.push(namesPart);
+    sub.innerHTML = parts.map(p => `<span>${esc(p)}</span>`).join('<span class="sep"></span>');
+    main.appendChild(sub);
+
+    row.appendChild(main);
+
+    const pl = document.createElement('div');
+    pl.className = 'h-entry__pl';
+    pl.textContent = e.playlist ? String(e.playlist) : '—';
+    row.appendChild(pl);
+
+    row.addEventListener('click', () => openClassEditSheet(e.key));
+    return row;
+  }
+
+  function buildHistoryStatsFooter(allFinalized) {
+    const total = allFinalized.length;
+    const guestSet = new Set();
+    const playlistSet = new Set();
+    allFinalized.forEach(e => {
+      e.attendeesArr.forEach(g => { if (g) guestSet.add(g); });
+      if (e.playlist) playlistSet.add(String(e.playlist));
+    });
+
+    const card = document.createElement('div');
+    card.className = 'h-stats-card';
+    const grid = document.createElement('div');
+    grid.className = 'h-stats-grid';
+    [
+      { val: total, lbl: 'Total Classes' },
+      { val: guestSet.size, lbl: 'Unique Guests' },
+      { val: playlistSet.size, lbl: 'Playlists Used' }
+    ].forEach(s => {
+      const cell = document.createElement('div');
+      cell.className = 'h-stat';
+      cell.innerHTML = `
+        <div class="h-stat__val">${esc(String(s.val))}</div>
+        <div class="h-stat__lbl">${esc(s.lbl)}</div>`;
+      grid.appendChild(cell);
+    });
+    card.appendChild(grid);
+    return card;
   }
   function renderMoreScreen(container, params) {
     container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">More (placeholder)</div>';
