@@ -533,6 +533,619 @@
       border-radius: 50%;
       cursor: pointer;
     }
+    .hilo-signin-banner__cta {
+      flex-shrink: 0;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 12px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       6b. SCHEDULE SCREEN (.a-*)
+       ═══════════════════════════════════════════════════ */
+    .a-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: calc(var(--safe-top) + 12px) 20px 8px;
+      flex-shrink: 0;
+      background: var(--page-bg);
+      gap: 10px;
+    }
+    .a-header__left { min-width: 0; flex: 1; }
+    .a-header__date {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .a-header__title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 32px;
+      color: var(--text-primary);
+      letter-spacing: -0.025em;
+      margin-top: 2px;
+      line-height: 1;
+    }
+    .a-header__actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .a-header__sparkle {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet-3), var(--violet-4));
+      color: var(--primary);
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+      transition: transform 0.12s ease;
+    }
+    .a-header__sparkle:active { transform: scale(0.94); }
+    .a-header__avatar-wrap {
+      position: relative;
+      width: 40px; height: 40px;
+      flex-shrink: 0;
+    }
+    .a-header__avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--violet-9), var(--violet-7));
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      letter-spacing: -0.01em;
+    }
+    .a-header__sync-dot {
+      position: absolute;
+      right: -1px; bottom: -1px;
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      border: 2px solid var(--page-bg);
+      background: var(--gray-7);
+    }
+    .a-header__sync-dot--green { background: var(--success); }
+    .a-header__sync-dot--amber { background: var(--warning); }
+    .a-header__sync-dot--gray { background: var(--gray-7); }
+
+    /* Sticky week strip */
+    .a-week-strip-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--page-bg);
+      padding: 6px 16px 8px;
+      box-shadow: 0 1px 0 var(--border-subtle);
+    }
+    .a-week-strip {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr) auto;
+      gap: 4px;
+      align-items: center;
+    }
+    .a-day-cell {
+      text-align: center;
+      padding: 6px 0 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      background: transparent;
+      border: none;
+      font-family: inherit;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.12s ease;
+    }
+    .a-day-cell:active { background: var(--violet-2); }
+    .a-day-cell__name {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-quaternary);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .a-day-cell__num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .a-day-cell__dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--primary);
+      opacity: 0;
+    }
+    .a-day-cell--has .a-day-cell__dot { opacity: 1; }
+    .a-day-cell--today .a-day-cell__num {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+    }
+    .a-day-cell--today .a-day-cell__name { color: var(--primary); }
+    .a-today-btn {
+      flex-shrink: 0;
+      margin-left: 4px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: none;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      align-self: center;
+    }
+    .a-today-btn--hidden { display: none; }
+
+    /* Agenda */
+    .a-agenda {
+      padding: 4px 16px 100px;
+    }
+    .a-week-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 22px 0 4px;
+    }
+    .a-week-divider__line {
+      flex: 1;
+      height: 0.5px;
+      background: var(--border-default);
+    }
+    .a-week-divider__label {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--text-quaternary);
+      text-transform: uppercase;
+    }
+    .a-day-section {
+      margin-top: 18px;
+      scroll-margin-top: 60px;
+    }
+    .a-day-label {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .a-day-label__num {
+      width: 28px;
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .a-day-label__name {
+      font-size: 12.5px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .a-day-label__month {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-quaternary);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .a-day-section--today .a-day-label__num,
+    .a-day-section--today .a-day-label__name {
+      color: var(--primary);
+    }
+    .a-day-section--past .a-day-label__num,
+    .a-day-section--past .a-day-label__name {
+      color: var(--text-quaternary);
+    }
+
+    /* Class row */
+    .a-class-row {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 12px 14px 12px 16px;
+      margin-bottom: 8px;
+      box-shadow: var(--shadow-xs);
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      border: 1.5px solid transparent;
+      transition: border-color 0.15s ease;
+    }
+    .a-class-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 14px; bottom: 14px;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--gray-5);
+    }
+    .a-class-row--draft::before { background: var(--warning); }
+    .a-class-row--final::before { background: var(--success); }
+    .a-class-row--open {
+      border-radius: 14px 14px 0 0;
+      margin-bottom: 0;
+    }
+    .a-class-row__time {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      min-width: 56px;
+    }
+    .a-class-row__main {
+      flex: 1;
+      min-width: 0;
+    }
+    .a-class-row__type {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .a-class-row__sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .a-class-row__sub-sep {
+      width: 2px; height: 2px;
+      border-radius: 50%;
+      background: var(--text-quaternary);
+    }
+    .a-class-row__status-draft {
+      color: var(--warning-text);
+      font-weight: 600;
+    }
+    .a-class-row__status-final {
+      color: var(--success);
+      font-weight: 600;
+    }
+    .a-class-row__chev {
+      color: var(--text-quaternary);
+      flex-shrink: 0;
+      transition: transform 0.2s var(--ease-out);
+      display: flex;
+      align-items: center;
+    }
+    .a-class-row__chev--open {
+      transform: rotate(90deg);
+      color: var(--primary);
+    }
+
+    /* Inline expand panel */
+    .a-expand {
+      background: var(--surface);
+      border-radius: 0 0 14px 14px;
+      padding: 4px 14px 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-xs), 0 8px 24px rgba(110,86,207,0.08);
+      border-top: 0.5px solid var(--border-subtle);
+      animation: aExpandIn 0.22s var(--ease-out);
+      overflow: hidden;
+    }
+    @keyframes aExpandIn {
+      from { opacity: 0; transform: translateY(-4px); max-height: 0; }
+      to { opacity: 1; transform: translateY(0); max-height: 1500px; }
+    }
+    .a-multi-class-chip {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: var(--violet-3);
+      border: 1px solid var(--violet-5);
+      border-radius: 999px;
+      color: var(--primary);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .a-rec-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--violet-3), var(--violet-2));
+      margin-top: 10px;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      color: inherit;
+    }
+    .a-rec-card__num {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), #8a6df0);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 19px;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+      box-shadow: 0 6px 16px rgba(110,86,207,0.3);
+    }
+    .a-rec-card__meta { flex: 1; min-width: 0; }
+    .a-rec-card__label {
+      font-family: var(--font-display);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+    .a-rec-card__name {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 1px;
+      letter-spacing: -0.01em;
+    }
+    .a-rec-card__why {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+    }
+    .a-rec-card__swap {
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.85);
+      color: var(--primary);
+      border: none;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 12px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .a-expand__section { margin-top: 14px; }
+    .a-expand__section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .a-expand__label {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+    }
+    .a-expand__count {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+    }
+    .a-field-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 0.5px solid var(--border-subtle);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      background: transparent;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      width: 100%;
+      font-family: inherit;
+      color: inherit;
+      text-align: left;
+    }
+    .a-field-row:last-of-type { border-bottom: none; }
+    .a-field-row__label {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+    }
+    .a-field-row__value {
+      font-size: 14px;
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+    .a-field-row__value--placeholder { color: var(--text-quaternary); }
+    .a-field-row__value .chev { color: var(--text-quaternary); display: inline-flex; align-items: center; }
+
+    /* Guests rows in expand panel */
+    .a-guest-list {
+      display: flex;
+      flex-direction: column;
+      background: var(--surface-sunken);
+      border-radius: 12px;
+      padding: 4px 0;
+    }
+    .a-guest-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-bottom: 0.5px solid var(--border-subtle);
+    }
+    .a-guest-row:last-child { border-bottom: none; }
+    .a-guest-row__av {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--violet-4);
+      color: var(--primary);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 11px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .a-guest-row__name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      flex: 1;
+      min-width: 0;
+    }
+    .a-guest-row__last {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-align: right;
+      line-height: 1.25;
+    }
+    .a-guest-row__last b {
+      display: block;
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--text-secondary);
+      font-size: 12px;
+      letter-spacing: -0.01em;
+    }
+    .a-guest-row__last--never b { color: var(--warning-text); }
+    .a-guest-row__last--fresh b { color: var(--success); }
+
+    .a-actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 8px;
+    }
+    .a-actions .hilo-btn--primary { flex: 1; }
+    .a-delete-link {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px 0;
+      background: transparent;
+      border: none;
+      color: var(--text-quaternary);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .a-delete-link:hover { color: var(--danger); }
+
+    /* Empty day */
+    .a-empty-day {
+      padding: 10px 14px;
+      border: 1.5px dashed var(--gray-5);
+      border-radius: 14px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      background: transparent;
+      width: 100%;
+      font-family: inherit;
+    }
+    .a-empty-day__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .a-empty-day--open {
+      border-style: solid;
+      border-color: var(--primary);
+      background: var(--violet-2);
+      border-radius: 14px 14px 0 0;
+      margin-bottom: 0;
+    }
+    .a-empty-expand {
+      background: var(--violet-2);
+      border-radius: 0 0 14px 14px;
+      padding: 4px 14px 14px;
+      margin-bottom: 12px;
+      animation: aExpandIn 0.22s var(--ease-out);
+      overflow: hidden;
+    }
+
+    /* FAB — schedule-screen specific (sits inside the screen) */
+    .a-fab {
+      position: absolute;
+      right: 16px;
+      bottom: calc(64px + var(--safe-bottom) + 16px);
+      width: 56px; height: 56px;
+      border-radius: 28px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      box-shadow: 0 12px 32px rgba(110,86,207,0.4), 0 4px 12px rgba(110,86,207,0.2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s var(--ease-out);
+      z-index: 50;
+    }
+    .a-fab:active { transform: scale(0.94); }
+
+    .a-agenda__footer {
+      text-align: center;
+      padding: 24px 0 8px;
+      color: var(--text-quaternary);
+      font-size: 11px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
 
     /* ═══════════════════════════════════════════════════
        7. TOAST
@@ -1951,9 +2564,794 @@
   // Each is a single-line stub that writes the screen name into the
   // screen container. Real implementations land in Phases 2–7.
 
-  function renderScheduleScreen(container, params) {
-    container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">Schedule (placeholder)</div>';
+  // ── Schedule helpers ─────────────────────────────────────
+  // ISO week start (Monday). Existing `getWeekStart` uses Sunday; the
+  // new design uses ISO Mon–Sun.
+  function getIsoWeekStart(date) {
+    const d = parseDateInput(date) || new Date();
+    d.setHours(0, 0, 0, 0);
+    const dow = d.getDay(); // 0..6, Sunday = 0
+    const offset = dow === 0 ? -6 : 1 - dow; // back up to Monday
+    d.setDate(d.getDate() + offset);
+    return d;
   }
+  function isoWeekKey(date) {
+    return formatDateKey(getIsoWeekStart(date));
+  }
+  function addDays(date, n) {
+    const d = parseDateInput(date) || new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + n);
+    return d;
+  }
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const MONTH_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const DAY_LETTER = ['S','M','T','W','T','F','S'];
+
+  // Build the agenda data: past 7 days + 35 days (5 weeks) forward = 42 days.
+  function buildAgendaData(referenceDate) {
+    const ref = parseDateInput(referenceDate) || new Date();
+    ref.setHours(0, 0, 0, 0);
+    const startISOdate = formatDateKey(addDays(ref, -7));
+    const endISOdate   = formatDateKey(addDays(ref, 35));
+    const todayISO = formatDateKey(ref);
+
+    // Group classes by day from state.weeklyPlan.
+    const byDay = new Map();
+    state.weeklyPlan.forEach((cls, key) => {
+      if (!cls || !cls.date) return;
+      if (cls.date < startISOdate || cls.date > endISOdate) return;
+      const list = byDay.get(cls.date) || [];
+      list.push({ key, cls });
+      byDay.set(cls.date, list);
+    });
+    // Sort each day's classes by time.
+    byDay.forEach(list => list.sort((a, b) =>
+      (a.cls.time || '').localeCompare(b.cls.time || '')));
+
+    const days = [];
+    for (let i = -7; i <= 35; i++) {
+      const d = addDays(ref, i);
+      const iso = formatDateKey(d);
+      const dow = d.getDay();
+      days.push({
+        iso,
+        date: d.getDate(),
+        monthIdx: d.getMonth(),
+        monthShort: MONTH_SHORT[d.getMonth()],
+        monthLong: MONTH_LONG[d.getMonth()],
+        dayName: DAY_SHORT[dow],
+        dayLetter: DAY_LETTER[dow],
+        isToday: iso === todayISO,
+        isPast: iso < todayISO,
+        weekStartISO: formatDateKey(getIsoWeekStart(d)),
+        classes: byDay.get(iso) || []
+      });
+    }
+    return { days, todayISO, refDate: ref };
+  }
+
+  // Format the week-divider label.
+  function weekDividerLabel(weekStartISO, todayWeekStartISO) {
+    const start = parseDateInput(weekStartISO);
+    if (!start) return '';
+    const end = addDays(start, 6);
+    const today = parseDateInput(todayWeekStartISO);
+    if (today) {
+      const diff = Math.round((start.getTime() - today.getTime()) / (1000*60*60*24));
+      if (diff === 0) return 'This week';
+      if (diff === 7) return 'Next week';
+      if (diff === -7) return 'Last week';
+    }
+    const sm = MONTH_SHORT[start.getMonth()];
+    const em = MONTH_SHORT[end.getMonth()];
+    if (sm === em) return `Week of ${sm} ${start.getDate()} – ${end.getDate()}`;
+    return `Week of ${sm} ${start.getDate()} – ${em} ${end.getDate()}`;
+  }
+
+  function userInitials(user) {
+    if (!user || !user.displayName) return 'JS';
+    const parts = user.displayName.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return 'JS';
+    const first = parts[0][0] || '';
+    const last = parts.length > 1 ? (parts[parts.length - 1][0] || '') : '';
+    return (first + last).toUpperCase() || 'JS';
+  }
+
+  function syncDotClass() {
+    if (!state.firebaseUser) return 'a-header__sync-dot--gray';
+    if (state.firestoreHasPendingWrites) return 'a-header__sync-dot--amber';
+    if (state.firestoreConnected) return 'a-header__sync-dot--green';
+    return 'a-header__sync-dot--amber';
+  }
+
+  // Convert raw HH:mm time to display label like "7 AM" or "7:30 AM".
+  function timeShortLabel(time) {
+    if (!time) return '';
+    const [hStr, mStr] = time.split(':');
+    const h = parseInt(hStr, 10);
+    const m = parseInt(mStr || '0', 10);
+    if (Number.isNaN(h)) return time;
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const dh = h % 12 || 12;
+    if (m === 0) return `${dh} ${ampm}`;
+    return `${dh}:${pad2(m)} ${ampm}`;
+  }
+
+  // Build a normalized "last heard" line for a guest+playlist.
+  function lastHeardLineFor(guest, playlistId, refISO) {
+    if (!playlistId) return { label: 'No playlist', sub: '', mod: 'never' };
+    const lm = lastHeardMap(refISO || formatDateKey(new Date()));
+    const last = lm.get(guest)?.get(playlistId);
+    if (!last) return { label: `Never heard #${playlistId}`, sub: 'first time', mod: 'never' };
+    const days = daysBetween(refISO || formatDateKey(new Date()), last);
+    if (days < 0) return { label: `Never heard #${playlistId}`, sub: 'first time', mod: 'never' };
+    if (days === 0) return { label: 'Today', sub: 'recent', mod: 'stale' };
+    if (days < 14) return { label: `${days}d ago`, sub: 'recent', mod: 'stale' };
+    if (days < 30) return { label: `${days}d ago`, sub: '', mod: '' };
+    return { label: `${days}d ago`, sub: 'fresh again', mod: 'fresh' };
+  }
+
+  // ── Sheet stubs (Phase 3 will replace) ───────────────────
+  function openPlaylistPickerSheet(dateTimeKey, onSelect) {
+    showToast('Playlist picker — coming in Phase 3', 'info');
+  }
+  function openAddClassSheet(prefillIso) {
+    showToast('Add class — coming in Phase 3', 'info');
+  }
+  function openClassEditSheet(dateTimeKey) {
+    showToast('Class editor — coming in Phase 3', 'info');
+  }
+
+  // ── Sign-in actions ──────────────────────────────────────
+  async function startGoogleSignIn() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+      await auth.signInWithPopup(provider);
+    } catch (err) {
+      const code = err && err.code;
+      const popupBlocked = code === 'auth/popup-blocked'
+        || code === 'auth/popup-closed-by-user'
+        || code === 'auth/operation-not-supported-in-this-environment';
+      if (popupBlocked) {
+        try { await auth.signInWithRedirect(provider); } catch (e2) {
+          showToast('Sign-in failed: ' + (e2.message || 'unknown error'), 'error');
+        }
+      } else {
+        showToast('Sign-in failed: ' + (err.message || 'unknown error'), 'error');
+      }
+    }
+  }
+
+  function dismissSigninBanner() {
+    state.signinBannerDismissed = true;
+    try { localStorage.setItem('hilo:signin-banner-dismissed', 'true'); } catch (e) {}
+    renderApp();
+  }
+
+  // SVG icon snippets used in the schedule UI.
+  const ICONS = {
+    sparkle: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.4L19 10l-5.1 1.6L12 17l-1.9-5.4L5 10l5.1-1.6L12 3z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14z"/></svg>',
+    chevR: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+    chevR16: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+    plus: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    plus14: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    check: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    close: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+  };
+
+  // ── Schedule render ──────────────────────────────────────
+  function renderScheduleScreen(container, params) {
+    const today = new Date();
+    const refDateISO = formatDateKey(today);
+    const todayWeekStartISO = formatDateKey(getIsoWeekStart(today));
+
+    // Track displayed week — defaults to today's ISO week.
+    if (!state.scheduleDisplayedWeekISO) {
+      state.scheduleDisplayedWeekISO = todayWeekStartISO;
+    }
+
+    // Build agenda and group days by ISO week.
+    const { days } = buildAgendaData(refDateISO);
+
+    // Map week-start → days[]; preserve insertion order via an array.
+    const weeks = [];
+    const weekMap = new Map();
+    for (const d of days) {
+      let bucket = weekMap.get(d.weekStartISO);
+      if (!bucket) {
+        bucket = { weekStartISO: d.weekStartISO, days: [] };
+        weekMap.set(d.weekStartISO, bucket);
+        weeks.push(bucket);
+      }
+      bucket.days.push(d);
+    }
+
+    // Build screen scaffold.
+    const screen = document.createElement('div');
+    screen.className = 'hilo-screen';
+    screen.style.position = 'relative';
+
+    // Scroll container.
+    const scroller = document.createElement('div');
+    scroller.className = 'hilo-scroll';
+    scroller.id = 'a-scroller';
+    screen.appendChild(scroller);
+
+    // Header.
+    const header = buildScheduleHeader(today);
+    scroller.appendChild(header);
+
+    // Sign-in banner.
+    if (!state.firebaseUser && !state.signinBannerDismissed) {
+      scroller.appendChild(buildSigninBanner());
+    }
+
+    // Sticky week strip wrapper. We'll re-render its inner content as the
+    // displayed week changes.
+    const stickyWrap = document.createElement('div');
+    stickyWrap.className = 'a-week-strip-wrap';
+    stickyWrap.id = 'a-week-strip-wrap';
+    scroller.appendChild(stickyWrap);
+
+    // Build week strip from displayed week.
+    refreshWeekStripDOM(stickyWrap, state.scheduleDisplayedWeekISO, todayWeekStartISO, weekMap, scroller);
+
+    // Agenda body.
+    const agenda = document.createElement('div');
+    agenda.className = 'a-agenda';
+    agenda.id = 'a-agenda';
+    scroller.appendChild(agenda);
+
+    // Render every week with a divider sentinel + days.
+    weeks.forEach(week => {
+      const divider = document.createElement('div');
+      divider.className = 'a-week-divider';
+      divider.dataset.weekStart = week.weekStartISO;
+      divider.innerHTML = `
+        <div class="a-week-divider__line"></div>
+        <div class="a-week-divider__label">${esc(weekDividerLabel(week.weekStartISO, todayWeekStartISO))}</div>
+        <div class="a-week-divider__line"></div>`;
+      agenda.appendChild(divider);
+
+      week.days.forEach(day => {
+        agenda.appendChild(buildDaySection(day, refDateISO));
+      });
+    });
+
+    // Footer caption.
+    const footer = document.createElement('div');
+    footer.className = 'a-agenda__footer';
+    footer.textContent = 'Keep scrolling to plan further out';
+    agenda.appendChild(footer);
+
+    // FAB.
+    const fab = document.createElement('button');
+    fab.type = 'button';
+    fab.className = 'a-fab';
+    fab.setAttribute('aria-label', 'Add class');
+    fab.innerHTML = ICONS.plus;
+    fab.addEventListener('click', () => openAddClassSheet());
+    screen.appendChild(fab);
+
+    container.appendChild(screen);
+
+    // Wire IntersectionObserver on dividers to update the displayed week.
+    setupWeekStripObserver(scroller, stickyWrap, todayWeekStartISO, weekMap);
+
+    // After mount, scroll today into view (only on first render — avoid
+    // re-snapping the user every refresh).
+    if (!state.scheduleScrollInitialized) {
+      const todayEl = scroller.querySelector(`[data-day-iso="${refDateISO}"]`);
+      if (todayEl) {
+        // Defer to next frame to allow layout.
+        requestAnimationFrame(() => {
+          const stickyHeight = stickyWrap.getBoundingClientRect().height || 52;
+          const desiredTop = Math.max(0, todayEl.offsetTop - stickyHeight - 8);
+          scroller.scrollTo({ top: desiredTop, behavior: 'auto' });
+          state.scheduleScrollInitialized = true;
+        });
+      } else {
+        state.scheduleScrollInitialized = true;
+      }
+    }
+  }
+
+  function buildScheduleHeader(today) {
+    const dayName = today.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+    const monthName = MONTH_LONG[today.getMonth()].toUpperCase();
+    const dateLabel = `${dayName}, ${monthName} ${today.getDate()}`;
+
+    const header = document.createElement('div');
+    header.className = 'a-header';
+
+    const left = document.createElement('div');
+    left.className = 'a-header__left';
+    left.innerHTML = `
+      <div class="a-header__date">${esc(dateLabel)}</div>
+      <div class="a-header__title">Schedule</div>`;
+    header.appendChild(left);
+
+    const actions = document.createElement('div');
+    actions.className = 'a-header__actions';
+
+    const sparkleBtn = document.createElement('button');
+    sparkleBtn.type = 'button';
+    sparkleBtn.className = 'a-header__sparkle';
+    sparkleBtn.setAttribute('aria-label', 'Open recommender');
+    sparkleBtn.innerHTML = ICONS.sparkle;
+    sparkleBtn.addEventListener('click', () => navPush('recommender'));
+    actions.appendChild(sparkleBtn);
+
+    const avatarWrap = document.createElement('div');
+    avatarWrap.className = 'a-header__avatar-wrap';
+    const avatar = document.createElement('div');
+    avatar.className = 'a-header__avatar';
+    avatar.textContent = userInitials(state.firebaseUser);
+    avatarWrap.appendChild(avatar);
+    const dot = document.createElement('div');
+    dot.className = 'a-header__sync-dot ' + syncDotClass();
+    avatarWrap.appendChild(dot);
+    avatarWrap.addEventListener('click', () => navSwitch('more'));
+    actions.appendChild(avatarWrap);
+
+    header.appendChild(actions);
+    return header;
+  }
+
+  function buildSigninBanner() {
+    const banner = document.createElement('div');
+    banner.className = 'hilo-signin-banner';
+    banner.innerHTML = `
+      <div class="hilo-signin-banner__icon">${ICONS.sparkle}</div>
+      <div class="hilo-signin-banner__text">
+        <div class="hilo-signin-banner__title">Sign in to sync</div>
+        <div class="hilo-signin-banner__sub">Keep your classes safe across devices.</div>
+      </div>
+      <button class="hilo-signin-banner__cta" type="button">Sign in</button>
+      <button class="hilo-signin-banner__dismiss" type="button" aria-label="Dismiss">${ICONS.close}</button>`;
+    banner.querySelector('.hilo-signin-banner__cta').addEventListener('click', startGoogleSignIn);
+    banner.querySelector('.hilo-signin-banner__dismiss').addEventListener('click', dismissSigninBanner);
+    return banner;
+  }
+
+  function refreshWeekStripDOM(wrap, displayedWeekISO, todayWeekISO, weekMap, scroller) {
+    // Build the strip for the displayed week. If displayed week isn't
+    // present in the agenda, fall back to today's week.
+    const weekObj = weekMap.get(displayedWeekISO) || weekMap.get(todayWeekISO);
+    if (!weekObj) { wrap.innerHTML = ''; return; }
+    const todayISO = formatDateKey(new Date());
+
+    const strip = document.createElement('div');
+    strip.className = 'a-week-strip';
+
+    weekObj.days.forEach(day => {
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'a-day-cell';
+      if (day.classes.length > 0) cell.classList.add('a-day-cell--has');
+      if (day.isToday) cell.classList.add('a-day-cell--today');
+      cell.dataset.dayIso = day.iso;
+      cell.innerHTML = `
+        <div class="a-day-cell__name">${esc(day.dayLetter)}</div>
+        <div class="a-day-cell__num">${day.date}</div>
+        <div class="a-day-cell__dot"></div>`;
+      cell.addEventListener('click', () => scrollAgendaToDay(scroller, day.iso));
+      strip.appendChild(cell);
+    });
+
+    // Today button.
+    const todayBtn = document.createElement('button');
+    todayBtn.type = 'button';
+    todayBtn.className = 'a-today-btn';
+    if (displayedWeekISO === todayWeekISO) todayBtn.classList.add('a-today-btn--hidden');
+    todayBtn.textContent = 'Today';
+    todayBtn.addEventListener('click', () => scrollAgendaToDay(scroller, todayISO));
+    strip.appendChild(todayBtn);
+
+    wrap.innerHTML = '';
+    wrap.appendChild(strip);
+  }
+
+  function scrollAgendaToDay(scroller, iso) {
+    const dayEl = scroller.querySelector(`[data-day-iso="${iso}"]`);
+    if (!dayEl) return;
+    const stickyEl = scroller.querySelector('#a-week-strip-wrap');
+    const stickyHeight = (stickyEl && stickyEl.getBoundingClientRect().height) || 52;
+    const desiredTop = Math.max(0, dayEl.offsetTop - stickyHeight - 8);
+    scroller.scrollTo({ top: desiredTop, behavior: 'smooth' });
+  }
+
+  function setupWeekStripObserver(scroller, stickyWrap, todayWeekISO, weekMap) {
+    if (state.scheduleObserver) {
+      try { state.scheduleObserver.disconnect(); } catch (e) {}
+    }
+    const dividers = scroller.querySelectorAll('[data-week-start]');
+    if (!dividers.length || typeof IntersectionObserver !== 'function') return;
+    const stickyHeight = stickyWrap.getBoundingClientRect().height || 52;
+    // We want to switch the displayed week when a divider crosses just below
+    // the sticky strip. Use rootMargin to define an active band.
+    const obs = new IntersectionObserver((entries) => {
+      // Pick the topmost divider currently in the trigger band (the one
+      // with the smallest top value but still intersecting) — that's the
+      // current week's divider just under the sticky strip.
+      let candidate = null;
+      let candidateTop = Infinity;
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const rect = entry.boundingClientRect;
+          if (rect.top < candidateTop) {
+            candidateTop = rect.top;
+            candidate = entry.target;
+          }
+        }
+      });
+      if (!candidate) return;
+      const weekStart = candidate.dataset.weekStart;
+      if (weekStart && weekStart !== state.scheduleDisplayedWeekISO) {
+        state.scheduleDisplayedWeekISO = weekStart;
+        refreshWeekStripDOM(stickyWrap, weekStart, todayWeekISO, weekMap, scroller);
+      }
+    }, {
+      root: scroller,
+      // Active "trigger zone" just under the sticky strip.
+      rootMargin: `-${Math.round(stickyHeight)}px 0px -75% 0px`,
+      threshold: 0
+    });
+    dividers.forEach(d => obs.observe(d));
+    state.scheduleObserver = obs;
+  }
+
+  function buildDaySection(day, refDateISO) {
+    const section = document.createElement('div');
+    section.className = 'a-day-section';
+    if (day.isToday) section.classList.add('a-day-section--today');
+    if (day.isPast) section.classList.add('a-day-section--past');
+    section.dataset.dayIso = day.iso;
+
+    // Day label.
+    const label = document.createElement('div');
+    label.className = 'a-day-label';
+    const showMonth = day.date === 1;
+    label.innerHTML = `
+      <div class="a-day-label__num">${day.date}</div>
+      <div class="a-day-label__name">${esc(day.dayName)}${day.isToday ? ' · TODAY' : ''}</div>
+      ${showMonth ? `<div class="a-day-label__month">${esc(day.monthShort.toUpperCase())}</div>` : ''}`;
+    section.appendChild(label);
+
+    // Class list or empty row.
+    const classesContainer = document.createElement('div');
+    classesContainer.className = 'a-day-section__classes';
+    section.appendChild(classesContainer);
+
+    populateDaySectionClasses(classesContainer, day, refDateISO);
+
+    return section;
+  }
+
+  function populateDaySectionClasses(container, day, refDateISO) {
+    container.innerHTML = '';
+    if (day.classes.length === 0) {
+      const emptyKey = `${day.iso}::empty`;
+      const isOpen = state.openClassKey === emptyKey;
+      const empty = document.createElement('button');
+      empty.type = 'button';
+      empty.className = 'a-empty-day' + (isOpen ? ' a-empty-day--open' : '');
+      empty.dataset.classKey = emptyKey;
+      empty.innerHTML = `
+        <span>No class scheduled</span>
+        <span class="a-empty-day__cta">${ICONS.plus14}<span>Plan</span></span>`;
+      empty.addEventListener('click', () => toggleClassExpand(emptyKey, day, refDateISO));
+      container.appendChild(empty);
+      if (isOpen) {
+        container.appendChild(buildEmptyExpand(day));
+      }
+      return;
+    }
+
+    day.classes.forEach(({ key, cls }) => {
+      const isOpen = state.openClassKey === key;
+      const row = document.createElement('div');
+      const status = (cls.status || 'draft').toLowerCase();
+      row.className = 'a-class-row '
+        + (status === 'finalized' ? 'a-class-row--final' : 'a-class-row--draft')
+        + (isOpen ? ' a-class-row--open' : '');
+      row.dataset.classKey = key;
+      const playlistLabel = cls.playlist ? `Playlist #${esc(cls.playlist)}` : 'No playlist';
+      const guestCount = (cls.attendees instanceof Set ? cls.attendees.size : (cls.attendees || []).length);
+      const typeLabel = cls.classType || 'Class';
+      const statusHTML = status === 'finalized'
+        ? `<span class="a-class-row__sub-sep"></span><span class="a-class-row__status-final">finalized</span>`
+        : `<span class="a-class-row__sub-sep"></span><span class="a-class-row__status-draft">draft</span>`;
+      row.innerHTML = `
+        <div class="a-class-row__time">${esc(timeShortLabel(cls.time))}</div>
+        <div class="a-class-row__main">
+          <div class="a-class-row__type">${esc(typeLabel)}</div>
+          <div class="a-class-row__sub">
+            <span>${playlistLabel}</span>
+            <span class="a-class-row__sub-sep"></span>
+            <span>${guestCount} guest${guestCount === 1 ? '' : 's'}</span>
+            ${statusHTML}
+          </div>
+        </div>
+        <div class="a-class-row__chev${isOpen ? ' a-class-row__chev--open' : ''}">${ICONS.chevR16}</div>`;
+      row.addEventListener('click', () => toggleClassExpand(key, day, refDateISO, row));
+      container.appendChild(row);
+      if (isOpen) {
+        container.appendChild(buildExpandPanel(key, cls, day, refDateISO));
+      }
+    });
+  }
+
+  function toggleClassExpand(key, day, refDateISO, sourceEl) {
+    const wasOpen = state.openClassKey === key;
+    state.openClassKey = wasOpen ? null : key;
+    // Re-render only this day section to avoid a full tab re-render.
+    const scroller = document.getElementById('a-scroller');
+    if (!scroller) { renderApp(); return; }
+    const section = scroller.querySelector(`[data-day-iso="${day.iso}"]`);
+    if (!section) { renderApp(); return; }
+    const list = section.querySelector('.a-day-section__classes');
+    if (!list) { renderApp(); return; }
+    populateDaySectionClasses(list, day, refDateISO);
+
+    if (!wasOpen) {
+      // After opening, scroll the row to just below the sticky strip.
+      requestAnimationFrame(() => {
+        const stickyEl = scroller.querySelector('#a-week-strip-wrap');
+        const stickyHeight = (stickyEl && stickyEl.getBoundingClientRect().height) || 52;
+        const targetEl = scroller.querySelector(`[data-class-key="${CSS.escape(key)}"]`);
+        if (targetEl) {
+          const desiredTop = Math.max(0, targetEl.offsetTop - stickyHeight - 8);
+          scroller.scrollTo({ top: desiredTop, behavior: 'smooth' });
+        }
+      });
+    }
+  }
+
+  function buildEmptyExpand(day) {
+    const wrap = document.createElement('div');
+    wrap.className = 'a-empty-expand';
+
+    const fields = document.createElement('div');
+    fields.className = 'a-expand__section';
+    fields.style.marginTop = '4px';
+    fields.innerHTML = `
+      <button class="a-field-row" type="button">
+        <div class="a-field-row__label">Type</div>
+        <div class="a-field-row__value a-field-row__value--placeholder">Pick a class type <span class="chev">${ICONS.chevR}</span></div>
+      </button>
+      <button class="a-field-row" type="button">
+        <div class="a-field-row__label">Time</div>
+        <div class="a-field-row__value a-field-row__value--placeholder">Set a time <span class="chev">${ICONS.chevR}</span></div>
+      </button>
+      <button class="a-field-row" type="button">
+        <div class="a-field-row__label">Guests</div>
+        <div class="a-field-row__value a-field-row__value--placeholder">Add guests <span class="chev">${ICONS.chevR}</span></div>
+      </button>`;
+    fields.querySelectorAll('.a-field-row').forEach(btn =>
+      btn.addEventListener('click', () => openAddClassSheet(day.iso)));
+    wrap.appendChild(fields);
+
+    const cta = document.createElement('div');
+    cta.className = 'a-actions';
+    const ctaBtn = document.createElement('button');
+    ctaBtn.type = 'button';
+    ctaBtn.className = 'hilo-btn hilo-btn--primary hilo-btn--sm';
+    ctaBtn.style.flex = '1';
+    ctaBtn.innerHTML = `${ICONS.plus14}<span>Schedule for ${esc(day.dayName)} ${day.date}</span>`;
+    ctaBtn.addEventListener('click', () => openAddClassSheet(day.iso));
+    cta.appendChild(ctaBtn);
+    wrap.appendChild(cta);
+
+    return wrap;
+  }
+
+  function buildExpandPanel(key, cls, day, refDateISO) {
+    const wrap = document.createElement('div');
+    wrap.className = 'a-expand';
+
+    // Multi-class same-type chip.
+    if (cls.classType && day.classes.length >= 2) {
+      const sameType = day.classes.filter(c =>
+        (c.cls.classType || '').toLowerCase() === (cls.classType || '').toLowerCase());
+      if (sameType.length >= 2) {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'a-multi-class-chip';
+        chip.innerHTML = `${ICONS.sparkle}<span>Apply to all ${sameType.length} ${esc(cls.classType)} classes today</span>`;
+        chip.addEventListener('click', () => {
+          state.selectedRecommendationClassKeys = new Set(sameType.map(s => s.key));
+          state.recAutoSelectDone = true;
+          navPush('recommender');
+        });
+        wrap.appendChild(chip);
+      }
+    }
+
+    // Recommendation card. Compute metrics for this class's roster.
+    const rosterSet = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+    const metrics = computeMetrics({
+      attendees: rosterSet,
+      classType: cls.classType || '',
+      window: state.selectedWindow,
+      date: cls.date || refDateISO
+    });
+    const best = metrics[0];
+    const currentPlaylist = cls.playlist || (best ? best.playlist : '');
+    const recCard = document.createElement('button');
+    recCard.type = 'button';
+    recCard.className = 'a-rec-card';
+    const playlistDisplay = currentPlaylist || '?';
+    let whyText;
+    if (!metrics.length) {
+      whyText = 'Add guests to see a recommendation';
+    } else if (best && best.playlist === currentPlaylist) {
+      const score = Math.round(best.score);
+      whyText = `Best playlist · Score ${score}`;
+    } else if (best) {
+      const score = Math.round(best.score);
+      whyText = `Better fit available: #${best.playlist} · Score ${score}`;
+    } else {
+      whyText = 'Best fit for this group';
+    }
+    recCard.innerHTML = `
+      <div class="a-rec-card__num">${esc(playlistDisplay)}</div>
+      <div class="a-rec-card__meta">
+        <div class="a-rec-card__label">${day.isToday ? 'Recommended' : 'Selected'}</div>
+        <div class="a-rec-card__name">Playlist #${esc(playlistDisplay)}</div>
+        <div class="a-rec-card__why">${esc(whyText)}</div>
+      </div>
+      <span class="a-rec-card__swap">Swap</span>`;
+    recCard.addEventListener('click', () => openPlaylistPickerSheet(key, (newPlaylistId) => {
+      // onSelect callback (Phase 3).
+    }));
+    wrap.appendChild(recCard);
+
+    // Type / Time fields.
+    const fields = document.createElement('div');
+    fields.className = 'a-expand__section';
+    fields.innerHTML = `
+      <button class="a-field-row" type="button" data-edit="type">
+        <div class="a-field-row__label">Type</div>
+        <div class="a-field-row__value">${esc(cls.classType || 'Add type')} <span class="chev">${ICONS.chevR}</span></div>
+      </button>
+      <button class="a-field-row" type="button" data-edit="time">
+        <div class="a-field-row__label">Time</div>
+        <div class="a-field-row__value">${esc(timeShortLabel(cls.time))} <span class="chev">${ICONS.chevR}</span></div>
+      </button>`;
+    fields.querySelectorAll('.a-field-row').forEach(btn =>
+      btn.addEventListener('click', () => openClassEditSheet(key)));
+    wrap.appendChild(fields);
+
+    // Guest list.
+    const guestSection = document.createElement('div');
+    guestSection.className = 'a-expand__section';
+    const headRow = document.createElement('div');
+    headRow.className = 'a-expand__section-head';
+    headRow.innerHTML = `
+      <div class="a-expand__label">Guests</div>
+      <div class="a-expand__count">${rosterSet.size} · last heard #${esc(currentPlaylist || '?')}</div>`;
+    guestSection.appendChild(headRow);
+
+    const guestList = document.createElement('div');
+    guestList.className = 'a-guest-list';
+    const guestArray = Array.from(rosterSet);
+    if (guestArray.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'a-guest-row';
+      empty.innerHTML = `<div class="a-guest-row__name" style="color:var(--text-tertiary)">No guests yet</div>`;
+      guestList.appendChild(empty);
+    } else {
+      guestArray.forEach(name => {
+        const lh = lastHeardLineFor(name, currentPlaylist, cls.date || refDateISO);
+        const row = document.createElement('div');
+        row.className = 'a-guest-row';
+        row.innerHTML = `
+          <div class="a-guest-row__av">${esc((name[0] || '?').toUpperCase())}</div>
+          <div class="a-guest-row__name">${esc(name)}</div>
+          <div class="a-guest-row__last${lh.mod ? ' a-guest-row__last--' + lh.mod : ''}">
+            <b>${esc(lh.label)}</b>
+            ${lh.sub ? `<span>${esc(lh.sub)}</span>` : ''}
+          </div>`;
+        guestList.appendChild(row);
+      });
+    }
+    guestSection.appendChild(guestList);
+    wrap.appendChild(guestSection);
+
+    // Notes preview.
+    const notesSection = document.createElement('div');
+    notesSection.className = 'a-expand__section';
+    const notesText = (cls.notes || '').trim();
+    notesSection.innerHTML = `
+      <button class="a-field-row" type="button" style="border-bottom:none">
+        <div class="a-field-row__label">Notes</div>
+        <div class="a-field-row__value${notesText ? '' : ' a-field-row__value--placeholder'}">${esc(notesText || 'Add a note…')} <span class="chev">${ICONS.chevR}</span></div>
+      </button>`;
+    notesSection.querySelector('.a-field-row').addEventListener('click', () => openClassEditSheet(key));
+    wrap.appendChild(notesSection);
+
+    // Actions.
+    const actions = document.createElement('div');
+    actions.className = 'a-actions';
+    const draftBtn = document.createElement('button');
+    draftBtn.type = 'button';
+    draftBtn.className = 'hilo-btn hilo-btn--ghost hilo-btn--sm';
+    draftBtn.textContent = 'Save draft';
+    draftBtn.addEventListener('click', async () => {
+      setLoading(draftBtn, true);
+      try {
+        const ok = await saveClassToFirestore(key, {
+          date: cls.date,
+          time: cls.time,
+          playlist: cls.playlist || '',
+          attendees: rosterSet,
+          status: 'draft',
+          notes: cls.notes || '',
+          classType: cls.classType || ''
+        });
+        if (ok) showToast('Draft saved', 'success');
+      } finally { setLoading(draftBtn, false); }
+    });
+    actions.appendChild(draftBtn);
+
+    const finalizeBtn = document.createElement('button');
+    finalizeBtn.type = 'button';
+    finalizeBtn.className = 'hilo-btn hilo-btn--primary hilo-btn--sm';
+    finalizeBtn.innerHTML = `${ICONS.check}<span>Finalize</span>`;
+    finalizeBtn.addEventListener('click', async () => {
+      if (!cls.playlist) { showToast('Pick a playlist first', 'error'); return; }
+      if (rosterSet.size === 0) { showToast('Add guests first', 'error'); return; }
+      setLoading(finalizeBtn, true);
+      try {
+        const ok = await saveClassToFirestore(key, {
+          date: cls.date,
+          time: cls.time,
+          playlist: cls.playlist,
+          attendees: rosterSet,
+          status: 'finalized',
+          notes: cls.notes || '',
+          classType: cls.classType || ''
+        });
+        if (ok) {
+          await writeRecordsToFirestore({
+            date: cls.date,
+            time: cls.time,
+            playlist: cls.playlist,
+            attendees: rosterSet
+          });
+          state.openClassKey = null;
+          showToast('Class finalized', 'success');
+        }
+      } finally { setLoading(finalizeBtn, false); }
+    });
+    actions.appendChild(finalizeBtn);
+    wrap.appendChild(actions);
+
+    // Delete link.
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'a-delete-link';
+    del.textContent = 'Delete class';
+    del.addEventListener('click', async () => {
+      const yes = window.confirm('Delete this class? This cannot be undone.');
+      if (!yes) return;
+      try {
+        await deleteClassFromFirestore(key);
+        state.openClassKey = null;
+        showToast('Class deleted', 'success');
+      } catch (e) {
+        showToast('Delete failed: ' + (e.message || 'unknown'), 'error');
+      }
+    });
+    wrap.appendChild(del);
+
+    return wrap;
+  }
+
   function renderGuestsScreen(container, params) {
     container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">Guests (placeholder)</div>';
   }
