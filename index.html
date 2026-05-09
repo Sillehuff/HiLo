@@ -1531,6 +1531,579 @@
     }
 
     /* ═══════════════════════════════════════════════════
+       6.X RECOMMENDER SCREEN (.r-*)
+       ═══════════════════════════════════════════════════ */
+    .r-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--page-bg);
+      position: relative;
+    }
+    .r-scroll {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 100px;
+    }
+    .r-header {
+      padding: calc(var(--safe-top) + 12px) 20px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--page-bg);
+      border-bottom: 0.5px solid var(--border-subtle);
+    }
+    .r-header__back {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 4px 6px 4px 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .r-header__back svg {
+      transform: rotate(180deg);
+    }
+    .r-header__titles {
+      flex: 1;
+      min-width: 0;
+    }
+    .r-header__date {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-quaternary);
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .r-header__title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      line-height: 1.15;
+    }
+
+    .r-class-bar {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      background: var(--page-bg);
+      padding: 12px 16px 10px;
+      box-shadow: 0 1px 0 var(--border-subtle);
+    }
+    .r-class-bar__head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .r-class-bar__title {
+      flex: 1;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+    }
+    .r-class-bar__count {
+      color: var(--primary);
+      margin-left: 6px;
+    }
+    .r-class-bar__btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 6px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .r-class-bar__btn[disabled] {
+      color: var(--text-quaternary);
+      cursor: default;
+    }
+    .r-class-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .r-class-pills::-webkit-scrollbar { display: none; }
+    .r-class-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1.5px solid var(--border-default);
+      border-radius: 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.15s ease, background 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-family: inherit;
+    }
+    .r-class-pill__check {
+      width: 14px; height: 14px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border-default);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: transparent;
+    }
+    .r-class-pill--active {
+      border-color: var(--primary);
+      background: var(--violet-2);
+    }
+    .r-class-pill--active .r-class-pill__check {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .r-class-pill__check svg { width: 10px; height: 10px; }
+    .r-class-pill__time {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .r-class-pill__type {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .r-class-pill__status {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: var(--surface-sunken);
+      color: var(--text-tertiary);
+    }
+    .r-merged-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 4px 10px;
+      background: var(--violet-3);
+      color: var(--primary);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .r-window-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px 6px;
+      flex-wrap: wrap;
+    }
+    .r-window-row__label {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      margin-right: 4px;
+    }
+    .r-window-pill {
+      padding: 6px 12px;
+      border: 1.5px solid var(--border-default);
+      border-radius: 999px;
+      background: var(--surface);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+    .r-window-pill--active {
+      border-color: var(--primary);
+      background: var(--violet-2);
+      color: var(--primary);
+    }
+
+    .r-best-card {
+      margin: 14px 16px 0;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--violet-3) 0%, #fff 100%);
+      border-radius: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--violet-5);
+      position: relative;
+      overflow: hidden;
+    }
+    .r-best-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), #8a6df0);
+    }
+    .r-best-card__label {
+      font-family: var(--font-display);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .r-best-card__head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .r-best-card__num {
+      font-family: var(--font-display);
+      font-size: 56px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+    }
+    .r-best-card__head-meta {
+      flex: 1;
+      min-width: 0;
+      padding-top: 4px;
+    }
+    .r-best-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .r-best-card__tag {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: var(--text-secondary);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .r-best-card__score {
+      font-family: var(--font-display);
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .r-best-card__score-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+    .r-best-card__why {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 0.5px solid var(--violet-5);
+    }
+    .r-best-card__why-title {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .r-best-card__reason {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+    .r-best-card__reason-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+    }
+    .r-best-card__reason-dot--strong { background: var(--success); }
+    .r-best-card__reason-dot--moderate { background: var(--warning); }
+    .r-best-card__reason-dot--close { background: var(--text-quaternary); }
+
+    .r-attendees-section {
+      margin: 14px 16px 0;
+      background: var(--surface);
+      border-radius: 16px;
+      box-shadow: var(--shadow-xs);
+      overflow: hidden;
+    }
+    .r-attendees-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      font-family: inherit;
+      text-align: left;
+    }
+    .r-attendees-toggle__title {
+      flex: 1;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .r-attendees-toggle__chev {
+      color: var(--text-tertiary);
+      transition: transform 0.15s ease;
+    }
+    .r-attendees-toggle--open .r-attendees-toggle__chev {
+      transform: rotate(90deg);
+    }
+    .r-attendees-list {
+      border-top: 0.5px solid var(--border-subtle);
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .r-attendee-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-bottom: 0.5px solid var(--border-subtle);
+    }
+    .r-attendee-row:last-child { border-bottom: none; }
+    .r-attendee-row__avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--violet-4);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .r-attendee-row__name {
+      flex: 1;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .r-attendee-row__last {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+    .r-attendee-row__last--never {
+      color: var(--primary);
+    }
+
+    .r-section-head {
+      padding: 18px 20px 10px;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .r-rank-list {
+      padding: 0 16px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .r-rank-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border-radius: 14px;
+      box-shadow: var(--shadow-xs);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s ease;
+      border: 1.5px solid transparent;
+    }
+    .r-rank-row:active { background: var(--violet-2); }
+    .r-rank-row--top {
+      border-color: var(--primary);
+      background: var(--violet-2);
+    }
+    .r-rank-row__num {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--violet-4);
+      color: var(--primary);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .r-rank-row--top .r-rank-row__num {
+      background: linear-gradient(135deg, var(--primary), #8a6df0);
+      color: #fff;
+    }
+    .r-rank-row__meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .r-rank-row__title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .r-rank-row__tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 3px;
+    }
+    .r-rank-row__tag {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: var(--surface-sunken);
+    }
+    .r-rank-row__sub {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      margin-top: 3px;
+    }
+    .r-rank-row__score {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .r-rank-row__score-num {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+    .r-rank-row--top .r-rank-row__score-num { color: var(--primary); }
+    .r-rank-row__score-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .r-empty {
+      margin: 24px 16px;
+      padding: 28px 20px;
+      background: var(--surface);
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: var(--shadow-xs);
+    }
+    .r-empty__icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--violet-3);
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .r-empty__title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .r-empty__sub {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      line-height: 1.45;
+    }
+
+    .r-action-bar {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 12px 16px calc(var(--safe-bottom) + 12px);
+      background: linear-gradient(180deg, rgba(250,250,248,0.0) 0%, var(--page-bg) 35%);
+      pointer-events: none;
+    }
+    .r-action-bar__inner {
+      pointer-events: auto;
+    }
+    .r-action-btn {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), #8a6df0);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(110,86,207,0.32);
+      -webkit-tap-highlight-color: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .r-action-btn[disabled] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* ═══════════════════════════════════════════════════
        7. TOAST
        ═══════════════════════════════════════════════════ */
     #toast-container {
@@ -4955,8 +5528,628 @@
   function renderGuestDetailScreen(container, params) {
     container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">Guest Detail (placeholder)</div>';
   }
+  // ── Recommender screen ───────────────────────────────────
   function renderRecommenderScreen(container, params) {
-    container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">Recommender (placeholder)</div>';
+    const today = new Date();
+    const refDateISO = formatDateKey(today);
+
+    // Default replay window if missing.
+    if (!Number.isFinite(state.selectedWindow)) state.selectedWindow = 45;
+
+    // Eligible (non-finalized) classes for selection.
+    let entries = getRecommenderClassEntries();
+
+    // Reconcile state.selectedRecommendationClassKeys against valid keys —
+    // mirrors getSelectedRecommenderClassEntries() but without auto-seed
+    // (we want the empty-state placeholder when arriving via sparkle).
+    if (entries.length === 0) {
+      state.selectedRecommendationClassKeys.clear();
+    } else {
+      const validKeys = new Set(entries.map(e => e.key));
+      for (const key of state.selectedRecommendationClassKeys) {
+        if (!validKeys.has(key)) state.selectedRecommendationClassKeys.delete(key);
+      }
+    }
+
+    // Build screen scaffold.
+    const screen = document.createElement('div');
+    screen.className = 'r-screen';
+
+    const scroll = document.createElement('div');
+    scroll.className = 'r-scroll';
+    screen.appendChild(scroll);
+
+    // Header.
+    const header = document.createElement('div');
+    header.className = 'r-header';
+
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'r-header__back';
+    back.setAttribute('aria-label', 'Back');
+    back.innerHTML = `${ICONS.chevR16}<span>Back</span>`;
+    back.addEventListener('click', () => navPop());
+    header.appendChild(back);
+
+    const titles = document.createElement('div');
+    titles.className = 'r-header__titles';
+    titles.innerHTML = `
+      <div class="r-header__date">RECOMMENDER</div>
+      <div class="r-header__title">Recommend a playlist</div>`;
+    header.appendChild(titles);
+
+    scroll.appendChild(header);
+
+    // Mount points for surgical re-renders.
+    const classBar = document.createElement('div');
+    classBar.className = 'r-class-bar';
+    scroll.appendChild(classBar);
+
+    const windowRow = document.createElement('div');
+    windowRow.className = 'r-window-row';
+    scroll.appendChild(windowRow);
+
+    const bestMount = document.createElement('div');
+    bestMount.id = 'r-best-mount';
+    scroll.appendChild(bestMount);
+
+    const attendeesMount = document.createElement('div');
+    attendeesMount.id = 'r-attendees-mount';
+    scroll.appendChild(attendeesMount);
+
+    const rankMount = document.createElement('div');
+    rankMount.id = 'r-rank-mount';
+    scroll.appendChild(rankMount);
+
+    // Sticky action bar.
+    const actionBar = document.createElement('div');
+    actionBar.className = 'r-action-bar';
+    actionBar.id = 'r-action-mount';
+    screen.appendChild(actionBar);
+
+    container.appendChild(screen);
+
+    // Render the dynamic sections.
+    function recomputeAndRender() {
+      // Refresh entries each pass — they may have changed if the user
+      // tapped Select-All-Drafts after a Firestore listener tick.
+      entries = getRecommenderClassEntries();
+      const validKeys = new Set(entries.map(e => e.key));
+      for (const key of state.selectedRecommendationClassKeys) {
+        if (!validKeys.has(key)) state.selectedRecommendationClassKeys.delete(key);
+      }
+      const selectedEntries = entries.filter(e => state.selectedRecommendationClassKeys.has(e.key));
+
+      renderClassBar(classBar, entries, selectedEntries, recomputeAndRender);
+      renderWindowRow(windowRow, recomputeAndRender);
+
+      const metrics = getMetricsForSelectedClasses(selectedEntries);
+      const mergedAttendees = mergedAttendeesFor(selectedEntries);
+
+      renderBestCard(bestMount, selectedEntries, metrics, mergedAttendees);
+      renderAttendeesSection(attendeesMount, selectedEntries, metrics, mergedAttendees);
+      renderRankList(rankMount, selectedEntries, metrics, recomputeAndRender);
+      renderActionBar(actionBar, selectedEntries, metrics, recomputeAndRender);
+    }
+
+    recomputeAndRender();
+  }
+
+  function mergedAttendeesFor(selectedEntries) {
+    const merged = new Set();
+    selectedEntries.forEach(({ cls }) => {
+      const att = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+      att.forEach(g => merged.add(g));
+    });
+    return merged;
+  }
+
+  function classPillLabel(entry) {
+    const d = parseDateInput(entry.cls.date);
+    let dayPart = entry.cls.date || '';
+    if (d) {
+      const todayISO = formatDateKey(new Date());
+      if (formatDateKey(d) === todayISO) dayPart = 'Today';
+      else dayPart = DAY_SHORT[d.getDay()];
+    }
+    const time = timeShortLabel(entry.cls.time);
+    return { dayPart, time };
+  }
+
+  function renderClassBar(node, entries, selectedEntries, onChange) {
+    node.innerHTML = '';
+
+    const head = document.createElement('div');
+    head.className = 'r-class-bar__head';
+
+    const title = document.createElement('div');
+    title.className = 'r-class-bar__title';
+    title.innerHTML = `Classes <span class="r-class-bar__count">(${selectedEntries.length} selected)</span>`;
+    head.appendChild(title);
+
+    const draftCount = entries.filter(e => (e.cls.status || 'draft') === 'draft').length;
+    const selectAllBtn = document.createElement('button');
+    selectAllBtn.type = 'button';
+    selectAllBtn.className = 'r-class-bar__btn';
+    selectAllBtn.textContent = 'Select all drafts';
+    if (draftCount === 0) selectAllBtn.setAttribute('disabled', 'disabled');
+    selectAllBtn.addEventListener('click', () => {
+      entries.forEach(e => {
+        if ((e.cls.status || 'draft') === 'draft') {
+          state.selectedRecommendationClassKeys.add(e.key);
+        }
+      });
+      state.recAutoSelectDone = true;
+      onChange();
+    });
+    head.appendChild(selectAllBtn);
+
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.className = 'r-class-bar__btn';
+    clearBtn.textContent = 'Clear';
+    if (selectedEntries.length === 0) clearBtn.setAttribute('disabled', 'disabled');
+    clearBtn.addEventListener('click', () => {
+      state.selectedRecommendationClassKeys.clear();
+      state.recAutoSelectDone = true;
+      onChange();
+    });
+    head.appendChild(clearBtn);
+
+    node.appendChild(head);
+
+    if (entries.length === 0) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'padding:6px 0;font-size:12.5px;color:var(--text-tertiary);';
+      empty.textContent = 'No upcoming or draft classes. Add one from Schedule.';
+      node.appendChild(empty);
+      return;
+    }
+
+    const pills = document.createElement('div');
+    pills.className = 'r-class-pills';
+
+    entries.forEach(entry => {
+      const pill = document.createElement('button');
+      pill.type = 'button';
+      const isActive = state.selectedRecommendationClassKeys.has(entry.key);
+      pill.className = 'r-class-pill' + (isActive ? ' r-class-pill--active' : '');
+      const { dayPart, time } = classPillLabel(entry);
+      const typeLabel = entry.cls.classType || 'Class';
+      const status = entry.cls.status || 'draft';
+      const checkSvg = isActive ? ICONS.check : '';
+      const statusBadge = status !== 'draft'
+        ? `<span class="r-class-pill__status">${esc(status)}</span>`
+        : '';
+      pill.innerHTML = `
+        <span class="r-class-pill__check">${checkSvg}</span>
+        <span class="r-class-pill__time">${esc(dayPart)} · ${esc(time || '')}</span>
+        <span class="r-class-pill__type">· ${esc(typeLabel)}</span>
+        ${statusBadge}`;
+      pill.addEventListener('click', () => {
+        if (state.selectedRecommendationClassKeys.has(entry.key)) {
+          state.selectedRecommendationClassKeys.delete(entry.key);
+        } else {
+          state.selectedRecommendationClassKeys.add(entry.key);
+        }
+        state.recAutoSelectDone = true;
+        onChange();
+      });
+      pills.appendChild(pill);
+    });
+
+    node.appendChild(pills);
+
+    // Merged badge — show when ≥2 selected entries share type+date.
+    const mergedHint = computeMergedHint(selectedEntries);
+    if (mergedHint) {
+      const badge = document.createElement('div');
+      badge.className = 'r-merged-badge';
+      badge.innerHTML = `${ICONS.sparkle}<span>Merged: ${mergedHint.count} ${esc(mergedHint.type)} classes (${esc(mergedHint.dayLabel)})</span>`;
+      node.appendChild(badge);
+    }
+  }
+
+  function computeMergedHint(selectedEntries) {
+    if (selectedEntries.length < 2) return null;
+    // Group by type|date.
+    const groups = new Map();
+    selectedEntries.forEach(e => {
+      const t = (e.cls.classType || '').toLowerCase();
+      if (!t) return;
+      const key = `${t}|${e.cls.date}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(e);
+    });
+    let best = null;
+    groups.forEach(arr => {
+      if (arr.length < 2) return;
+      if (!best || arr.length > best.length) best = arr;
+    });
+    if (!best) return null;
+    const sample = best[0];
+    const d = parseDateInput(sample.cls.date);
+    let dayLabel = sample.cls.date || '';
+    if (d) {
+      const todayISO = formatDateKey(new Date());
+      dayLabel = formatDateKey(d) === todayISO ? 'Today' : DAY_SHORT[d.getDay()];
+    }
+    return { count: best.length, type: sample.cls.classType, dayLabel };
+  }
+
+  function renderWindowRow(node, onChange) {
+    node.innerHTML = '';
+    const label = document.createElement('div');
+    label.className = 'r-window-row__label';
+    label.textContent = 'Replay window';
+    node.appendChild(label);
+
+    [30, 45, 60, 90].forEach(n => {
+      const pill = document.createElement('button');
+      pill.type = 'button';
+      const active = (state.selectedWindow === n);
+      pill.className = 'r-window-pill' + (active ? ' r-window-pill--active' : '');
+      pill.textContent = `${n}d`;
+      pill.addEventListener('click', () => {
+        if (state.selectedWindow === n) return;
+        state.selectedWindow = n;
+        try { saveStateToLocalStorage(); } catch (e) { /* noop */ }
+        onChange();
+      });
+      node.appendChild(pill);
+    });
+  }
+
+  function buildEmptyCard(title, sub) {
+    const wrap = document.createElement('div');
+    wrap.className = 'r-empty';
+    wrap.innerHTML = `
+      <div class="r-empty__icon">${ICONS.sparkle}</div>
+      <div class="r-empty__title">${esc(title)}</div>
+      <div class="r-empty__sub">${esc(sub)}</div>`;
+    return wrap;
+  }
+
+  function renderBestCard(node, selectedEntries, metrics, mergedAttendees) {
+    node.innerHTML = '';
+    if (selectedEntries.length === 0) {
+      node.appendChild(buildEmptyCard(
+        'Pick a class to get a recommendation.',
+        'Tap one of the class pills above to see the freshest playlist for that group.'
+      ));
+      return;
+    }
+    if (mergedAttendees.size === 0) {
+      node.appendChild(buildEmptyCard(
+        'No guests on the selected classes.',
+        'Add guests in the class edit sheet, then come back for a recommendation.'
+      ));
+      return;
+    }
+    if (!metrics.length) {
+      node.appendChild(buildEmptyCard(
+        'No playlists match these classes.',
+        'Try widening tags on Playlists, or activate retired playlists.'
+      ));
+      return;
+    }
+
+    const best = metrics[0];
+    const strength = getRecommendationStrength(metrics);
+    const tags = state.playlistTags.get(best.playlist) || [];
+
+    const card = document.createElement('div');
+    card.className = 'r-best-card';
+
+    const label = document.createElement('div');
+    label.className = 'r-best-card__label';
+    label.innerHTML = `${ICONS.sparkle}<span>Best fit</span>`;
+    card.appendChild(label);
+
+    const head = document.createElement('div');
+    head.className = 'r-best-card__head';
+
+    const num = document.createElement('div');
+    num.className = 'r-best-card__num';
+    num.textContent = best.playlist;
+    head.appendChild(num);
+
+    const headMeta = document.createElement('div');
+    headMeta.className = 'r-best-card__head-meta';
+    if (tags.length > 0) {
+      const tagsWrap = document.createElement('div');
+      tagsWrap.className = 'r-best-card__tags';
+      tags.forEach(t => {
+        const c = document.createElement('span');
+        c.className = 'r-best-card__tag';
+        c.textContent = t;
+        tagsWrap.appendChild(c);
+      });
+      headMeta.appendChild(tagsWrap);
+    }
+    const score = document.createElement('div');
+    score.className = 'r-best-card__score';
+    score.textContent = String(Math.round(best.score));
+    headMeta.appendChild(score);
+
+    const scoreLabel = document.createElement('div');
+    scoreLabel.className = 'r-best-card__score-label';
+    scoreLabel.textContent = 'Freshness score';
+    headMeta.appendChild(scoreLabel);
+
+    head.appendChild(headMeta);
+    card.appendChild(head);
+
+    const why = document.createElement('div');
+    why.className = 'r-best-card__why';
+    const whyTitle = document.createElement('div');
+    whyTitle.className = 'r-best-card__why-title';
+    whyTitle.textContent = 'Why this playlist';
+    why.appendChild(whyTitle);
+
+    const reasons = buildBestReasons(best, mergedAttendees, strength);
+    reasons.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'r-best-card__reason';
+      const dot = document.createElement('span');
+      dot.className = 'r-best-card__reason-dot' + (r.tone ? ` r-best-card__reason-dot--${r.tone}` : '');
+      row.appendChild(dot);
+      const txt = document.createElement('span');
+      txt.textContent = r.text;
+      row.appendChild(txt);
+      why.appendChild(row);
+    });
+    card.appendChild(why);
+
+    node.appendChild(card);
+  }
+
+  function buildBestReasons(best, mergedAttendees, strength) {
+    const out = [];
+    const w = state.selectedWindow || 45;
+    if (best.duePct >= 50) {
+      out.push({ text: `Most attendees haven't heard #${best.playlist} in ${w}+ days.`, tone: '' });
+    } else if (best.duePct > 0) {
+      out.push({ text: `${best.duePct}% are due for #${best.playlist} (${w}+ days).`, tone: '' });
+    }
+    if (best.neverPct > 0) {
+      out.push({ text: `${best.neverPct}% never heard this playlist.`, tone: '' });
+    }
+    if (best.recentPct > 0) {
+      out.push({
+        text: `${best.recentPct}% heard recently — give them a break.`,
+        tone: ''
+      });
+    } else if (mergedAttendees.size > 0) {
+      out.push({ text: `Nobody heard this in the last ${w} days.`, tone: '' });
+    }
+    if (strength) {
+      const toneMap = { strong: 'strong', moderate: 'moderate', close: 'close' };
+      out.push({
+        text: `Strength: ${strength.label}. ${strength.detail || ''}`.trim(),
+        tone: toneMap[strength.tone] || ''
+      });
+    }
+    return out;
+  }
+
+  function renderAttendeesSection(node, selectedEntries, metrics, mergedAttendees) {
+    node.innerHTML = '';
+    if (mergedAttendees.size === 0 || metrics.length === 0) return;
+
+    const best = metrics[0];
+    const refISO = (selectedEntries[0] && selectedEntries[0].cls.date) || formatDateKey(new Date());
+
+    const sec = document.createElement('div');
+    sec.className = 'r-attendees-section';
+
+    const isOpen = !!state.recAttendeesOpen;
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'r-attendees-toggle' + (isOpen ? ' r-attendees-toggle--open' : '');
+    toggle.innerHTML = `
+      <span class="r-attendees-toggle__title">All attendees (${mergedAttendees.size})</span>
+      <span class="r-attendees-toggle__chev">${ICONS.chevR16}</span>`;
+    toggle.addEventListener('click', () => {
+      state.recAttendeesOpen = !state.recAttendeesOpen;
+      renderAttendeesSection(node, selectedEntries, metrics, mergedAttendees);
+    });
+    sec.appendChild(toggle);
+
+    if (isOpen) {
+      const list = document.createElement('div');
+      list.className = 'r-attendees-list';
+      const lm = lastHeardMap(refISO);
+      const guests = Array.from(mergedAttendees).map(g => {
+        const last = lm.get(g)?.get(best.playlist);
+        let days = null;
+        if (last) {
+          const d = daysBetween(refISO, last);
+          if (d >= 0) days = d;
+        }
+        return { guest: g, days };
+      });
+      guests.sort((a, b) => {
+        if (a.days === null && b.days !== null) return -1;
+        if (a.days !== null && b.days === null) return 1;
+        if (a.days === null && b.days === null) return a.guest.localeCompare(b.guest);
+        return b.days - a.days;
+      });
+      guests.forEach(({ guest, days }) => {
+        const row = document.createElement('div');
+        row.className = 'r-attendee-row';
+        const initials = guest
+          .trim()
+          .split(/\s+/)
+          .map(p => (p[0] || '').toUpperCase())
+          .slice(0, 2)
+          .join('') || '?';
+        const lastTxt = days === null
+          ? `Never heard #${best.playlist}`
+          : (days === 0 ? `Last heard #${best.playlist}: today` : `Last heard #${best.playlist}: ${days}d ago`);
+        const lastClass = days === null ? ' r-attendee-row__last--never' : '';
+        row.innerHTML = `
+          <div class="r-attendee-row__avatar">${esc(initials)}</div>
+          <div class="r-attendee-row__name">${esc(guest)}</div>
+          <div class="r-attendee-row__last${lastClass}">${esc(lastTxt)}</div>`;
+        list.appendChild(row);
+      });
+      sec.appendChild(list);
+    }
+
+    node.appendChild(sec);
+  }
+
+  function renderRankList(node, selectedEntries, metrics, onChange) {
+    node.innerHTML = '';
+    if (metrics.length === 0) return;
+
+    const head = document.createElement('div');
+    head.className = 'r-section-head';
+    head.textContent = 'All playlists ranked';
+    node.appendChild(head);
+
+    const list = document.createElement('div');
+    list.className = 'r-rank-list';
+
+    metrics.forEach((m, idx) => {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'r-rank-row' + (idx === 0 ? ' r-rank-row--top' : '');
+
+      const num = document.createElement('div');
+      num.className = 'r-rank-row__num';
+      num.textContent = m.playlist;
+      row.appendChild(num);
+
+      const meta = document.createElement('div');
+      meta.className = 'r-rank-row__meta';
+      const title = document.createElement('div');
+      title.className = 'r-rank-row__title';
+      title.textContent = `Playlist #${m.playlist}` + (idx === 0 ? ' · Best fit' : '');
+      meta.appendChild(title);
+      const tags = state.playlistTags.get(m.playlist) || [];
+      if (tags.length > 0) {
+        const tagWrap = document.createElement('div');
+        tagWrap.className = 'r-rank-row__tags';
+        tags.slice(0, 4).forEach(t => {
+          const c = document.createElement('span');
+          c.className = 'r-rank-row__tag';
+          c.textContent = t;
+          tagWrap.appendChild(c);
+        });
+        meta.appendChild(tagWrap);
+      }
+      const sub = document.createElement('div');
+      sub.className = 'r-rank-row__sub';
+      const medianStr = m.heardCount ? `median ${m.median}d` : 'no history';
+      sub.textContent = `${medianStr} · ${m.neverPct}% never · ${m.duePct || m.readyPct || 0}% due`;
+      meta.appendChild(sub);
+      row.appendChild(meta);
+
+      const score = document.createElement('div');
+      score.className = 'r-rank-row__score';
+      score.innerHTML = `
+        <div class="r-rank-row__score-num">${Math.round(m.score)}</div>
+        <div class="r-rank-row__score-label">Score</div>`;
+      row.appendChild(score);
+
+      row.addEventListener('click', () => {
+        assignPlaylistToSelected(String(m.playlist), selectedEntries, onChange);
+      });
+
+      list.appendChild(row);
+    });
+
+    node.appendChild(list);
+  }
+
+  function renderActionBar(node, selectedEntries, metrics, onChange) {
+    node.innerHTML = '';
+    if (selectedEntries.length === 0) {
+      node.style.display = 'none';
+      return;
+    }
+    node.style.display = '';
+
+    const inner = document.createElement('div');
+    inner.className = 'r-action-bar__inner';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'r-action-btn';
+
+    const best = metrics[0];
+    if (!best) {
+      btn.setAttribute('disabled', 'disabled');
+      btn.textContent = 'No recommendation available';
+    } else if (selectedEntries.length === 1) {
+      const e = selectedEntries[0];
+      const typeLabel = e.cls.classType || 'class';
+      const timeLabel = timeShortLabel(e.cls.time) || '';
+      btn.innerHTML = `${ICONS.check}<span>Assign #${best.playlist} to ${esc(typeLabel)}${timeLabel ? ' ' + esc(timeLabel) : ''}</span>`;
+    } else {
+      btn.innerHTML = `${ICONS.check}<span>Assign #${best.playlist} to all ${selectedEntries.length} classes</span>`;
+    }
+    btn.addEventListener('click', () => {
+      if (!best) return;
+      assignPlaylistToSelected(String(best.playlist), selectedEntries, onChange);
+    });
+
+    inner.appendChild(btn);
+    node.appendChild(inner);
+  }
+
+  async function assignPlaylistToSelected(playlistId, selectedEntries, onChange) {
+    if (!selectedEntries || selectedEntries.length === 0) return;
+    let savedAny = false;
+    for (const entry of selectedEntries) {
+      const cls = entry.cls;
+      const rosterSet = cls.attendees instanceof Set ? cls.attendees : new Set(cls.attendees || []);
+      // Mirror locally first so empty-Firebase users still see the change.
+      cls.playlist = playlistId;
+      state.weeklyPlan.set(entry.key, cls);
+      if (state.firebaseUser) {
+        try {
+          const ok = await saveClassToFirestore(entry.key, {
+            date: cls.date,
+            time: cls.time,
+            playlist: playlistId,
+            attendees: rosterSet,
+            status: cls.status || 'draft',
+            notes: cls.notes || '',
+            classType: cls.classType || ''
+          });
+          if (ok) savedAny = true;
+        } catch (e) {
+          console.warn('Recommender assign failed:', e);
+        }
+      } else {
+        savedAny = true;
+      }
+    }
+    try { saveStateToLocalStorage(); } catch (e) { /* noop */ }
+
+    if (savedAny) {
+      if (selectedEntries.length === 1) {
+        const e = selectedEntries[0];
+        const typeLabel = e.cls.classType || 'class';
+        const timeLabel = timeShortLabel(e.cls.time) || '';
+        showToast(`Assigned #${playlistId} to ${typeLabel}${timeLabel ? ' ' + timeLabel : ''}`, 'success');
+      } else {
+        showToast(`Assigned #${playlistId} to ${selectedEntries.length} classes`, 'success');
+      }
+    }
+
+    // Clear selection per task requirements + return to Schedule.
+    state.selectedRecommendationClassKeys.clear();
+    state.recAutoSelectDone = true;
+    state.recAttendeesOpen = false;
+
+    // Pop the recommender screen and switch to Schedule tab.
+    const tab = state.nav.activeTab;
+    state.nav.stacks[tab] = [];
+    navSwitch('schedule');
   }
   function renderPlaylistsScreen(container, params) {
     container.innerHTML = '<div style="padding:24px;font-family:Outfit;font-size:24px">Playlists (placeholder)</div>';
