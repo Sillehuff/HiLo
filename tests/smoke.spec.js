@@ -142,32 +142,60 @@ test('redesigned app smoke flow works in local unsigned mode', async ({ page }) 
 
   await page.goto('/');
 
-  await expect(page.locator('#weekly')).toBeVisible();
-  await expect(page.locator('#weekStrip')).toHaveCount(1);
-  await expect(page.locator('#calendarGrid .day-card')).toHaveCount(7);
-  await expect(page.locator('#calendarGrid .class-item').first()).toBeVisible();
+  await expect(page.locator('#a-scroller')).toBeVisible();
+  await expect(page.locator('#a-week-strip-wrap')).toHaveCount(1);
+  await expect(page.locator('#a-agenda .a-day-section')).toHaveCount(43);
+  await expect(page.locator('#a-agenda .a-class-row').first()).toBeVisible();
 
-  await page.locator('button[data-tab=\"dashboard\"]').click();
-  await expect(page.locator('#dashboard')).toBeVisible();
-  await expect(page.locator('#plannedClassList')).toContainText('Spin');
-  await expect.poll(async () => page.locator('#runnerUps tr').count()).toBeGreaterThan(0);
+  const scheduledDay = page.locator(`[data-day-iso="${fixture.weeklyPlan[0][1].date}"]`);
+  await expect(scheduledDay.locator('.a-class-row')).toHaveCount(1);
+  await expect(scheduledDay.locator('.a-empty-day--add')).toBeVisible();
+  await expect(scheduledDay.locator('.a-empty-day--add')).toContainText('Plan class');
 
-  await page.locator('button[data-tab=\"weekly\"]').click();
-  await page.locator('#calendarGrid .class-actions button').first().click();
-  await expect(page.locator('#class-modal')).toBeVisible();
-  await page.locator('#cancel-modal').click();
-  await expect(page.locator('#class-modal')).toHaveClass(/hidden/);
+  await scheduledDay.locator('.a-empty-day--add').click();
+  await expect(scheduledDay.locator('.a-empty-expand')).toBeVisible();
+  await scheduledDay.locator('.a-empty-expand .a-field-row').first().click();
+  await expect(page.locator('.hilo-sheet__title').last()).toHaveText('New Class');
+
+  const guestSearch = page.locator('.hilo-sheet').last().locator('.sheet-guest-entry input');
+  await guestSearch.fill('Alice');
+  await page.locator('.hilo-sheet').last().locator('.sheet-guest-suggestion-pill', { hasText: 'Alice M.' }).click();
+  await expect(guestSearch).toHaveValue('');
+
+  const selectedGuest = page.locator('.hilo-sheet').last().locator('.sheet-selected-guest', { hasText: 'Alice M.' });
+  await expect(selectedGuest).toBeVisible();
+  await expect(page.locator('.hilo-sheet').last().locator('.sheet-selected-guest__check')).toHaveCount(0);
+  await expect.poll(async () => selectedGuest.evaluate((el) => {
+    const styles = window.getComputedStyle(el);
+    return {
+      borderStyle: styles.borderTopStyle,
+      hasBorder: parseFloat(styles.borderTopWidth) > 0,
+      background: styles.backgroundColor
+    };
+  })).toEqual({
+    borderStyle: 'solid',
+    hasBorder: true,
+    background: 'rgb(234, 226, 248)'
+  });
+
+  await page.locator('.hilo-sheet__close').last().click();
+  await expect(page.locator('.hilo-sheet')).toHaveCount(0);
 
   await page.locator('button[data-tab=\"history\"]').click();
-  await page.fill('#history-search', 'spin');
-  await expect(page.locator('#historyTbody tr').first()).toBeVisible();
+  await expect(page.locator('.hilo-header__title')).toHaveText('History');
+  await page.locator('.h-search-input').fill('spin');
+  await expect(page.locator('.h-search-input')).toHaveValue('spin');
 
   await page.locator('button[data-tab=\"guests\"]').click();
-  await page.fill('#guest-search-filter', 'Alice');
-  await expect(page.locator('#guests-grid')).toContainText('Alice');
+  await expect(page.locator('.hilo-header__title')).toHaveText('Guests');
+  await page.locator('.g-search-input').fill('Alice');
+  await expect(page.locator('.g-list')).toContainText('Alice');
 
-  await page.locator('button[data-tab=\"settings\"]').click();
-  await expect(page.locator('#settings-auth-info')).toContainText('Not signed in');
+  await page.locator('button[data-tab=\"more\"]').click();
+  await expect(page.locator('.hilo-header__title')).toHaveText('More');
+  await page.locator('.m-row', { hasText: 'Settings' }).click();
+  await expect(page.locator('.s-title')).toHaveText('Settings');
+  await expect(page.locator('.s-sync-pill')).toContainText('Not signed in');
 
   expect(pageErrors).toEqual([]);
   expect(errors).toEqual([]);

@@ -655,17 +655,18 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 7px 9px 7px 11px;
-      border: none;
-      border-radius: var(--radius-pill);
-      background: var(--primary-soft);
-      color: var(--primary);
+      padding: 7px 10px 7px 11px;
+      border: 1.5px solid var(--primary);
+      border-radius: var(--radius-md);
+      background: var(--primary-soft-hover);
+      color: var(--primary-hover);
       font-family: var(--font-body);
       font-size: 13px;
       font-weight: 600;
       cursor: grab;
       user-select: none;
-      transition: transform 0.12s ease, opacity 0.12s ease, box-shadow 0.12s ease;
+      box-shadow: 0 1px 0 rgba(110, 86, 207, 0.08);
+      transition: transform 0.12s ease, opacity 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, border-color 0.12s ease;
     }
     .sheet-selected-guest:active { cursor: grabbing; }
     .sheet-selected-guest--dragging {
@@ -690,7 +691,7 @@
       width: 16px;
       height: 16px;
       flex-shrink: 0;
-      color: var(--primary);
+      color: var(--primary-hover);
     }
     .sheet-guest-suggestions {
       display: flex;
@@ -706,6 +707,10 @@
     .sheet-guest-suggestion-pill {
       background: var(--surface-sunken);
       border-color: var(--border-light);
+    }
+    .sheet-selected-guest__check,
+    .sheet-guest-suggestion-pill__check {
+      display: none;
     }
     .sheet-guest-suggestion-pill--new {
       background: var(--success-light);
@@ -1663,6 +1668,10 @@
       gap: 6px;
       color: var(--primary);
       font-weight: 600;
+      white-space: nowrap;
+    }
+    .a-empty-day--add {
+      margin-top: 2px;
     }
     .a-empty-day--open {
       border-style: solid;
@@ -5486,6 +5495,14 @@
       return normalizeGuestName(input.value);
     }
 
+    function clearGuestSearch() {
+      input.value = '';
+      suggestions.innerHTML = '';
+      suggestions.hidden = true;
+      emptyNote.hidden = true;
+      addBtn.disabled = true;
+    }
+
     function findExistingGuest(name) {
       const lower = name.toLowerCase();
       return Array.from(state.allGuests).find(g => g.toLowerCase() === lower) || '';
@@ -5520,13 +5537,13 @@
         saveStateToLocalStorage();
       }
       if (selectedIndexOf(finalName) > -1) {
-        input.value = '';
+        clearGuestSearch();
         renderList();
         return false;
       }
 
       selectedOrder.push(finalName);
-      input.value = '';
+      clearGuestSearch();
       renderList();
       notifyChange();
       return true;
@@ -6905,21 +6922,33 @@
     return section;
   }
 
+  function buildPlanClassAffordance(day, refDateISO, {
+    keySuffix = 'empty',
+    label = 'No class scheduled',
+    ctaLabel = 'Plan',
+    extraClass = ''
+  } = {}) {
+    const key = `${day.iso}::${keySuffix}`;
+    const isOpen = state.openClassKey === key;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'a-empty-day'
+      + (extraClass ? ` ${extraClass}` : '')
+      + (isOpen ? ' a-empty-day--open' : '');
+    button.dataset.classKey = key;
+    button.innerHTML = `
+      <span>${esc(label)}</span>
+      <span class="a-empty-day__cta">${ICONS.plus14}<span>${esc(ctaLabel)}</span></span>`;
+    button.addEventListener('click', () => toggleClassExpand(key, day, refDateISO));
+    return { button, isOpen };
+  }
+
   function populateDaySectionClasses(container, day, refDateISO) {
     container.innerHTML = '';
     if (day.classes.length === 0) {
-      const emptyKey = `${day.iso}::empty`;
-      const isOpen = state.openClassKey === emptyKey;
-      const empty = document.createElement('button');
-      empty.type = 'button';
-      empty.className = 'a-empty-day' + (isOpen ? ' a-empty-day--open' : '');
-      empty.dataset.classKey = emptyKey;
-      empty.innerHTML = `
-        <span>No class scheduled</span>
-        <span class="a-empty-day__cta">${ICONS.plus14}<span>Plan</span></span>`;
-      empty.addEventListener('click', () => toggleClassExpand(emptyKey, day, refDateISO));
-      container.appendChild(empty);
-      if (isOpen) {
+      const emptyAffordance = buildPlanClassAffordance(day, refDateISO);
+      container.appendChild(emptyAffordance.button);
+      if (emptyAffordance.isOpen) {
         container.appendChild(buildEmptyExpand(day));
       }
       return;
@@ -6957,6 +6986,17 @@
         container.appendChild(buildExpandPanel(key, cls, day, refDateISO));
       }
     });
+
+    const addAffordance = buildPlanClassAffordance(day, refDateISO, {
+      keySuffix: 'add',
+      label: 'Add another class',
+      ctaLabel: 'Plan class',
+      extraClass: 'a-empty-day--add'
+    });
+    container.appendChild(addAffordance.button);
+    if (addAffordance.isOpen) {
+      container.appendChild(buildEmptyExpand(day));
+    }
   }
 
   function toggleClassExpand(key, day, refDateISO, sourceEl) {
