@@ -1,5 +1,5 @@
 // Service Worker for Hilo Playlist PWA
-const CACHE_NAME = 'hilo-playlist-v23';
+const CACHE_NAME = 'hilo-playlist-v24';
 
 // Files to cache on install
 const FILES_TO_CACHE = [
@@ -40,6 +40,32 @@ self.addEventListener('fetch', (event) => {
   if (url.hostname.includes('firebaseio.com') ||
       url.hostname.includes('googleapis.com') ||
       url.hostname.includes('gstatic.com')) {
+    return;
+  }
+
+  const acceptsHtml = event.request.headers.get('accept')?.includes('text/html');
+  const isAppShellRequest = event.request.mode === 'navigate' || acceptsHtml;
+  if (isAppShellRequest && event.request.method === 'GET') {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) =>
+        fetch(new Request(event.request, { cache: 'no-cache' })).then((networkResponse) => {
+          if (networkResponse.ok && url.origin === self.location.origin) {
+            cache.put(event.request, networkResponse.clone());
+          }
+          return networkResponse;
+        }).catch(() =>
+          cache.match(event.request)
+            .then((cachedResponse) => cachedResponse || cache.match('./index.html'))
+            .then((fallbackResponse) =>
+              fallbackResponse || new Response('Offline — app shell unavailable.', {
+                status: 503,
+                statusText: 'Service Unavailable',
+                headers: { 'Content-Type': 'text/plain' }
+              })
+            )
+        )
+      )
+    );
     return;
   }
 
