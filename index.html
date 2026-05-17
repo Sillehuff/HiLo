@@ -1586,6 +1586,12 @@
       padding: 9px 12px;
       border-bottom: 0.5px solid var(--border-subtle);
     }
+    .a-guest-row--action {
+      cursor: pointer;
+    }
+    .a-guest-row--action:active {
+      background: rgba(124, 92, 211, 0.06);
+    }
     .a-guest-row:last-child { border-bottom: none; }
     .a-guest-row__av {
       width: 28px; height: 28px;
@@ -7171,7 +7177,10 @@
       guestArray.forEach(name => {
         const lh = lastHeardLineFor(name, currentPlaylist, cls.date || refDateISO);
         const row = document.createElement('div');
-        row.className = 'a-guest-row';
+        row.className = 'a-guest-row a-guest-row--action';
+        row.setAttribute('role', 'button');
+        row.setAttribute('tabindex', '0');
+        row.setAttribute('aria-label', `Edit class attendees including ${name}`);
         row.innerHTML = `
           <div class="a-guest-row__av">${esc((name[0] || '?').toUpperCase())}</div>
           <div class="a-guest-row__name">${esc(name)}</div>
@@ -7179,6 +7188,12 @@
             <b>${esc(lh.label)}</b>
             ${lh.sub ? `<span>${esc(lh.sub)}</span>` : ''}
           </div>`;
+        row.addEventListener('click', () => openClassEditSheet(key));
+        row.addEventListener('keydown', (e) => {
+          if (e.key !== 'Enter' && e.key !== ' ') return;
+          e.preventDefault();
+          openClassEditSheet(key);
+        });
         guestList.appendChild(row);
       });
     }

@@ -151,6 +151,12 @@ test('redesigned app smoke flow works in local unsigned mode', async ({ page }) 
   await expect(scheduledDay.locator('.a-class-row')).toHaveCount(1);
   await expect(scheduledDay.locator('.a-empty-day--add')).toBeVisible();
   await expect(scheduledDay.locator('.a-empty-day--add')).toContainText('Plan class');
+  await scheduledDay.locator('.a-class-row').click();
+  await expect(scheduledDay.locator('.a-guest-row__name', { hasText: 'Alice M.' })).toBeVisible();
+  await scheduledDay.locator('.a-guest-row__name', { hasText: 'Alice M.' }).click();
+  await expect(page.locator('.hilo-sheet__title').last()).toHaveText('Edit Class');
+  await page.locator('.hilo-sheet__close').last().click();
+  await expect(page.locator('.hilo-sheet')).toHaveCount(0);
 
   await scheduledDay.locator('.a-empty-day--add').click();
   await expect(scheduledDay.locator('.a-empty-expand')).toBeVisible();
