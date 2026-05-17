@@ -118,6 +118,42 @@ const firebaseCompatStub = `
 })();
 `;
 
+test('class editor sheet stays horizontally fixed on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await page.route(/https:\/\/www\.gstatic\.com\/firebasejs\/.*\/firebase-.*compat\.js/, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/javascript',
+      body: firebaseCompatStub
+    });
+  });
+
+  const fixture = buildFixture();
+  await page.addInitScript((data) => {
+    localStorage.setItem('hiloPlaylistData', JSON.stringify(data));
+  }, fixture);
+
+  await page.goto('/');
+
+  const scheduledDay = page.locator(`[data-day-iso="${fixture.weeklyPlan[0][1].date}"]`);
+  await scheduledDay.locator('.a-class-row').click();
+  await scheduledDay.locator('.a-guest-row__name', { hasText: 'Alice M.' }).click();
+
+  const sheet = page.locator('.hilo-sheet').last();
+  await expect(sheet.locator('.hilo-sheet__title')).toHaveText('Edit Class');
+
+  const body = sheet.locator('.hilo-sheet__body');
+  const metrics = await body.evaluate((el) => ({
+    clientWidth: el.clientWidth,
+    scrollWidth: el.scrollWidth
+  }));
+  expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
+
+  await body.evaluate((el) => { el.scrollLeft = 120; });
+  await expect.poll(() => body.evaluate((el) => el.scrollLeft)).toBe(0);
+});
+
 test('redesigned app smoke flow works in local unsigned mode', async ({ page }) => {
   const errors = [];
   const pageErrors = [];
