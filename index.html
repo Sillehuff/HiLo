@@ -3898,6 +3898,7 @@
 
   function getAllClassTypes() {
     const types = new Set();
+    state.playlistTags.forEach(tags => tags.forEach(t => types.add(t)));
     state.records.forEach(r => { if (r.classType) types.add(r.classType); });
     state.weeklyPlan.forEach(cls => { if (cls.classType) types.add(cls.classType); });
     return Array.from(types).sort();
@@ -4471,8 +4472,6 @@
         if (state.unsubRecords) { state.unsubRecords(); state.unsubRecords = null; }
         if (state.unsubClasses) { state.unsubClasses(); state.unsubClasses = null; }
         if (state.unsubPlaylists) { state.unsubPlaylists(); state.unsubPlaylists = null; }
-        state.playlistTags = new Map();
-        state.playlistStatus = new Map();
         state.firestoreConnected = false;
         rebuildPlaylistsFromData();
         updateConnectionStatus();
@@ -5980,7 +5979,7 @@
     };
   }
 
-  // ── Helper: class type pills (saved classes + custom) ──
+  // ── Helper: class type pills (playlist tags, saved classes, + custom) ──
   function buildClassTypePicker({ value, onChange }) {
     const wrap = document.createElement('div');
     let selected = value || '';
