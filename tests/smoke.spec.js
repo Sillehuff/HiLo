@@ -56,8 +56,10 @@ async function topVisibleScheduleDay(page) {
   return page.locator('#a-scroller').evaluate((scroller) => {
     const sticky = document.querySelector('#a-week-strip-wrap');
     const stickyHeight = sticky?.getBoundingClientRect().height || 52;
+    const stickyTopRaw = sticky ? parseFloat(getComputedStyle(sticky).top) : 0;
+    const stickyTop = Number.isFinite(stickyTopRaw) ? stickyTopRaw : 0;
     const scrollerRect = scroller.getBoundingClientRect();
-    const targetTop = scrollerRect.top + stickyHeight + 12;
+    const targetTop = scrollerRect.top + stickyTop + stickyHeight + 12;
     let active = scroller.querySelector('.a-day-section');
     scroller.querySelectorAll('.a-day-section').forEach((section) => {
       if (section.getBoundingClientRect().top <= targetTop) active = section;
@@ -346,4 +348,38 @@ test('schedule defaults to today and syncs the horizontal date rail while scroll
     const left = await rail.evaluate((el) => el.scrollLeft);
     return left < todayRailLeft;
   }).toBe(true);
+});
+
+test('schedule sticky rail respects the mobile safe area', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await page.route(/https:\/\/www\.gstatic\.com\/firebasejs\/.*\/firebase-.*compat\.js/, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/javascript',
+      body: firebaseCompatStub
+    });
+  });
+
+  const fixture = buildFixture();
+  await page.addInitScript((data) => {
+    localStorage.setItem('hiloPlaylistData', JSON.stringify(data));
+  }, fixture);
+
+  await page.goto('/');
+  await page.addStyleTag({ content: ':root { --safe-top: 47px !important; }' });
+
+  await page.locator('#a-scroller').evaluate((scroller) => {
+    scroller.scrollTop += 1200;
+    scroller.dispatchEvent(new Event('scroll'));
+  });
+
+  await expect.poll(() => page.locator('#a-week-strip-wrap').evaluate((el) => {
+    const rect = el.getBoundingClientRect();
+    const top = parseFloat(getComputedStyle(el).top);
+    return {
+      cssTop: Math.round(Number.isFinite(top) ? top : 0),
+      visualTop: Math.round(rect.top)
+    };
+  })).toEqual({ cssTop: 47, visualTop: 47 });
 });

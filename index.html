@@ -1168,7 +1168,7 @@
     /* Sticky week strip */
     .a-week-strip-wrap {
       position: sticky;
-      top: 0;
+      top: var(--safe-top);
       z-index: 10;
       background: var(--page-bg);
       padding: 6px 0 8px;
@@ -6928,7 +6928,15 @@
   function getScheduleScrollTopForElement(scroller, targetEl, stickyHeight) {
     const scrollerRect = scroller.getBoundingClientRect();
     const targetRect = targetEl.getBoundingClientRect();
-    return Math.max(0, scroller.scrollTop + targetRect.top - scrollerRect.top - stickyHeight - 8);
+    const stickyEl = scroller.querySelector('#a-week-strip-wrap');
+    const stickyTop = getScheduleStickyTop(stickyEl);
+    return Math.max(0, scroller.scrollTop + targetRect.top - scrollerRect.top - stickyHeight - stickyTop - 8);
+  }
+
+  function getScheduleStickyTop(stickyEl) {
+    if (!stickyEl) return 0;
+    const top = parseFloat(getComputedStyle(stickyEl).top);
+    return Number.isFinite(top) ? top : 0;
   }
 
   function scrollAgendaToDay(scroller, iso, { behavior = 'smooth', scrollRail = true } = {}) {
@@ -6991,8 +6999,9 @@
 
   function getTopVisibleScheduleDay(scroller, stickyWrap) {
     const stickyHeight = (stickyWrap && stickyWrap.getBoundingClientRect().height) || 52;
+    const stickyTop = getScheduleStickyTop(stickyWrap);
     const scrollerRect = scroller.getBoundingClientRect();
-    const targetTop = scrollerRect.top + stickyHeight + 12;
+    const targetTop = scrollerRect.top + stickyTop + stickyHeight + 12;
     const sections = scroller.querySelectorAll('.a-day-section');
     let active = sections[0] || null;
     sections.forEach(section => {
