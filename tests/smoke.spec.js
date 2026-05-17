@@ -282,24 +282,39 @@ test('redesigned app smoke flow works in local unsigned mode', async ({ page }) 
   await expect(scheduledDay.locator('.a-empty-expand')).toBeVisible();
   await scheduledDay.locator('.a-empty-expand .a-field-row').first().click();
   await expect(page.locator('.hilo-sheet__title').last()).toHaveText('New Class');
+  const classTypeLabels = await page.locator('.hilo-sheet').last().evaluate((sheet) => {
+    const fields = Array.from(sheet.querySelectorAll('.sheet-field'));
+    const typeField = fields.find((field) =>
+      field.querySelector('.sheet-field__label')?.textContent?.trim() === 'Class type'
+    );
+    return Array.from(typeField?.querySelectorAll('.sheet-pill') || [])
+      .map((pill) => pill.textContent.trim());
+  });
+  expect(classTypeLabels).toContain('Spin');
+  expect(classTypeLabels).toContain('Custom');
+  expect(classTypeLabels).not.toContain('HIIT');
 
   const guestSearch = page.locator('.hilo-sheet').last().locator('.sheet-guest-entry input');
   await guestSearch.fill('Alice');
   const sheetBody = page.locator('.hilo-sheet').last().locator('.hilo-sheet__body');
   const sheetActions = page.locator('.hilo-sheet').last().locator('.sheet-actions');
-  await expect(sheetActions).toHaveCSS('position', 'static');
   await expect.poll(() => sheetBody.evaluate((el) =>
     el.classList.contains('sheet-body--guest-searching')
   )).toBe(true);
+  await expect(sheetActions).toBeHidden();
   await expect.poll(() => page.locator('.hilo-sheet').last().locator('.sheet-guest-suggestions').evaluate((suggestions) => {
     const actions = suggestions.closest('.hilo-sheet__body')?.querySelector('.sheet-actions');
     if (!actions) return false;
+    if (getComputedStyle(actions).display !== 'none') return false;
     const suggestionsRect = suggestions.getBoundingClientRect();
-    const actionsRect = actions.getBoundingClientRect();
-    return actionsRect.top >= suggestionsRect.bottom - 1;
+    return suggestionsRect.height > 0;
   })).toBe(true);
   await page.locator('.hilo-sheet').last().locator('.sheet-guest-suggestion-pill', { hasText: 'Alice M.' }).click();
   await expect(guestSearch).toHaveValue('');
+  await expect.poll(() => sheetBody.evaluate((el) =>
+    el.classList.contains('sheet-body--guest-searching')
+  )).toBe(false);
+  await expect(sheetActions).toBeVisible();
 
   const selectedGuest = page.locator('.hilo-sheet').last().locator('.sheet-selected-guest', { hasText: 'Alice M.' });
   await expect(selectedGuest).toBeVisible();

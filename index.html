@@ -782,8 +782,7 @@
       bottom: 0;
     }
     .hilo-sheet__body.sheet-body--guest-searching .sheet-actions {
-      position: static;
-      margin-top: 8px;
+      display: none;
     }
     .sheet-actions .hilo-btn--primary { flex: 1; }
     .sheet-actions .hilo-btn--ghost,
@@ -3733,7 +3732,6 @@
   };
 
   const DEFAULT_PLAYLISTS = Array.from({ length: 12 }, (_, i) => String(i + 1));
-  const PREDEFINED_CLASS_TYPES = [];
   const DEBUG_MODE = false;
 
   function debugLog(...args) {
@@ -3899,8 +3897,7 @@
   }
 
   function getAllClassTypes() {
-    const types = new Set(PREDEFINED_CLASS_TYPES);
-    state.playlistTags.forEach(tags => tags.forEach(t => types.add(t)));
+    const types = new Set();
     state.records.forEach(r => { if (r.classType) types.add(r.classType); });
     state.weeklyPlan.forEach(cls => { if (cls.classType) types.add(cls.classType); });
     return Array.from(types).sort();
@@ -5983,7 +5980,7 @@
     };
   }
 
-  // ── Helper: class type pills (built-in + history-derived + custom) ──
+  // ── Helper: class type pills (saved classes + custom) ──
   function buildClassTypePicker({ value, onChange }) {
     const wrap = document.createElement('div');
     let selected = value || '';
@@ -6005,7 +6002,7 @@
     function render() {
       pillsRow.innerHTML = '';
       const types = getAllClassTypes();
-      // Ensure we include selected if it's not in built-in list
+      // Keep the selected saved value visible even if it is no longer in history.
       if (selected && !types.includes(selected)) types.push(selected);
 
       types.forEach(t => {
@@ -6501,39 +6498,6 @@
     const addField = document.createElement('div');
     addField.className = 'sheet-field';
     addField.appendChild(sheetLabel('Add tag'));
-
-    const predefinedRow = document.createElement('div');
-    predefinedRow.style.cssText = 'display:flex;gap:6px;align-items:center;margin-bottom:8px;';
-    const predefinedSelect = document.createElement('select');
-    predefinedSelect.className = 'sheet-input';
-    predefinedSelect.style.flex = '1';
-    const placeholderOpt = document.createElement('option');
-    placeholderOpt.value = '';
-    placeholderOpt.textContent = 'Predefined…';
-    predefinedSelect.appendChild(placeholderOpt);
-    const builtIns = ['Yoga', 'Pilates', 'Spin', 'HIIT', 'Strength', 'Stretch', 'Dance', 'Barre'];
-    const merged = Array.from(new Set([...PREDEFINED_CLASS_TYPES, ...builtIns])).sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: 'base' }));
-    merged.forEach(t => {
-      const opt = document.createElement('option');
-      opt.value = t;
-      opt.textContent = t;
-      predefinedSelect.appendChild(opt);
-    });
-    const predefinedAddBtn = document.createElement('button');
-    predefinedAddBtn.type = 'button';
-    predefinedAddBtn.className = 'hilo-btn hilo-btn--ghost hilo-btn--sm';
-    predefinedAddBtn.textContent = 'Add';
-    predefinedAddBtn.addEventListener('click', async () => {
-      const v = predefinedSelect.value;
-      if (!v) return;
-      await updatePlaylistMetadata(playlistId, { addTag: v });
-      predefinedSelect.value = '';
-      renderChips();
-    });
-    predefinedRow.appendChild(predefinedSelect);
-    predefinedRow.appendChild(predefinedAddBtn);
-    addField.appendChild(predefinedRow);
 
     const customRow = document.createElement('div');
     customRow.style.cssText = 'display:flex;gap:6px;align-items:center;';

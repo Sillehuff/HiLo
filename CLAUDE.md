@@ -55,7 +55,7 @@ Mobile-first 4-tab IA:
 
 **Recommender** (pushed): multi-select class pills + "Select All Drafts" + "Clear" + Replay window control + best card with reasons + collapsible "All attendees (N)" + ranked list + sticky assign-to-all action bar. Preserves the multi-class same-type same-day flow via `getMetricsForSelectedClasses` over merged attendees.
 
-**Playlists** (pushed under More): Active/Retired summary, list with inline status toggle, tap row → openTagEditorSheet (predefined + custom + remove confirm). "Removed" is a third hidden status reachable only via tag editor.
+**Playlists** (pushed under More): Active/Retired summary, list with inline status toggle, tap row → openTagEditorSheet (custom tags + remove confirm). "Removed" is a third hidden status reachable only via tag editor.
 
 **Settings** (pushed under More): account card, sync pill, cosmetic Notifications + Auto-finalize toggles (persist to localStorage, no functional behavior), Replay window selector, Import/Export CSV, Clear All Data with in-sheet confirm.
 
@@ -99,7 +99,7 @@ Some UI elements render but have no functional logic — placeholders for future
 - Playlist IDs normalized: strip "Playlist #", handle decimals, numeric sort
 - Guest names are case-preserved but matched case-sensitively
 - CSS uses custom properties (`--primary`, `--accent`, `--cream`, etc.) with dark glass aesthetic
-- Constants: `DEFAULT_PLAYLISTS` (1-12), `PREDEFINED_CLASS_TYPES` (Yoga, Pilates, Spin, HIIT, Strength, Stretch, Dance, Barre)
+- Constants: `DEFAULT_PLAYLISTS` (1-12)
 
 ## Deployment
 
