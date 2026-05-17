@@ -427,6 +427,8 @@
       bottom: 0;
       left: 0;
       right: 0;
+      width: 100%;
+      max-width: 100vw;
       background: var(--surface);
       border-radius: 24px 24px 0 0;
       transform: translateY(100%);
@@ -480,6 +482,8 @@
     .hilo-sheet__body {
       flex: 1 1 auto;
       overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior-x: none;
       -webkit-overflow-scrolling: touch;
       padding: 0 20px 24px;
     }
@@ -759,6 +763,8 @@
     .sheet-actions {
       display: flex;
       gap: 8px;
+      width: 100%;
+      max-width: 100%;
       padding: 12px 20px calc(20px + var(--safe-bottom));
       border-top: 0.5px solid var(--border-light);
       flex-shrink: 0;
