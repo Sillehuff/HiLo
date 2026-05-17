@@ -52,6 +52,39 @@ function buildFixture() {
   };
 }
 
+async function topVisibleScheduleDay(page) {
+  return page.locator('#a-scroller').evaluate((scroller) => {
+    const sticky = document.querySelector('#a-week-strip-wrap');
+    const stickyHeight = sticky?.getBoundingClientRect().height || 52;
+    const scrollerRect = scroller.getBoundingClientRect();
+    const targetTop = scrollerRect.top + stickyHeight + 12;
+    let active = scroller.querySelector('.a-day-section');
+    scroller.querySelectorAll('.a-day-section').forEach((section) => {
+      if (section.getBoundingClientRect().top <= targetTop) active = section;
+    });
+    return active?.dataset.dayIso || '';
+  });
+}
+
+async function centeredRailDay(page) {
+  return page.locator('[data-week-strip-scroller]').evaluate((rail) => {
+    const railRect = rail.getBoundingClientRect();
+    const railCenter = railRect.left + (railRect.width / 2);
+    let closest = null;
+    let closestDistance = Infinity;
+    rail.querySelectorAll('.a-day-cell').forEach((cell) => {
+      const rect = cell.getBoundingClientRect();
+      const cellCenter = rect.left + (rect.width / 2);
+      const distance = Math.abs(cellCenter - railCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closest = cell;
+      }
+    });
+    return closest?.dataset.dayIso || '';
+  });
+}
+
 const firebaseCompatStub = `
 (function() {
   if (window.firebase) return;
@@ -136,7 +169,7 @@ test('class editor sheet stays horizontally fixed on mobile', async ({ page }) =
 
   await page.goto('/');
 
-  const scheduledDay = page.locator(`[data-day-iso="${fixture.weeklyPlan[0][1].date}"]`);
+  const scheduledDay = page.locator(`.a-day-section[data-day-iso="${fixture.weeklyPlan[0][1].date}"]`);
   await scheduledDay.locator('.a-class-row').click();
   await scheduledDay.locator('.a-guest-row__name', { hasText: 'Alice M.' }).click();
 
@@ -180,10 +213,10 @@ test('redesigned app smoke flow works in local unsigned mode', async ({ page }) 
 
   await expect(page.locator('#a-scroller')).toBeVisible();
   await expect(page.locator('#a-week-strip-wrap')).toHaveCount(1);
-  await expect(page.locator('#a-agenda .a-day-section')).toHaveCount(43);
-  await expect(page.locator('#a-agenda .a-class-row').first()).toBeVisible();
+  await expect.poll(() => page.locator('#a-agenda .a-day-section').count()).toBeGreaterThanOrEqual(140);
+  await expect(page.locator('[data-week-strip-scroller]')).toBeVisible();
 
-  const scheduledDay = page.locator(`[data-day-iso="${fixture.weeklyPlan[0][1].date}"]`);
+  const scheduledDay = page.locator(`.a-day-section[data-day-iso="${fixture.weeklyPlan[0][1].date}"]`);
   await expect(scheduledDay.locator('.a-class-row')).toHaveCount(1);
   await expect(scheduledDay.locator('.a-empty-day--add')).toBeVisible();
   await expect(scheduledDay.locator('.a-empty-day--add')).toContainText('Plan class');
@@ -241,4 +274,76 @@ test('redesigned app smoke flow works in local unsigned mode', async ({ page }) 
 
   expect(pageErrors).toEqual([]);
   expect(errors).toEqual([]);
+});
+
+test('schedule defaults to today and syncs the horizontal date rail while scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await page.route(/https:\/\/www\.gstatic\.com\/firebasejs\/.*\/firebase-.*compat\.js/, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/javascript',
+      body: firebaseCompatStub
+    });
+  });
+
+  const fixture = buildFixture();
+  const today = isoDateLocal(0);
+  const oldClassDate = isoDateLocal(-42);
+  fixture.weeklyPlan.push([
+    `${oldClassDate}T08:00`,
+    {
+      date: oldClassDate,
+      time: '08:00',
+      playlist: '2',
+      attendees: ['Ben T.'],
+      status: 'finalized',
+      notes: '',
+      classType: 'Spin'
+    }
+  ]);
+
+  await page.addInitScript((data) => {
+    localStorage.setItem('hiloPlaylistData', JSON.stringify(data));
+  }, fixture);
+
+  await page.goto('/');
+
+  const rail = page.locator('[data-week-strip-scroller]');
+  await expect(rail).toBeVisible();
+  await expect.poll(() => page.locator('.a-day-cell--active').getAttribute('data-day-iso')).toBe(today);
+  await expect.poll(() => topVisibleScheduleDay(page)).toBe(today);
+  await page.waitForTimeout(250);
+  const todayRailLeft = await rail.evaluate((el) => el.scrollLeft);
+  const railMetrics = await rail.evaluate((el) => ({
+    clientWidth: el.clientWidth,
+    scrollWidth: el.scrollWidth,
+    buttonCount: el.querySelectorAll('.a-day-cell').length
+  }));
+  expect(railMetrics.scrollWidth).toBeGreaterThan(railMetrics.clientWidth);
+  expect(railMetrics.buttonCount).toBeGreaterThanOrEqual(140);
+
+  await rail.hover();
+  await page.mouse.wheel(400, 0);
+  let railScrolledDate = '';
+  await expect.poll(async () => {
+    const left = await rail.evaluate((el) => el.scrollLeft);
+    const active = await page.locator('.a-day-cell--active').getAttribute('data-day-iso');
+    const centered = await centeredRailDay(page);
+    const topVisible = await topVisibleScheduleDay(page);
+    railScrolledDate = centered;
+    return left > todayRailLeft && active === centered && topVisible === centered && centered !== today;
+  }).toBe(true);
+  expect(railScrolledDate).not.toBe(today);
+
+  await page.locator(`.a-day-cell[data-day-iso="${oldClassDate}"]`).click();
+
+  const oldSection = page.locator(`.a-day-section[data-day-iso="${oldClassDate}"]`);
+  await expect(oldSection.locator('.a-class-row')).toBeVisible();
+  await expect.poll(() => page.locator('.a-day-cell--active').getAttribute('data-day-iso')).toBe(oldClassDate);
+  await expect.poll(() => topVisibleScheduleDay(page)).toBe(oldClassDate);
+  await expect.poll(async () => {
+    const left = await rail.evaluate((el) => el.scrollLeft);
+    return left < todayRailLeft;
+  }).toBe(true);
 });

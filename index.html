@@ -179,7 +179,8 @@
     .hilo-screen {
       display: flex;
       flex-direction: column;
-      min-height: 100%;
+      height: 100%;
+      min-height: 0;
       background: var(--page-bg);
       color: var(--text-primary);
       font-family: var(--font-body);
@@ -188,6 +189,7 @@
     }
     .hilo-scroll {
       flex: 1;
+      min-height: 0;
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
@@ -1169,16 +1171,44 @@
       top: 0;
       z-index: 10;
       background: var(--page-bg);
-      padding: 6px 16px 8px;
+      padding: 6px 0 8px;
       box-shadow: 0 1px 0 var(--border-subtle);
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
     .a-week-strip {
       display: grid;
-      grid-template-columns: repeat(7, 1fr) auto;
-      gap: 4px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
       align-items: center;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
     }
+    .a-week-strip__scroller {
+      display: flex;
+      gap: 4px;
+      width: 100%;
+      min-width: 0;
+      max-width: calc(100vw - 88px);
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0 0 0 16px;
+      scroll-behavior: smooth;
+      scroll-padding: 0 16px;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
+    .a-week-strip--today .a-week-strip__scroller {
+      max-width: 100vw;
+    }
+    .a-week-strip__scroller::-webkit-scrollbar { display: none; }
     .a-day-cell {
+      flex: 0 0 46px;
+      scroll-snap-align: center;
       text-align: center;
       padding: 6px 0 8px;
       border-radius: 12px;
@@ -1195,6 +1225,9 @@
       transition: background 0.12s ease;
     }
     .a-day-cell:active { background: var(--violet-2); }
+    .a-day-cell--active {
+      background: var(--primary-soft);
+    }
     .a-day-cell__name {
       font-family: var(--font-display);
       font-size: 10px;
@@ -1219,6 +1252,10 @@
       opacity: 0;
     }
     .a-day-cell--has .a-day-cell__dot { opacity: 1; }
+    .a-day-cell--active .a-day-cell__num {
+      color: var(--primary);
+      font-weight: 700;
+    }
     .a-day-cell--today .a-day-cell__num {
       background: var(--primary);
       color: #fff;
@@ -1227,7 +1264,7 @@
     .a-day-cell--today .a-day-cell__name { color: var(--primary); }
     .a-today-btn {
       flex-shrink: 0;
-      margin-left: 4px;
+      margin-right: 16px;
       padding: 5px 10px;
       border-radius: 999px;
       background: var(--primary-soft);
@@ -1705,7 +1742,7 @@
     .a-fab {
       position: absolute;
       right: 16px;
-      bottom: calc(64px + var(--safe-bottom) + 16px);
+      bottom: 16px;
       width: 56px; height: 56px;
       border-radius: 28px;
       background: var(--primary);
@@ -3746,6 +3783,11 @@
     },
     // Which class is inline-expanded on the Schedule screen.
     openClassKey: null,
+    // Schedule scroll/rail state.
+    scheduleDisplayedWeekISO: '',
+    scheduleActiveDateISO: '',
+    scheduleScrollInitialized: false,
+    scheduleScrollCleanup: null,
     // Persisted to localStorage key 'hilo:signin-banner-dismissed'.
     signinBannerDismissed: false,
     // ── Phase 3: bottom sheet stack ─────────────────────
@@ -5006,14 +5048,31 @@
   const MONTH_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const DAY_LETTER = ['S','M','T','W','T','F','S'];
+  const SCHEDULE_PAST_WEEKS = 12;
+  const SCHEDULE_FUTURE_WEEKS = 16;
+  const SCHEDULE_CLASS_BUFFER_WEEKS = 1;
 
-  // Build the agenda data: past 7 days + 35 days (5 weeks) forward = 42 days.
+  // Build the agenda data around today, widening as needed to include planned classes.
   function buildAgendaData(referenceDate) {
     const ref = parseDateInput(referenceDate) || new Date();
     ref.setHours(0, 0, 0, 0);
-    const startISOdate = formatDateKey(addDays(ref, -7));
-    const endISOdate   = formatDateKey(addDays(ref, 35));
+    let start = getIsoWeekStart(addDays(ref, -SCHEDULE_PAST_WEEKS * 7));
+    let end = addDays(getIsoWeekStart(addDays(ref, SCHEDULE_FUTURE_WEEKS * 7)), 6);
     const todayISO = formatDateKey(ref);
+
+    state.weeklyPlan.forEach((cls) => {
+      if (!cls || !cls.date) return;
+      const classDate = parseDateInput(cls.date);
+      if (!classDate) return;
+      classDate.setHours(0, 0, 0, 0);
+      const bufferedStart = addDays(getIsoWeekStart(classDate), -SCHEDULE_CLASS_BUFFER_WEEKS * 7);
+      const bufferedEnd = addDays(getIsoWeekStart(classDate), (SCHEDULE_CLASS_BUFFER_WEEKS * 7) + 6);
+      if (bufferedStart.getTime() < start.getTime()) start = bufferedStart;
+      if (bufferedEnd.getTime() > end.getTime()) end = bufferedEnd;
+    });
+
+    const startISOdate = formatDateKey(start);
+    const endISOdate = formatDateKey(end);
 
     // Group classes by day from state.weeklyPlan.
     const byDay = new Map();
@@ -5029,8 +5088,7 @@
       (a.cls.time || '').localeCompare(b.cls.time || '')));
 
     const days = [];
-    for (let i = -7; i <= 35; i++) {
-      const d = addDays(ref, i);
+    for (let d = new Date(start); d.getTime() <= end.getTime(); d = addDays(d, 1)) {
       const iso = formatDateKey(d);
       const dow = d.getDay();
       days.push({
@@ -6657,12 +6715,14 @@
     }
 
     // Build agenda and group days by ISO week.
-    const { days } = buildAgendaData(refDateISO);
+    const { days, todayISO } = buildAgendaData(refDateISO);
 
     // Map week-start → days[]; preserve insertion order via an array.
     const weeks = [];
     const weekMap = new Map();
+    const dayMap = new Map();
     for (const d of days) {
+      dayMap.set(d.iso, d);
       let bucket = weekMap.get(d.weekStartISO);
       if (!bucket) {
         bucket = { weekStartISO: d.weekStartISO, days: [] };
@@ -6671,6 +6731,10 @@
       }
       bucket.days.push(d);
     }
+    if (!state.scheduleActiveDateISO || !dayMap.has(state.scheduleActiveDateISO)) {
+      state.scheduleActiveDateISO = todayISO;
+    }
+    state.scheduleDisplayedWeekISO = isoWeekKey(state.scheduleActiveDateISO);
 
     // Build screen scaffold.
     const screen = document.createElement('div');
@@ -6692,15 +6756,14 @@
       scroller.appendChild(buildSigninBanner());
     }
 
-    // Sticky week strip wrapper. We'll re-render its inner content as the
-    // displayed week changes.
+    // Sticky horizontal date rail.
     const stickyWrap = document.createElement('div');
     stickyWrap.className = 'a-week-strip-wrap';
     stickyWrap.id = 'a-week-strip-wrap';
     scroller.appendChild(stickyWrap);
 
-    // Build week strip from displayed week.
-    refreshWeekStripDOM(stickyWrap, state.scheduleDisplayedWeekISO, todayWeekStartISO, weekMap, scroller);
+    // Build week strip from the full agenda range.
+    refreshWeekStripDOM(stickyWrap, days, state.scheduleActiveDateISO, todayWeekStartISO, scroller);
 
     // Agenda body.
     const agenda = document.createElement('div');
@@ -6741,24 +6804,22 @@
 
     container.appendChild(screen);
 
-    // Wire IntersectionObserver on dividers to update the displayed week.
-    setupWeekStripObserver(scroller, stickyWrap, todayWeekStartISO, weekMap);
+    // Wire scroll sync to update the visible week/date rail.
+    setupScheduleScrollSync(scroller, stickyWrap, todayWeekStartISO, weekMap);
 
-    // After mount, scroll today into view (only on first render — avoid
-    // re-snapping the user every refresh).
-    if (!state.scheduleScrollInitialized) {
-      const todayEl = scroller.querySelector(`[data-day-iso="${refDateISO}"]`);
-      if (todayEl) {
-        // Defer to next frame to allow layout.
-        requestAnimationFrame(() => {
-          const stickyHeight = stickyWrap.getBoundingClientRect().height || 52;
-          const desiredTop = Math.max(0, todayEl.offsetTop - stickyHeight - 8);
-          scroller.scrollTo({ top: desiredTop, behavior: 'auto' });
-          state.scheduleScrollInitialized = true;
-        });
-      } else {
+    // After mount, default to today, then preserve the active date across re-renders.
+    const restoreISO = state.scheduleScrollInitialized ? state.scheduleActiveDateISO : todayISO;
+    const restoreEl = scroller.querySelector(`.a-day-section[data-day-iso="${restoreISO}"]`);
+    if (restoreEl) {
+      requestAnimationFrame(() => {
+        const stickyHeight = stickyWrap.getBoundingClientRect().height || 52;
+        const desiredTop = getScheduleScrollTopForElement(scroller, restoreEl, stickyHeight);
+        scroller.scrollTo({ top: desiredTop, behavior: 'auto' });
+        setActiveScheduleDay(stickyWrap, restoreISO, todayWeekStartISO, weekMap, { scrollRail: true });
         state.scheduleScrollInitialized = true;
-      }
+      });
+    } else {
+      state.scheduleScrollInitialized = true;
     }
   }
 
@@ -6820,91 +6881,211 @@
     return banner;
   }
 
-  function refreshWeekStripDOM(wrap, displayedWeekISO, todayWeekISO, weekMap, scroller) {
-    // Build the strip for the displayed week. If displayed week isn't
-    // present in the agenda, fall back to today's week.
-    const weekObj = weekMap.get(displayedWeekISO) || weekMap.get(todayWeekISO);
-    if (!weekObj) { wrap.innerHTML = ''; return; }
+  function refreshWeekStripDOM(wrap, days, activeISO, todayWeekISO, scroller) {
     const todayISO = formatDateKey(new Date());
 
     const strip = document.createElement('div');
     strip.className = 'a-week-strip';
+    if (state.scheduleDisplayedWeekISO === todayWeekISO) strip.classList.add('a-week-strip--today');
 
-    weekObj.days.forEach(day => {
+    const rail = document.createElement('div');
+    rail.className = 'a-week-strip__scroller';
+    rail.dataset.weekStripScroller = 'true';
+    rail.setAttribute('aria-label', 'Schedule dates');
+
+    days.forEach(day => {
       const cell = document.createElement('button');
       cell.type = 'button';
       cell.className = 'a-day-cell';
       if (day.classes.length > 0) cell.classList.add('a-day-cell--has');
       if (day.isToday) cell.classList.add('a-day-cell--today');
+      if (day.iso === activeISO) cell.classList.add('a-day-cell--active');
       cell.dataset.dayIso = day.iso;
+      cell.dataset.weekStart = day.weekStartISO;
       cell.innerHTML = `
         <div class="a-day-cell__name">${esc(day.dayLetter)}</div>
         <div class="a-day-cell__num">${day.date}</div>
         <div class="a-day-cell__dot"></div>`;
-      cell.addEventListener('click', () => scrollAgendaToDay(scroller, day.iso));
-      strip.appendChild(cell);
+      cell.addEventListener('click', () => scrollAgendaToDay(scroller, day.iso, { behavior: 'smooth' }));
+      rail.appendChild(cell);
     });
+    strip.appendChild(rail);
 
     // Today button.
     const todayBtn = document.createElement('button');
     todayBtn.type = 'button';
     todayBtn.className = 'a-today-btn';
-    if (displayedWeekISO === todayWeekISO) todayBtn.classList.add('a-today-btn--hidden');
+    if (state.scheduleDisplayedWeekISO === todayWeekISO) todayBtn.classList.add('a-today-btn--hidden');
     todayBtn.textContent = 'Today';
-    todayBtn.addEventListener('click', () => scrollAgendaToDay(scroller, todayISO));
+    todayBtn.addEventListener('click', () => scrollAgendaToDay(scroller, todayISO, { behavior: 'smooth' }));
     strip.appendChild(todayBtn);
 
     wrap.innerHTML = '';
     wrap.appendChild(strip);
+    setActiveScheduleDay(wrap, activeISO, todayWeekISO, null, { scrollRail: true });
   }
 
-  function scrollAgendaToDay(scroller, iso) {
-    const dayEl = scroller.querySelector(`[data-day-iso="${iso}"]`);
+  function getScheduleScrollTopForElement(scroller, targetEl, stickyHeight) {
+    const scrollerRect = scroller.getBoundingClientRect();
+    const targetRect = targetEl.getBoundingClientRect();
+    return Math.max(0, scroller.scrollTop + targetRect.top - scrollerRect.top - stickyHeight - 8);
+  }
+
+  function scrollAgendaToDay(scroller, iso, { behavior = 'smooth', scrollRail = true } = {}) {
+    const dayEl = scroller.querySelector(`.a-day-section[data-day-iso="${iso}"]`);
     if (!dayEl) return;
     const stickyEl = scroller.querySelector('#a-week-strip-wrap');
     const stickyHeight = (stickyEl && stickyEl.getBoundingClientRect().height) || 52;
-    const desiredTop = Math.max(0, dayEl.offsetTop - stickyHeight - 8);
-    scroller.scrollTo({ top: desiredTop, behavior: 'smooth' });
+    const desiredTop = getScheduleScrollTopForElement(scroller, dayEl, stickyHeight);
+    const distance = Math.abs(scroller.scrollTop - desiredTop);
+    const resolvedBehavior = distance > scroller.clientHeight * 2 ? 'auto' : behavior;
+    scroller.scrollTo({ top: desiredTop, behavior: resolvedBehavior });
+    const weekMap = buildWeekMapFromScroller(scroller);
+    setActiveScheduleDay(stickyEl, iso, formatDateKey(getIsoWeekStart(new Date())), weekMap, { scrollRail });
   }
 
-  function setupWeekStripObserver(scroller, stickyWrap, todayWeekISO, weekMap) {
-    if (state.scheduleObserver) {
-      try { state.scheduleObserver.disconnect(); } catch (e) {}
-    }
-    const dividers = scroller.querySelectorAll('[data-week-start]');
-    if (!dividers.length || typeof IntersectionObserver !== 'function') return;
-    const stickyHeight = stickyWrap.getBoundingClientRect().height || 52;
-    // We want to switch the displayed week when a divider crosses just below
-    // the sticky strip. Use rootMargin to define an active band.
-    const obs = new IntersectionObserver((entries) => {
-      // Pick the topmost divider currently in the trigger band (the one
-      // with the smallest top value but still intersecting) — that's the
-      // current week's divider just under the sticky strip.
-      let candidate = null;
-      let candidateTop = Infinity;
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const rect = entry.boundingClientRect;
-          if (rect.top < candidateTop) {
-            candidateTop = rect.top;
-            candidate = entry.target;
-          }
-        }
-      });
-      if (!candidate) return;
-      const weekStart = candidate.dataset.weekStart;
-      if (weekStart && weekStart !== state.scheduleDisplayedWeekISO) {
-        state.scheduleDisplayedWeekISO = weekStart;
-        refreshWeekStripDOM(stickyWrap, weekStart, todayWeekISO, weekMap, scroller);
-      }
-    }, {
-      root: scroller,
-      // Active "trigger zone" just under the sticky strip.
-      rootMargin: `-${Math.round(stickyHeight)}px 0px -75% 0px`,
-      threshold: 0
+  function buildWeekMapFromScroller(scroller) {
+    const map = new Map();
+    scroller.querySelectorAll('[data-week-start]').forEach(el => {
+      if (el.dataset.weekStart) map.set(el.dataset.weekStart, true);
     });
-    dividers.forEach(d => obs.observe(d));
-    state.scheduleObserver = obs;
+    return map;
+  }
+
+  function setActiveScheduleDay(wrap, iso, todayWeekISO, weekMap, { scrollRail = false } = {}) {
+    if (!wrap || !iso) return;
+    const activeWeekISO = isoWeekKey(iso);
+    const hasWeek = !weekMap || weekMap.has(activeWeekISO);
+    if (!hasWeek) return;
+    state.scheduleActiveDateISO = iso;
+    state.scheduleDisplayedWeekISO = activeWeekISO;
+
+    const todayBtn = wrap.querySelector('.a-today-btn');
+    const strip = wrap.querySelector('.a-week-strip');
+    if (strip) {
+      strip.classList.toggle('a-week-strip--today', activeWeekISO === todayWeekISO);
+    }
+    if (todayBtn) {
+      todayBtn.classList.toggle('a-today-btn--hidden', activeWeekISO === todayWeekISO);
+    }
+
+    wrap.querySelectorAll('.a-day-cell--active').forEach(cell => {
+      if (cell.dataset.dayIso !== iso) cell.classList.remove('a-day-cell--active');
+    });
+    const activeCell = wrap.querySelector(`.a-day-cell[data-day-iso="${CSS.escape(iso)}"]`);
+    if (activeCell) {
+      activeCell.classList.add('a-day-cell--active');
+      if (scrollRail) {
+        const rail = activeCell.closest('[data-week-strip-scroller]');
+        if (rail) {
+          const targetLeft = activeCell.offsetLeft - ((rail.clientWidth - activeCell.offsetWidth) / 2);
+          const maxLeft = Math.max(0, rail.scrollWidth - rail.clientWidth);
+          rail.scrollTo({
+            left: Math.max(0, Math.min(maxLeft, targetLeft)),
+            behavior: 'smooth'
+          });
+        }
+      }
+    }
+  }
+
+  function getTopVisibleScheduleDay(scroller, stickyWrap) {
+    const stickyHeight = (stickyWrap && stickyWrap.getBoundingClientRect().height) || 52;
+    const scrollerRect = scroller.getBoundingClientRect();
+    const targetTop = scrollerRect.top + stickyHeight + 12;
+    const sections = scroller.querySelectorAll('.a-day-section');
+    let active = sections[0] || null;
+    sections.forEach(section => {
+      if (section.getBoundingClientRect().top <= targetTop) active = section;
+    });
+    return active ? active.dataset.dayIso : '';
+  }
+
+  function getCenteredRailDay(rail) {
+    if (!rail) return '';
+    const railRect = rail.getBoundingClientRect();
+    const railCenter = railRect.left + (railRect.width / 2);
+    let closest = null;
+    let closestDistance = Infinity;
+    rail.querySelectorAll('.a-day-cell').forEach(cell => {
+      const rect = cell.getBoundingClientRect();
+      const cellCenter = rect.left + (rect.width / 2);
+      const distance = Math.abs(cellCenter - railCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closest = cell;
+      }
+    });
+    return closest ? closest.dataset.dayIso : '';
+  }
+
+  function setupScheduleScrollSync(scroller, stickyWrap, todayWeekISO, weekMap) {
+    if (typeof state.scheduleScrollCleanup === 'function') {
+      try { state.scheduleScrollCleanup(); } catch (e) {}
+      state.scheduleScrollCleanup = null;
+    }
+    const rail = stickyWrap.querySelector('[data-week-strip-scroller]');
+    let ticking = false;
+    let railUserInteracting = false;
+    let railIntentTimer = null;
+    let railSyncTimer = null;
+    const syncFromScroll = () => {
+      ticking = false;
+      const iso = getTopVisibleScheduleDay(scroller, stickyWrap);
+      if (!iso || iso === state.scheduleActiveDateISO) return;
+      const previousWeek = state.scheduleDisplayedWeekISO;
+      const nextWeek = isoWeekKey(iso);
+      setActiveScheduleDay(stickyWrap, iso, todayWeekISO, weekMap, {
+        scrollRail: previousWeek !== nextWeek
+      });
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(syncFromScroll);
+    };
+    const clearRailIntentLater = () => {
+      clearTimeout(railIntentTimer);
+      railIntentTimer = setTimeout(() => {
+        railUserInteracting = false;
+      }, 700);
+    };
+    const markRailIntent = () => {
+      railUserInteracting = true;
+      clearRailIntentLater();
+    };
+    const syncAgendaFromRail = () => {
+      if (!railUserInteracting) return;
+      const iso = getCenteredRailDay(rail);
+      if (!iso) return;
+      scrollAgendaToDay(scroller, iso, { behavior: 'auto', scrollRail: false });
+      railUserInteracting = false;
+    };
+    const onRailScroll = () => {
+      if (!railUserInteracting) return;
+      clearRailIntentLater();
+      clearTimeout(railSyncTimer);
+      railSyncTimer = setTimeout(syncAgendaFromRail, 120);
+    };
+    scroller.addEventListener('scroll', onScroll, { passive: true });
+    if (rail) {
+      rail.addEventListener('wheel', markRailIntent, { passive: true });
+      rail.addEventListener('pointerdown', markRailIntent, { passive: true });
+      rail.addEventListener('touchstart', markRailIntent, { passive: true });
+      rail.addEventListener('scroll', onRailScroll, { passive: true });
+    }
+    state.scheduleScrollCleanup = () => {
+      scroller.removeEventListener('scroll', onScroll);
+      if (rail) {
+        rail.removeEventListener('wheel', markRailIntent);
+        rail.removeEventListener('pointerdown', markRailIntent);
+        rail.removeEventListener('touchstart', markRailIntent);
+        rail.removeEventListener('scroll', onRailScroll);
+      }
+      clearTimeout(railIntentTimer);
+      clearTimeout(railSyncTimer);
+    };
+    requestAnimationFrame(syncFromScroll);
   }
 
   function buildDaySection(day, refDateISO) {
@@ -7017,7 +7198,7 @@
     // Re-render only this day section to avoid a full tab re-render.
     const scroller = document.getElementById('a-scroller');
     if (!scroller) { renderApp(); return; }
-    const section = scroller.querySelector(`[data-day-iso="${day.iso}"]`);
+    const section = scroller.querySelector(`.a-day-section[data-day-iso="${day.iso}"]`);
     if (!section) { renderApp(); return; }
     const list = section.querySelector('.a-day-section__classes');
     if (!list) { renderApp(); return; }
@@ -7030,7 +7211,7 @@
         const stickyHeight = (stickyEl && stickyEl.getBoundingClientRect().height) || 52;
         const targetEl = scroller.querySelector(`[data-class-key="${CSS.escape(key)}"]`);
         if (targetEl) {
-          const desiredTop = Math.max(0, targetEl.offsetTop - stickyHeight - 8);
+          const desiredTop = getScheduleScrollTopForElement(scroller, targetEl, stickyHeight);
           scroller.scrollTo({ top: desiredTop, behavior: 'smooth' });
         }
       });
