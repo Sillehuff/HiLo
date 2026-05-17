@@ -774,6 +774,10 @@
       position: sticky;
       bottom: 0;
     }
+    .hilo-sheet__body.sheet-body--guest-searching .sheet-actions {
+      position: static;
+      margin-top: 8px;
+    }
     .sheet-actions .hilo-btn--primary { flex: 1; }
     .sheet-actions .hilo-btn--ghost,
     .sheet-actions .hilo-btn--success { flex: 0 0 auto; }
@@ -5828,6 +5832,16 @@
     }
 
     input.addEventListener('input', renderList);
+    input.addEventListener('focus', () => {
+      const bodyEl = wrap.closest('.hilo-sheet__body');
+      if (bodyEl) bodyEl.classList.add('sheet-body--guest-searching');
+    });
+    input.addEventListener('blur', () => {
+      setTimeout(() => {
+        const bodyEl = wrap.closest('.hilo-sheet__body');
+        if (bodyEl) bodyEl.classList.remove('sheet-body--guest-searching');
+      }, 160);
+    });
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();

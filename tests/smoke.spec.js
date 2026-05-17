@@ -236,6 +236,19 @@ test('redesigned app smoke flow works in local unsigned mode', async ({ page }) 
 
   const guestSearch = page.locator('.hilo-sheet').last().locator('.sheet-guest-entry input');
   await guestSearch.fill('Alice');
+  const sheetBody = page.locator('.hilo-sheet').last().locator('.hilo-sheet__body');
+  const sheetActions = page.locator('.hilo-sheet').last().locator('.sheet-actions');
+  await expect(sheetActions).toHaveCSS('position', 'static');
+  await expect.poll(() => sheetBody.evaluate((el) =>
+    el.classList.contains('sheet-body--guest-searching')
+  )).toBe(true);
+  await expect.poll(() => page.locator('.hilo-sheet').last().locator('.sheet-guest-suggestions').evaluate((suggestions) => {
+    const actions = suggestions.closest('.hilo-sheet__body')?.querySelector('.sheet-actions');
+    if (!actions) return false;
+    const suggestionsRect = suggestions.getBoundingClientRect();
+    const actionsRect = actions.getBoundingClientRect();
+    return actionsRect.top >= suggestionsRect.bottom - 1;
+  })).toBe(true);
   await page.locator('.hilo-sheet').last().locator('.sheet-guest-suggestion-pill', { hasText: 'Alice M.' }).click();
   await expect(guestSearch).toHaveValue('');
 
