@@ -291,8 +291,9 @@ test('redesigned app smoke flow works in local unsigned mode', async ({ page }) 
       .map((pill) => pill.textContent.trim());
   });
   expect(classTypeLabels).toContain('Spin');
+  expect(classTypeLabels).toContain('HIIT');
   expect(classTypeLabels).toContain('Custom');
-  expect(classTypeLabels).not.toContain('HIIT');
+  expect(classTypeLabels).not.toContain('Yoga');
 
   const guestSearch = page.locator('.hilo-sheet').last().locator('.sheet-guest-entry input');
   await guestSearch.fill('Alice');
