@@ -3909,6 +3909,18 @@
     return Array.from(types).sort();
   }
 
+  function getAvailablePlaylistTagTypes(playlistId) {
+    const currentTags = state.playlistTags.get(String(playlistId)) || [];
+    const currentTagKeys = new Set(
+      currentTags
+        .map(t => (t || '').toString().trim().toLowerCase())
+        .filter(Boolean)
+    );
+    return getAllClassTypes()
+      .filter(t => !currentTagKeys.has(t.toLowerCase()))
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+  }
+
   function normalizeTime(timeStr, fallback = '09:00') {
     const raw = (timeStr ?? '').toString().trim();
     if (!raw) return fallback;
@@ -6570,18 +6582,32 @@
         x.innerHTML = ICONS.close;
         x.addEventListener('click', async () => {
           await updatePlaylistMetadata(playlistId, { removeTag: t });
-          renderChips();
+          refreshTagEditor();
         });
         chip.appendChild(x);
         chipsWrap.appendChild(chip);
       });
     }
-    renderChips();
 
     // Add tag section
     const addField = document.createElement('div');
     addField.className = 'sheet-field';
     addField.appendChild(sheetLabel('Add tag'));
+
+    const knownRow = document.createElement('div');
+    knownRow.style.cssText = 'display:flex;gap:6px;align-items:center;margin-bottom:8px;';
+    const typeSelect = document.createElement('select');
+    typeSelect.className = 'sheet-input';
+    typeSelect.style.flex = '1';
+    typeSelect.setAttribute('aria-label', 'Class type tag');
+    const typeAddBtn = document.createElement('button');
+    typeAddBtn.type = 'button';
+    typeAddBtn.className = 'hilo-btn hilo-btn--primary hilo-btn--sm';
+    typeAddBtn.setAttribute('aria-label', 'Add selected class type tag');
+    typeAddBtn.innerHTML = ICONS.plus14;
+    knownRow.appendChild(typeSelect);
+    knownRow.appendChild(typeAddBtn);
+    addField.appendChild(knownRow);
 
     const customRow = document.createElement('div');
     customRow.style.cssText = 'display:flex;gap:6px;align-items:center;';
@@ -6593,13 +6619,50 @@
     const customAddBtn = document.createElement('button');
     customAddBtn.type = 'button';
     customAddBtn.className = 'hilo-btn hilo-btn--primary hilo-btn--sm';
+    customAddBtn.setAttribute('aria-label', 'Add custom tag');
     customAddBtn.innerHTML = `${ICONS.plus14}`;
+
+    function renderTypeSelect() {
+      const availableTypes = getAvailablePlaylistTagTypes(playlistId);
+      typeSelect.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = availableTypes.length > 0
+        ? 'Choose class type...'
+        : (getAllClassTypes().length > 0 ? 'All class types assigned' : 'No class types yet');
+      typeSelect.appendChild(placeholder);
+      availableTypes.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        typeSelect.appendChild(opt);
+      });
+      typeSelect.value = '';
+      typeSelect.disabled = availableTypes.length === 0;
+      typeAddBtn.disabled = availableTypes.length === 0;
+    }
+
+    function refreshTagEditor() {
+      renderChips();
+      renderTypeSelect();
+    }
+
+    typeAddBtn.addEventListener('click', async () => {
+      const v = typeSelect.value;
+      if (!v) return;
+      await updatePlaylistMetadata(playlistId, { addTag: v });
+      refreshTagEditor();
+    });
+    typeSelect.addEventListener('change', () => {
+      if (typeSelect.value) typeAddBtn.focus();
+    });
+
     customAddBtn.addEventListener('click', async () => {
       const v = (customInput.value || '').trim();
       if (!v) return;
       await updatePlaylistMetadata(playlistId, { addTag: v });
       customInput.value = '';
-      renderChips();
+      refreshTagEditor();
     });
     customInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -6611,6 +6674,7 @@
     customRow.appendChild(customAddBtn);
     addField.appendChild(customRow);
     body.appendChild(addField);
+    refreshTagEditor();
 
     // Status section
     const statusField = document.createElement('div');

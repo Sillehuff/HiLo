@@ -47,7 +47,8 @@ function buildFixture() {
       ['1', 'Active'],
       ['2', 'Active'],
       ['3', 'Active'],
-      ['4', 'Active']
+      ['4', 'Active'],
+      ['5', 'Active']
     ]
   };
 }
@@ -361,6 +362,26 @@ test('redesigned app smoke flow works in local unsigned mode', async ({ page }) 
   await expect(page.locator('.g-list')).toContainText('Alice');
 
   await page.locator('button[data-tab=\"more\"]').click();
+  await expect(page.locator('.hilo-header__title')).toHaveText('More');
+  await page.locator('.m-row', { hasText: 'Playlists' }).click();
+  await expect(page.locator('.pl-title')).toHaveText('Playlists');
+  await page.locator('.pl-row', { hasText: 'Playlist #5' }).click();
+  await expect(page.locator('.hilo-sheet__title').last()).toHaveText('Tags for Playlist #5');
+  const tagTypeSelect = page.locator('.hilo-sheet').last().locator('select[aria-label="Class type tag"]');
+  const tagTypeOptions = await tagTypeSelect.locator('option').evaluateAll((options) =>
+    options.map((option) => option.textContent.trim())
+  );
+  expect(tagTypeOptions).toContain('Spin');
+  expect(tagTypeOptions).toContain('HIIT');
+  await tagTypeSelect.selectOption('HIIT');
+  await page.locator('.hilo-sheet').last().locator('button[aria-label="Add selected class type tag"]').click();
+  await expect(page.locator('.hilo-sheet').last().locator('.sheet-tag-chip', { hasText: 'HIIT' })).toBeVisible();
+  await expect.poll(() => tagTypeSelect.locator('option').evaluateAll((options) =>
+    options.map((option) => option.textContent.trim())
+  )).not.toContain('HIIT');
+  await page.locator('.hilo-sheet__close').last().click();
+  await expect(page.locator('.hilo-sheet')).toHaveCount(0);
+  await page.locator('.pl-back').click();
   await expect(page.locator('.hilo-header__title')).toHaveText('More');
   await page.locator('.m-row', { hasText: 'Settings' }).click();
   await expect(page.locator('.s-title')).toHaveText('Settings');
