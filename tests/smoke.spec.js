@@ -153,7 +153,7 @@ const firebaseCompatStub = `
 })();
 `;
 
-test('class editor sheet stays horizontally fixed on mobile', async ({ page }) => {
+test('class editor sheet stays fixed and attendee drag does not select text on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
 
   await page.route(/https:\/\/www\.gstatic\.com\/firebasejs\/.*\/firebase-.*compat\.js/, async (route) => {
@@ -187,6 +187,55 @@ test('class editor sheet stays horizontally fixed on mobile', async ({ page }) =
 
   await body.evaluate((el) => { el.scrollLeft = 120; });
   await expect.poll(() => body.evaluate((el) => el.scrollLeft)).toBe(0);
+
+  const selectedGuests = sheet.locator('.sheet-selected-guest');
+  await expect(selectedGuests).toHaveCount(3);
+
+  const firstGuest = selectedGuests.filter({ hasText: 'Alice M.' });
+  const secondGuest = selectedGuests.filter({ hasText: 'Ben T.' });
+  await firstGuest.scrollIntoViewIfNeeded();
+
+  await expect.poll(() => firstGuest.evaluate((el) => {
+    const styles = window.getComputedStyle(el);
+    const nameStyles = window.getComputedStyle(el.querySelector('.sheet-selected-guest__name'));
+    return {
+      userSelect: styles.userSelect,
+      webkitUserSelect: styles.getPropertyValue('-webkit-user-select') || styles.webkitUserSelect,
+      touchAction: styles.touchAction,
+      nameUserSelect: nameStyles.userSelect,
+      nameWebkitUserSelect: nameStyles.getPropertyValue('-webkit-user-select') || nameStyles.webkitUserSelect
+    };
+  })).toEqual({
+    userSelect: 'none',
+    webkitUserSelect: 'none',
+    touchAction: 'none',
+    nameUserSelect: 'none',
+    nameWebkitUserSelect: 'none'
+  });
+
+  await sheet.locator('.hilo-sheet__title').evaluate((el) => {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  });
+  expect(await page.evaluate(() => window.getSelection().toString())).toContain('Edit Class');
+
+  const firstBox = await firstGuest.boundingBox();
+  const secondBox = await secondGuest.boundingBox();
+  expect(firstBox).not.toBeNull();
+  expect(secondBox).not.toBeNull();
+
+  await page.mouse.move(firstBox.x + firstBox.width / 2, firstBox.y + firstBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(secondBox.x + secondBox.width * 0.85, secondBox.y + secondBox.height / 2, { steps: 8 });
+  await expect.poll(() => page.evaluate(() => window.getSelection().toString())).toBe('');
+  await page.mouse.up();
+
+  await expect.poll(() => selectedGuests.evaluateAll((chips) =>
+    chips.map((chip) => chip.dataset.guestName)
+  )).toEqual(['Ben T.', 'Alice M.', 'Carla D.']);
 });
 
 test('redesigned app smoke flow works in local unsigned mode', async ({ page }) => {
