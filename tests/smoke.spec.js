@@ -296,6 +296,20 @@ test('redesigned app smoke flow works in local unsigned mode', async ({ page }) 
   expect(classTypeLabels).not.toContain('Yoga');
 
   const guestSearch = page.locator('.hilo-sheet').last().locator('.sheet-guest-entry input');
+  const keyboardAccessoryHeight = 118;
+  const keyboardInsetStyle = await page.addStyleTag({
+    content: `:root { --sheet-keyboard-offset: ${keyboardAccessoryHeight}px !important; }`
+  });
+  await guestSearch.fill('Kadey');
+  const newGuestSuggestion = page.locator('.hilo-sheet').last().locator('.sheet-guest-suggestion-pill--new', { hasText: 'Add "Kadey"' });
+  await expect(newGuestSuggestion).toBeVisible();
+  await expect.poll(() => newGuestSuggestion.evaluate((pill, inset) => {
+    const rect = pill.getBoundingClientRect();
+    return Math.round(window.innerHeight - inset - rect.bottom);
+  }, keyboardAccessoryHeight)).toBeGreaterThanOrEqual(8);
+  await keyboardInsetStyle.evaluate((node) => node.remove());
+  await page.evaluate(() => document.documentElement.style.removeProperty('--sheet-keyboard-offset'));
+
   await guestSearch.fill('Alice');
   const sheetBody = page.locator('.hilo-sheet').last().locator('.hilo-sheet__body');
   const sheetActions = page.locator('.hilo-sheet').last().locator('.sheet-actions');

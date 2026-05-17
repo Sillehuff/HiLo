@@ -114,6 +114,7 @@
       --tap-target: 44px;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --sheet-keyboard-offset: 0px;
       --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -426,7 +427,7 @@
     }
     .hilo-sheet {
       position: absolute;
-      bottom: 0;
+      bottom: var(--sheet-keyboard-offset);
       left: 0;
       right: 0;
       width: 100%;
@@ -435,7 +436,7 @@
       border-radius: 24px 24px 0 0;
       transform: translateY(100%);
       transition: transform 0.3s var(--ease-out);
-      max-height: 90vh;
+      max-height: min(90vh, calc(100vh - var(--safe-top) - var(--sheet-keyboard-offset) - 8px));
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -445,8 +446,8 @@
     .hilo-sheet.is-open {
       transform: translateY(0);
     }
-    .hilo-sheet--tall { max-height: 92vh; }
-    .hilo-sheet--short { max-height: 60vh; }
+    .hilo-sheet--tall { max-height: min(92vh, calc(100vh - var(--safe-top) - var(--sheet-keyboard-offset) - 8px)); }
+    .hilo-sheet--short { max-height: min(60vh, calc(100vh - var(--safe-top) - var(--sheet-keyboard-offset) - 8px)); }
     .hilo-sheet__handle {
       width: 40px;
       height: 4px;
@@ -783,6 +784,10 @@
     }
     .hilo-sheet__body.sheet-body--guest-searching .sheet-actions {
       display: none;
+    }
+    .hilo-sheet__body.sheet-body--guest-searching {
+      padding-bottom: calc(96px + var(--safe-bottom));
+      scroll-padding-bottom: calc(112px + var(--safe-bottom));
     }
     .sheet-actions .hilo-btn--primary { flex: 1; }
     .sheet-actions .hilo-btn--ghost,
@@ -5296,6 +5301,7 @@
       if (removed) return;
       removed = true;
       if (entry.root && entry.root.parentNode) entry.root.parentNode.removeChild(entry.root);
+      updateSheetKeyboardOffset();
       if (typeof entry.onClose === 'function') {
         try { entry.onClose(); } catch (e) { console.warn('Sheet onClose error:', e); }
       }
@@ -5318,6 +5324,51 @@
     while (state.sheetStack.length > 0) closeSheet();
   }
 
+  function getActiveSheetEditable() {
+    const el = document.activeElement;
+    if (!(el instanceof HTMLElement)) return null;
+    const editable = el.matches('input, textarea, select') || el.isContentEditable;
+    return editable && el.closest('.hilo-sheet') ? el : null;
+  }
+
+  function updateSheetKeyboardOffset() {
+    const active = getActiveSheetEditable();
+    let offset = 0;
+    if (active && window.visualViewport) {
+      const vv = window.visualViewport;
+      offset = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+      if (offset < 48) offset = 0;
+    }
+    document.documentElement.style.setProperty('--sheet-keyboard-offset', `${offset}px`);
+  }
+
+  function keepSheetFocusVisible(target = null) {
+    const active = target instanceof HTMLElement ? target : getActiveSheetEditable();
+    if (!active || !active.closest('.hilo-sheet')) return;
+    const scrollTarget = active.closest('.sheet-guest-entry') || active;
+    try {
+      scrollTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    } catch (e) {
+      scrollTarget.scrollIntoView(false);
+    }
+  }
+
+  function scheduleSheetKeyboardRefresh(target = null) {
+    updateSheetKeyboardOffset();
+    requestAnimationFrame(() => {
+      updateSheetKeyboardOffset();
+      keepSheetFocusVisible(target);
+    });
+    setTimeout(() => {
+      updateSheetKeyboardOffset();
+      keepSheetFocusVisible(target);
+    }, 120);
+    setTimeout(() => {
+      updateSheetKeyboardOffset();
+      keepSheetFocusVisible(target);
+    }, 320);
+  }
+
   // Global handlers — attach once.
   if (!window.__hiloSheetHandlersAttached) {
     window.__hiloSheetHandlersAttached = true;
@@ -5336,6 +5387,23 @@
         closeSheet();
       }
     });
+  }
+
+  if (!window.__hiloSheetKeyboardHandlersAttached) {
+    window.__hiloSheetKeyboardHandlersAttached = true;
+    document.addEventListener('focusin', (e) => {
+      if (e.target instanceof HTMLElement && e.target.closest('.hilo-sheet')) {
+        scheduleSheetKeyboardRefresh(e.target);
+      }
+    }, true);
+    document.addEventListener('focusout', () => {
+      setTimeout(updateSheetKeyboardOffset, 180);
+    }, true);
+    window.addEventListener('resize', () => scheduleSheetKeyboardRefresh());
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => scheduleSheetKeyboardRefresh());
+      window.visualViewport.addEventListener('scroll', () => scheduleSheetKeyboardRefresh());
+    }
   }
 
   // ── Helper: build a sticky footer button row ───────────
@@ -5657,6 +5725,21 @@
       selectGuest(name, { saveNew: true });
     }
 
+    function keepGuestSearchResultsVisible() {
+      if (document.activeElement !== input) return;
+      const target = !suggestions.hidden
+        ? suggestions
+        : (!emptyNote.hidden ? emptyNote : input);
+      scheduleSheetKeyboardRefresh(input);
+      requestAnimationFrame(() => {
+        try {
+          target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        } catch (e) {
+          target.scrollIntoView(false);
+        }
+      });
+    }
+
     function showTrash(show) {
       trashDrop.hidden = !show;
       trashDrop.classList.remove('sheet-guest-trash--active');
@@ -5840,12 +5923,14 @@
         emptyNote.textContent = 'Already added.';
         emptyNote.hidden = false;
       }
+      keepGuestSearchResultsVisible();
     }
 
     input.addEventListener('input', renderList);
     input.addEventListener('focus', () => {
       const bodyEl = wrap.closest('.hilo-sheet__body');
       if (bodyEl) bodyEl.classList.add('sheet-body--guest-searching');
+      keepGuestSearchResultsVisible();
     });
     input.addEventListener('blur', () => {
       setTimeout(() => {
