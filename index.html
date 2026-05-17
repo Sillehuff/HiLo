@@ -670,6 +670,9 @@
       font-size: 13px;
       font-weight: 600;
       cursor: grab;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      touch-action: none;
       user-select: none;
       box-shadow: 0 1px 0 rgba(110, 86, 207, 0.08);
       transition: transform 0.12s ease, opacity 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, border-color 0.12s ease;
@@ -689,6 +692,8 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      -webkit-user-select: none;
+      user-select: none;
     }
     .sheet-selected-guest__remove {
       display: inline-flex;
@@ -698,6 +703,8 @@
       height: 16px;
       flex-shrink: 0;
       color: var(--primary-hover);
+      -webkit-user-select: none;
+      user-select: none;
     }
     .sheet-guest-suggestions {
       display: flex;
@@ -5659,6 +5666,11 @@
       trashDrop.classList.remove('sheet-guest-trash--active');
     }
 
+    function clearGuestTextSelection() {
+      const selection = window.getSelection && window.getSelection();
+      if (selection && !selection.isCollapsed) selection.removeAllRanges();
+    }
+
     function setHighlightedChip(nextChip) {
       if (highlightedChip && highlightedChip !== nextChip) {
         highlightedChip.classList.remove('sheet-selected-guest--drag-over');
@@ -5698,6 +5710,7 @@
       const moved = Math.abs(e.clientX - dragStartX) + Math.abs(e.clientY - dragStartY);
       if (!dragStarted && moved > 6) {
         dragStarted = true;
+        clearGuestTextSelection();
         chip.classList.add('sheet-selected-guest--dragging');
         showTrash(true);
       }
@@ -5783,6 +5796,8 @@
         chip.addEventListener('pointerdown', (e) => {
           if (e.target.closest('.sheet-selected-guest__remove')) return;
           if (typeof e.button === 'number' && e.button !== 0) return;
+          e.preventDefault();
+          clearGuestTextSelection();
           draggedGuest = name;
           activePointerId = e.pointerId;
           dragStarted = false;
